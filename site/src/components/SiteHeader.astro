@@ -1,6 +1,7 @@
 ---
 import { HandHeart } from "@lucide/astro";
 import { navItems } from "../data/site";
+import { withBase } from "../utils/paths";
 
 interface Props {
   isHome?: boolean;
@@ -8,17 +9,17 @@ interface Props {
 
 const { isHome = false } = Astro.props;
 const resolveHref = (href: string) =>
-  isHome || !href.startsWith("#") ? href : `/${href}`;
+  isHome && href.startsWith("#") ? href : withBase(href.startsWith("#") ? `/${href}` : href);
 ---
 
 <header class="site-header" aria-label="Navegacion principal">
-  <a class="brand-mark" href={isHome ? "#inicio" : "/"} aria-label="Break The Beat inicio">
-    <img src="/assets/break-the-beat-logo.webp" width="900" height="569" alt="Break The Beat" />
+  <a class="brand-mark" href={isHome ? "#inicio" : withBase("/")} aria-label="Break The Beat inicio">
+    <img src={withBase("/assets/break-the-beat-logo.webp")} width="900" height="569" alt="Break The Beat" />
   </a>
   <nav class="desktop-nav">
     {navItems.map((item) => <a href={resolveHref(item.href)}>{item.label}</a>)}
   </nav>
-  <a class="header-cta" href={isHome ? "#apoyar" : "/apoyar/"}>
+  <a class="header-cta" href={isHome ? "#apoyar" : withBase("/apoyar/")}>
     <HandHeart size={18} aria-hidden="true" />
     Apoyar
   </a>

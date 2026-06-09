@@ -1,12 +1,13 @@
 ---
 import { ArrowUpRight } from "@lucide/astro";
 import { event, footerGroups } from "../data/site";
+import { withBase } from "../utils/paths";
 ---
 
 <footer class="site-footer">
   <div class="footer-top">
-    <a class="footer-logo" href="/" aria-label="Break The Beat inicio">
-      <img src="/assets/break-the-beat-logo.webp" width="900" height="569" alt="Break The Beat" />
+    <a class="footer-logo" href={withBase("/")} aria-label="Break The Beat inicio">
+      <img src={withBase("/assets/break-the-beat-logo.webp")} width="900" height="569" alt="Break The Beat" />
     </a>
     <a class="footer-more" href="#inicio">
       Ver mas
@@ -19,7 +20,7 @@ import { event, footerGroups } from "../data/site";
         <h2>{group.title}</h2>
         {group.links.map((link) => (
           <a
-            href={link.href}
+            href={withBase(link.href)}
             target={link.href.startsWith("http") ? "_blank" : undefined}
             rel={link.href.startsWith("http") ? "noreferrer" : undefined}
           >

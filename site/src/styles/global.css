@@ -519,7 +519,7 @@ h3 {
 .awards {
   background:
     linear-gradient(rgba(5, 5, 5, 0.82), rgba(5, 5, 5, 0.82)),
-    url("/assets/bboy-street.webp") center / cover fixed;
+    var(--awards-bg, none) center / cover fixed;
 }
 
 .award-list {

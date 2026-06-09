@@ -3,6 +3,7 @@ import { ArrowLeft, ArrowRight } from "@lucide/astro";
 import SiteFooter from "../components/SiteFooter.astro";
 import SiteHeader from "../components/SiteHeader.astro";
 import { event, featurePages } from "../data/site";
+import { withBase } from "../utils/paths";
 import "../styles/global.css";
 
 export function getStaticPaths() {
@@ -27,9 +28,9 @@ const description = page.summary;
     <meta property="og:type" content="website" />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={page.image} />
+    <meta property="og:image" content={withBase(page.image)} />
     <meta name="twitter:card" content="summary_large_image" />
-    <link rel="icon" type="image/png" href="/assets/favicon.png" />
+    <link rel="icon" type="image/png" href={withBase("/assets/favicon.png")} />
     <title>{pageTitle}</title>
   </head>
   <body>
@@ -37,18 +38,18 @@ const description = page.summary;
     <main id="inicio" class="detail-page">
       <section class="detail-hero section-dark">
         <div class="detail-media" aria-hidden="true">
-          <img src={page.image} alt="" />
+          <img src={withBase(page.image)} alt="" />
         </div>
         <div class="detail-overlay"></div>
         <div class="detail-content">
-          <a class="text-link detail-back" href="/">
+          <a class="text-link detail-back" href={withBase("/")}>
             <ArrowLeft size={18} aria-hidden="true" />
             Volver
           </a>
           <p class="eyebrow">{page.eyebrow}</p>
           <h1>{page.title}</h1>
           <p>{page.summary}</p>
-          <a class="button button-primary" href="/#contacto">
+          <a class="button button-primary" href={withBase("/#contacto")}>
             Contacto oficial
             <ArrowRight size={18} aria-hidden="true" />
           </a>

@@ -25,6 +25,7 @@ import {
   stats,
   timeline
 } from "../data/site";
+import { withBase } from "../utils/paths";
 import "../styles/global.css";
 
 const pageTitle = "Break The Beat | 3ra edicion";
@@ -42,10 +43,10 @@ const description =
     <meta property="og:type" content="website" />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content="/assets/hero-battle.webp" />
+    <meta property="og:image" content={withBase("/assets/hero-battle.webp")} />
     <meta name="twitter:card" content="summary_large_image" />
-    <link rel="icon" type="image/png" href="/assets/favicon.png" />
-    <link rel="preload" as="image" href="/assets/hero-battle.webp" fetchpriority="high" />
+    <link rel="icon" type="image/png" href={withBase("/assets/favicon.png")} />
+    <link rel="preload" as="image" href={withBase("/assets/hero-battle.webp")} fetchpriority="high" />
     <title>{pageTitle}</title>
   </head>
   <body>
@@ -55,10 +56,10 @@ const description =
       <section class="hero hero-carousel section-dark" data-hero-carousel aria-label="Historias principales">
         {heroSlides.map((slide, index) => (
           <article class:list={["hero-slide", { "is-active": index === 0 }]} data-hero-slide>
-            <a class="hero-slide-link" href={slide.href} aria-label={`${slide.cta}: ${slide.title}`}>
+            <a class="hero-slide-link" href={withBase(slide.href)} aria-label={`${slide.cta}: ${slide.title}`}>
               <div class="hero-media" aria-hidden="true">
                 <img
-                  src={slide.image}
+                  src={withBase(slide.image)}
                   width="800"
                   height="450"
                   alt=""
@@ -70,7 +71,7 @@ const description =
               <div class="hero-content">
                 <p class="eyebrow">{slide.eyebrow}</p>
                 {index === 0 && (
-                  <img class="hero-logo" src="/assets/break-the-beat-logo.webp" width="900" height="569" alt={event.title} />
+                  <img class="hero-logo" src={withBase("/assets/break-the-beat-logo.webp")} width="900" height="569" alt={event.title} />
                 )}
                 <h1>{slide.title}</h1>
                 <p class="hero-copy">{slide.text}</p>
@@ -110,12 +111,12 @@ const description =
 
       <nav class="feature-tabs section-dark" aria-label="Explorar secciones">
         <span class="feature-tabs-label">Explorar secciones</span>
-        <a href="/movimiento/">Movimiento</a>
-        <a href="/impacto/">Impacto</a>
-        <a href="/rewind/">Rewind</a>
-        <a href="/highlights/">Highlights</a>
+        <a href={withBase("/movimiento/")}>Movimiento</a>
+        <a href={withBase("/impacto/")}>Impacto</a>
+        <a href={withBase("/rewind/")}>Rewind</a>
+        <a href={withBase("/highlights/")}>Highlights</a>
         <a href="#sponsors">Colaboradores</a>
-        <a href="/apoyar/">Apoyar</a>
+        <a href={withBase("/apoyar/")}>Apoyar</a>
         <a href="#contacto">Contacto</a>
       </nav>
 
@@ -165,7 +166,7 @@ const description =
           ))}
         </div>
         <div class="impact-feature">
-          <img src="/assets/community-lineup.webp" width="800" height="533" alt="Comunidad de Break The Beat reunida en el evento" />
+          <img src={withBase("/assets/community-lineup.webp")} width="800" height="533" alt="Comunidad de Break The Beat reunida en el evento" />
           <div>
             <p class="kicker">Comunidad primero</p>
             <h3>Mas que un torneo, una red de historias.</h3>
@@ -178,7 +179,7 @@ const description =
         </div>
       </section>
 
-      <section class="awards section-dark">
+      <section class="awards section-dark" style={`--awards-bg: url("${withBase("/assets/bboy-street.webp")}")`}>
         <div class="section-heading compact">
           <div class="section-label">
             <Trophy size={18} aria-hidden="true" />
@@ -214,9 +215,9 @@ const description =
           ))}
         </div>
         <div class="rewind-strip" aria-label="Momentos de Break The Beat">
-          <img src="/assets/crowd-rewind.webp" width="800" height="533" alt="Publico y bailarines en una edicion anterior de Break The Beat" />
-          <img src="/assets/bboy-street.webp" width="800" height="533" alt="Bboy haciendo un movimiento en un espacio urbano" />
-          <img src="/assets/guayaquil-venue.webp" width="800" height="413" alt="Espacio urbano de Guayaquil relacionado con el evento" />
+          <img src={withBase("/assets/crowd-rewind.webp")} width="800" height="533" alt="Publico y bailarines en una edicion anterior de Break The Beat" />
+          <img src={withBase("/assets/bboy-street.webp")} width="800" height="533" alt="Bboy haciendo un movimiento en un espacio urbano" />
+          <img src={withBase("/assets/guayaquil-venue.webp")} width="800" height="413" alt="Espacio urbano de Guayaquil relacionado con el evento" />
         </div>
       </section>
 
@@ -231,7 +232,7 @@ const description =
         <div class="highlight-grid">
           {highlights.map((item) => (
             <article class="highlight-card">
-              <img src={item.image} width={item.width} height={item.height} alt={item.alt} decoding="async" />
+              <img src={withBase(item.image)} width={item.width} height={item.height} alt={item.alt} decoding="async" />
               <div>
                 <h3>{item.title}</h3>
                 <p>{item.text}</p>

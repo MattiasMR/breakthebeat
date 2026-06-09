@@ -1,0 +1,75 @@
+---
+import { ArrowLeft, ArrowRight } from "@lucide/astro";
+import SiteFooter from "../components/SiteFooter.astro";
+import SiteHeader from "../components/SiteHeader.astro";
+import { event, featurePages } from "../data/site";
+import "../styles/global.css";
+
+export function getStaticPaths() {
+  return featurePages.map((page) => ({
+    params: { slug: page.slug },
+    props: { page }
+  }));
+}
+
+const { page } = Astro.props;
+const pageTitle = `${page.title} | ${event.title}`;
+const description = page.summary;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#050505" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={page.image} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" type="image/png" href="/assets/favicon.png" />
+    <title>{pageTitle}</title>
+  </head>
+  <body>
+    <SiteHeader />
+    <main id="inicio" class="detail-page">
+      <section class="detail-hero section-dark">
+        <div class="detail-media" aria-hidden="true">
+          <img src={page.image} alt="" />
+        </div>
+        <div class="detail-overlay"></div>
+        <div class="detail-content">
+          <a class="text-link detail-back" href="/">
+            <ArrowLeft size={18} aria-hidden="true" />
+            Volver
+          </a>
+          <p class="eyebrow">{page.eyebrow}</p>
+          <h1>{page.title}</h1>
+          <p>{page.summary}</p>
+          <a class="button button-primary" href="/#contacto">
+            Contacto oficial
+            <ArrowRight size={18} aria-hidden="true" />
+          </a>
+        </div>
+      </section>
+
+      <section class="detail-body section-light">
+        <div class="section-heading compact">
+          <div class="section-label">Detalle</div>
+          <h2>Lo importante de esta parte.</h2>
+        </div>
+        <div class="detail-list">
+          {page.bullets.map((item) => (
+            <article>
+              <span aria-hidden="true"></span>
+              <p>{item}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+    </main>
+    <SiteFooter />
+  </body>
+</html>

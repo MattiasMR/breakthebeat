@@ -1,0 +1,358 @@
+---
+import {
+  ArrowRight,
+  ArrowUpRight,
+  AtSign,
+  CalendarDays,
+  HandHeart,
+  Mail,
+  MapPin,
+  Megaphone,
+  Music2,
+  Sparkles,
+  Trophy,
+  UsersRound
+} from "@lucide/astro";
+import SiteFooter from "../components/SiteFooter.astro";
+import SiteHeader from "../components/SiteHeader.astro";
+import {
+  awards,
+  collaborators,
+  event,
+  highlights,
+  payments,
+  heroSlides,
+  stats,
+  timeline
+} from "../data/site";
+import "../styles/global.css";
+
+const pageTitle = "Break The Beat | 3ra edicion";
+const description =
+  "Sitio oficial de Break The Beat, torneo nacional de breakdance en Guayaquil con impacto cultural, comunidad, sponsors y aportes.";
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#050505" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content="/assets/hero-battle.webp" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" type="image/png" href="/assets/favicon.png" />
+    <link rel="preload" as="image" href="/assets/hero-battle.webp" fetchpriority="high" />
+    <title>{pageTitle}</title>
+  </head>
+  <body>
+    <SiteHeader isHome />
+
+    <main id="inicio">
+      <section class="hero hero-carousel section-dark" data-hero-carousel aria-label="Historias principales">
+        {heroSlides.map((slide, index) => (
+          <article class:list={["hero-slide", { "is-active": index === 0 }]} data-hero-slide>
+            <a class="hero-slide-link" href={slide.href} aria-label={`${slide.cta}: ${slide.title}`}>
+              <div class="hero-media" aria-hidden="true">
+                <img
+                  src={slide.image}
+                  width="800"
+                  height="450"
+                  alt=""
+                  fetchpriority={index === 0 ? "high" : undefined}
+                  decoding="async"
+                />
+              </div>
+              <div class="hero-overlay"></div>
+              <div class="hero-content">
+                <p class="eyebrow">{slide.eyebrow}</p>
+                {index === 0 && (
+                  <img class="hero-logo" src="/assets/break-the-beat-logo.webp" width="900" height="569" alt={event.title} />
+                )}
+                <h1>{slide.title}</h1>
+                <p class="hero-copy">{slide.text}</p>
+                <div class="event-meta" aria-label="Informacion del evento">
+                  <span>
+                    <CalendarDays size={18} aria-hidden="true" />
+                    {event.date}
+                  </span>
+                  <span>
+                    <MapPin size={18} aria-hidden="true" />
+                    {event.city}
+                  </span>
+                  <span>{event.prize} premio principal</span>
+                </div>
+                <span class="button button-primary">
+                  {slide.cta}
+                  <ArrowRight size={19} aria-hidden="true" />
+                </span>
+              </div>
+            </a>
+          </article>
+        ))}
+        <div class="hero-bottom">
+          <span>{event.edition}</span>
+          <span>{event.prize} premio principal</span>
+          <span>{event.location}</span>
+        </div>
+        <div class="hero-controls" aria-label="Cambiar historia principal">
+          {heroSlides.map((slide, index) => (
+            <button class:list={{ "is-active": index === 0 }} type="button" data-hero-control aria-label={`Ver ${slide.title}`}>
+              <span>{String(index + 1).padStart(2, "0")}</span>
+              {slide.eyebrow}
+            </button>
+          ))}
+        </div>
+      </section>
+
+      <nav class="feature-tabs section-dark" aria-label="Explorar secciones">
+        <span class="feature-tabs-label">Explorar secciones</span>
+        <a href="/movimiento/">Movimiento</a>
+        <a href="/impacto/">Impacto</a>
+        <a href="/rewind/">Rewind</a>
+        <a href="/highlights/">Highlights</a>
+        <a href="#sponsors">Colaboradores</a>
+        <a href="/apoyar/">Apoyar</a>
+        <a href="#contacto">Contacto</a>
+      </nav>
+
+      <section class="intro section-dark" id="que-es">
+        <div class="section-label">
+          <Sparkles size={18} aria-hidden="true" />
+          Que es
+        </div>
+        <div class="intro-grid">
+          <article>
+            <p class="kicker">No es solo acrobacia ni ritmo</p>
+            <h2>Es rebeldia con causa.</h2>
+            <p>
+              Break The Beat junta a bailarines de todo el pais en una competencia
+              donde el arte urbano se vive como deporte, espectaculo y comunidad.
+              Habra musica en vivo, shows, freestyle abierto y un premio principal
+              de {event.prize}.
+            </p>
+          </article>
+          <article>
+            <p class="kicker">Nuestro motor</p>
+            <h2>Un escenario seguro para canalizar energia.</h2>
+            <p>
+              En Guayaquil, el breaking ha sido refugio, protesta y orgullo barrial.
+              Esta tercera edicion busca abrir espacios donde jovenes puedan expresarse
+              desde el movimiento, lejos de la violencia y cerca de una comunidad que
+              los reconoce.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="impact section-light" id="impacto">
+        <div class="section-heading">
+          <div class="section-label">
+            <Megaphone size={18} aria-hidden="true" />
+            Impacto 2025
+          </div>
+          <h2>Una edicion que puso al breaking en conversacion.</h2>
+        </div>
+        <div class="stats-grid">
+          {stats.map((stat) => (
+            <article class="stat-card">
+              <strong>{stat.value}</strong>
+              <span>{stat.label}</span>
+            </article>
+          ))}
+        </div>
+        <div class="impact-feature">
+          <img src="/assets/community-lineup.webp" width="800" height="533" alt="Comunidad de Break The Beat reunida en el evento" />
+          <div>
+            <p class="kicker">Comunidad primero</p>
+            <h3>Mas que un torneo, una red de historias.</h3>
+            <p>
+              El proyecto busca profundizar en las historias humanas detras de los
+              bailarines y equipos, mostrando como el breakdance puede abrir caminos
+              de identidad, disciplina y pertenencia.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="awards section-dark">
+        <div class="section-heading compact">
+          <div class="section-label">
+            <Trophy size={18} aria-hidden="true" />
+            Reconocimientos
+          </div>
+          <h2>La historia de Break The Beat ya viajo por festivales.</h2>
+        </div>
+        <div class="award-list">
+          {awards.map((award) => (
+            <article class="award-item">
+              <span aria-hidden="true"></span>
+              <p>{award}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section class="rewind section-light" id="rewind">
+        <div class="section-heading">
+          <div class="section-label">
+            <Music2 size={18} aria-hidden="true" />
+            Galaxia Break The Beat
+          </div>
+          <h2>Rewind de un movimiento en crecimiento.</h2>
+        </div>
+        <div class="timeline">
+          {timeline.map((item) => (
+            <article class="timeline-item">
+              <span>{item.year}</span>
+              <h3>{item.title}</h3>
+              <p>{item.text}</p>
+            </article>
+          ))}
+        </div>
+        <div class="rewind-strip" aria-label="Momentos de Break The Beat">
+          <img src="/assets/crowd-rewind.webp" width="800" height="533" alt="Publico y bailarines en una edicion anterior de Break The Beat" />
+          <img src="/assets/bboy-street.webp" width="800" height="533" alt="Bboy haciendo un movimiento en un espacio urbano" />
+          <img src="/assets/guayaquil-venue.webp" width="800" height="413" alt="Espacio urbano de Guayaquil relacionado con el evento" />
+        </div>
+      </section>
+
+      <section class="highlights section-dark" id="highlights">
+        <div class="section-heading">
+          <div class="section-label">
+            <UsersRound size={18} aria-hidden="true" />
+            Highlights
+          </div>
+          <h2>El pulso del evento, por categorias y momentos.</h2>
+        </div>
+        <div class="highlight-grid">
+          {highlights.map((item) => (
+            <article class="highlight-card">
+              <img src={item.image} width={item.width} height={item.height} alt={item.alt} decoding="async" />
+              <div>
+                <h3>{item.title}</h3>
+                <p>{item.text}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section class="sponsors section-light" id="sponsors">
+        <div class="section-heading">
+          <div class="section-label">
+            <Trophy size={18} aria-hidden="true" />
+            Colaboradores
+          </div>
+          <h2>Sponsors y colaboradores actuales.</h2>
+          <p>
+            Listado inicial basado en aliados, medios y colaboradores de ediciones anteriores.
+            Esta seccion queda por modificar cuando el equipo confirme logos y sponsors 2026.
+          </p>
+        </div>
+        <div class="collaborator-note">Por modificar</div>
+        <div class="collaborator-grid">
+          {collaborators.map((partner) => (
+            <article class="collaborator-card">
+              <span>{partner.type}</span>
+              <h3>{partner.name}</h3>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section class="support section-dark" id="apoyar">
+        <div class="support-copy">
+          <div class="section-label">
+            <HandHeart size={18} aria-hidden="true" />
+            Apoyar
+          </div>
+          <h2>Apoyar el movimiento es ayudar a que el beat llegue mas lejos.</h2>
+          <p>
+            Los aportes se activaran cuando el equipo confirme cuenta responsable,
+            links oficiales, politica de devolucion y forma de rendicion. Por ahora,
+            la web deja listos los canales sin publicar datos sensibles.
+          </p>
+          <p class="legal-note">
+            Los aportes no se presentan como donacion deducible de impuestos salvo
+            que exista respaldo legal y administrativo confirmado.
+          </p>
+        </div>
+        <div class="payment-grid">
+          {payments.map((payment) => (
+            <article class="payment-card">
+              <div>
+                <h3>{payment.label}</h3>
+                <p>{payment.description}</p>
+              </div>
+              {payment.enabled && payment.url ? (
+                <a class="button button-primary" href={payment.url} target="_blank" rel="noreferrer">
+                  Abrir pago
+                  <ArrowUpRight size={18} aria-hidden="true" />
+                </a>
+              ) : (
+                <span class="button button-disabled" aria-disabled="true">
+                  {payment.status}
+                </span>
+              )}
+              <small>{payment.disclaimer}</small>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section class="contact section-light" id="contacto">
+        <div>
+          <p class="kicker">Contacto oficial</p>
+          <h2>Hablemos de cultura, comunidad y sponsors.</h2>
+        </div>
+        <div class="contact-actions">
+          <a class="button button-primary" href={event.instagramUrl} target="_blank" rel="noreferrer">
+            <AtSign size={19} aria-hidden="true" />
+            {event.instagram}
+          </a>
+          <a class="button button-secondary dark" href={`mailto:${event.email}`}>
+            <Mail size={19} aria-hidden="true" />
+            {event.email}
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <SiteFooter />
+    <script>
+      const carousel = document.querySelector("[data-hero-carousel]");
+      if (carousel) {
+        const slides = Array.from(carousel.querySelectorAll("[data-hero-slide]"));
+        const controls = Array.from(carousel.querySelectorAll("[data-hero-control]"));
+        let activeIndex = 0;
+        let timer;
+
+        const setActive = (nextIndex) => {
+          activeIndex = nextIndex;
+          slides.forEach((slide, index) => slide.classList.toggle("is-active", index === activeIndex));
+          controls.forEach((control, index) => control.classList.toggle("is-active", index === activeIndex));
+        };
+
+        const start = () => {
+          timer = window.setInterval(() => {
+            setActive((activeIndex + 1) % slides.length);
+          }, 5200);
+        };
+
+        controls.forEach((control, index) => {
+          control.addEventListener("click", () => {
+            window.clearInterval(timer);
+            setActive(index);
+            start();
+          });
+        });
+
+        start();
+      }
+    </script>
+  </body>
+</html>

@@ -210,8 +210,8 @@ export const highlights = [
     details:
       "La planificacion 2025 marca llegada, prueba y ensayo de DJ y host antes de abrir el evento. El DJ trabaja en vivo porque los bailarines compiten sin saber cual sera el beat; el host abre el torneo, presenta jueces, ordena rondas, anuncia descansos y sostiene la energia del publico.",
     bullets: [
-      "DJ 2025 registrado en documentos: Vicente Chiriboga / DJ Boga.",
-      "Host 2025 registrado en cronograma: Bryan Perico Hernandez.",
+      "DJ 2025: Vicente Chiriboga / DJ Boga.",
+      "Host 2025: Bryan Perico Hernandez.",
       "El host explica que es Break The Beat y presenta a los jueces.",
       "El DJ necesita mesa y equipo tecnico probado antes de la apertura."
     ]
@@ -244,10 +244,10 @@ export const highlights = [
     text:
       "Cobertura en medios, redes y espacios culturales que amplifican el mensaje del proyecto.",
     details:
-      "El dossier 2026 registra cobertura en Diario Expreso, SUPER, MadosTV y otros espacios. La comunicacion 2025 reporta mas de 4 medios, mas de 20 piezas de contenido, mas de 40k vistas en Instagram y mas de 300 comentarios positivos.",
+      "Break The Beat ha logrado cobertura en Diario Expreso, SUPER, MadosTV y otros espacios, amplificando el torneo en medios, redes y comunidad.",
     bullets: [
       "Medios mencionados: Diario Expreso, SUPER y MadosTV.",
-      "+4 medios de cobertura registrados en estadisticas 2025.",
+      "+4 medios de cobertura en ediciones anteriores.",
       "+20 piezas de contenido en redes.",
       "+40k vistas y +2.5k likes en Instagram."
     ]
@@ -255,23 +255,39 @@ export const highlights = [
 ];
 
 export const legacySponsors = [
-  { name: "Universidad Casa Grande", type: "Aliado academico" },
-  { name: "YO Dance Studio", type: "Alianza de difusion" },
-  { name: "Alcaldia de Guayaquil", type: "Aliado institucional" },
-  { name: "ZUMAR", type: "Espacio aliado" },
-  { name: "Ruta Centro", type: "Aliado territorial" },
-  { name: "Aquafit", type: "Marca aliada" },
-  { name: "CV Viniles", type: "Marca / proveedor" },
-  { name: "Pepsi", type: "Marca aliada" },
-  { name: "Sony", type: "Marca aliada" },
-  { name: "La Ganga", type: "Marca aliada" },
-  { name: "Evergood", type: "Marca aliada" },
-  { name: "Pony Malta", type: "Marca aliada" },
-  { name: "Bazzuka", type: "Marca aliada" },
-  { name: "Nature's Garden", type: "Marca aliada" },
-  { name: "Codicia", type: "Marca aliada" },
-  { name: "Cabala Estudio Creativo", type: "Estudio creativo" },
-  { name: "Color Express", type: "Marca / proveedor" }
+  {
+    name: "Universidad Casa Grande",
+    type: "Aliado academico",
+    logo: "/assets/sponsors/universidad-casa-grande.png"
+  },
+  {
+    name: "YO Dance Studio",
+    type: "Alianza de difusion",
+    logo: "/assets/sponsors/yo-dance-studio.png"
+  },
+  {
+    name: "Alcaldia de Guayaquil",
+    type: "Aliado institucional",
+    logo: "/assets/sponsors/alcaldia-guayaquil.png"
+  },
+  { name: "ZUMAR", type: "Espacio aliado", logo: "/assets/sponsors/zumar.png" },
+  { name: "Ruta Centro", type: "Aliado territorial", logo: "/assets/sponsors/ruta-centro.png" },
+  { name: "Aquafit", type: "Marca aliada", logo: "/assets/sponsors/aquafit.png" },
+  { name: "CV Viniles", type: "Marca / proveedor", logo: "/assets/sponsors/cv-viniles.png" },
+  { name: "Pepsi", type: "Marca aliada", logo: "/assets/sponsors/pepsi.png" },
+  { name: "Sony", type: "Marca aliada", logo: "/assets/sponsors/sony.png" },
+  { name: "La Ganga", type: "Marca aliada", logo: "/assets/sponsors/la-ganga.png" },
+  { name: "Evergood", type: "Marca aliada", logo: "/assets/sponsors/evergood.png" },
+  { name: "Pony Malta", type: "Marca aliada", logo: "/assets/sponsors/pony-malta.png" },
+  { name: "Bazzuka", type: "Marca aliada", logo: "/assets/sponsors/bazzuka.png" },
+  { name: "Nature's Garden", type: "Marca aliada", logo: "/assets/sponsors/natures-garden.png" },
+  { name: "Codicia", type: "Marca aliada", logo: "/assets/sponsors/codicia.png" },
+  {
+    name: "Cabala Estudio Creativo",
+    type: "Estudio creativo",
+    logo: "/assets/sponsors/cabala.png"
+  },
+  { name: "Color Express", type: "Marca / proveedor", logo: "/assets/sponsors/color-express.png" }
 ];
 
 export const athletes = [
@@ -280,28 +296,28 @@ export const athletes = [
     type: "Ganador repetido",
     stat: "2 ediciones",
     text:
-      "El archivo de contactos lo registra como competidor que ha ganado en las dos ediciones de Break The Beat."
+      "Bicampeon del torneo y uno de los nombres que ha elevado el nivel competitivo de Break The Beat."
   },
   {
     name: "Diamond Squad",
     type: "Ganadores anteriores",
     stat: "2vs2 Battle",
     text:
-      "Aparece en los materiales de premiacion como equipo ganador de una edicion anterior."
+      "Crew ganador en categoria 2vs2 y parte del historial competitivo del evento."
   },
   {
     name: "+50 participantes",
     type: "Base competitiva 2025",
     stat: "Inscritos",
     text:
-      "El dossier 2026 registra mas de 50 inscritos en Break The Beat 2, con bailarines de distintas comunidades."
+      "Una convocatoria abierta a bailarines de distintas comunidades, estilos y trayectorias."
   },
   {
     name: "B-Boys y B-Girls del pais",
     type: "Convocatoria nacional",
     stat: "18 a 30",
     text:
-      "Los dossiers definen la audiencia como bailarines amateurs y profesionales, artistas urbanos y comunidades barriales."
+      "Talento nacional, crews y nuevas generaciones que mantienen vivo el movimiento urbano."
   }
 ];
 

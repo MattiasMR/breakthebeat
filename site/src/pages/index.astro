@@ -274,26 +274,36 @@ const description =
             <Trophy size={18} aria-hidden="true" />
             Colaboradores
           </div>
-          <h2>Sponsors y colaboradores que han sido parte.</h2>
+          <h2>Marcas que han impulsado el movimiento.</h2>
           <p>
-            Recopilado desde los dossiers 2025 y 2026, incluyendo marcas de la primera edicion.
-            Esta vista muestra marcas y aliados que ya aparecen en el material del proyecto.
+            Aliados, auspiciantes y espacios que han acompanado el crecimiento de Break The Beat.
           </p>
         </div>
-        <div class="sponsor-cloud" aria-label="Sponsors y aliados historicos">
+        <div class="sponsor-grid" aria-label="Sponsors y aliados">
           {legacySponsors.map((partner) => (
-            <article class="sponsor-pill">
-              <span>{partner.type}</span>
-              <h3>{partner.name}</h3>
+            <article class="sponsor-card" aria-label={`${partner.name}, ${partner.type}`}>
+              <img
+                src={withBase(partner.logo)}
+                width="520"
+                height="260"
+                alt={partner.name}
+                loading="lazy"
+                decoding="async"
+              />
             </article>
           ))}
         </div>
-        <div class="athlete-heading">
-          <p class="kicker">Atletas</p>
-          <h3>Competidores repetidos y ganadores anteriores.</h3>
+      </section>
+
+      <section class="athletes section-dark" id="atletas">
+        <div class="section-heading">
+          <div class="section-label">
+            <UsersRound size={18} aria-hidden="true" />
+            Atletas
+          </div>
+          <h2>Competidores que han marcado el cypher.</h2>
           <p>
-            Base inicial armada solo con nombres y datos encontrados en los documentos del proyecto.
-            El registro completo de participantes queda listo para ampliarse cuando exista una lista oficial.
+            B-boys, B-girls, crews y nuevas generaciones que sostienen la energia de Break The Beat.
           </p>
         </div>
         <div class="athlete-grid">

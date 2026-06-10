@@ -361,14 +361,8 @@ export const footerGroups = [
     links: [
       { label: "Domingo 27 de septiembre 2026", href: "/#inicio" },
       { label: "Locacion por anunciar", href: "/#inicio" },
-<<<<<<< HEAD
       { label: "Links de pago pendientes", href: "/#apoyar" },
       { label: "Sponsors historicos", href: "/#sponsors" },
-      { label: "Cloudflare Pages ready", href: "https://pages.cloudflare.com/" }
-=======
-      { label: "Links de pago pendientes", href: "/apoyar/" },
-      { label: "Colaboradores por modificar", href: "/#sponsors" }
->>>>>>> 2a1dada4e5016c101a0d51c02f6610e496a2589b
     ]
   }
 ];

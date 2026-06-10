@@ -12,7 +12,7 @@ const resolveHref = (href: string) =>
   isHome && href.startsWith("#") ? href : withBase(href.startsWith("#") ? `/${href}` : href);
 ---
 
-<header class="site-header" aria-label="Navegacion principal">
+<header class="site-header" aria-label="Navegación principal">
   <a class="brand-mark" href={isHome ? "#inicio" : withBase("/")} aria-label="Break The Beat inicio">
     <img src={withBase("/assets/break-the-beat-logo.webp")} width="900" height="569" alt="Break The Beat" />
   </a>

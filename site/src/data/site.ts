@@ -1,19 +1,19 @@
 export const event = {
   title: "Break The Beat",
-  edition: "3ra edicion",
+  edition: "3ra edición",
   eyebrow: "Torneo nacional de breakdance",
   date: "Domingo 27 de septiembre 2026",
-  location: "Locacion por anunciar",
+  location: "Locación por anunciar",
   city: "Guayaquil, Ecuador",
   instagram: "@breakthebeat.ucg",
   instagramUrl: "https://www.instagram.com/breakthebeat.ucg/",
   email: "breakthebeat@casagrande.edu.ec",
   summary:
-    "Una competencia nacional de breakdance creada por estudiantes de Universidad Casa Grande para visibilizar la cultura urbana, abrir espacios seguros y reunir a bailarines de todo el pais."
+    "Una competencia nacional de breakdance creada por estudiantes de Universidad Casa Grande para visibilizar la cultura urbana, abrir espacios seguros y reunir a bailarines de todo el país."
 };
 
 export const navItems = [
-  { label: "Que es", href: "/movimiento/" },
+  { label: "Qué es", href: "/movimiento/" },
   { label: "Impacto", href: "/impacto/" },
   { label: "Rewind", href: "/rewind/" },
   { label: "Highlights", href: "/highlights/" },
@@ -26,9 +26,9 @@ export const heroSlides = [
   {
     slug: "movimiento",
     title: "Break The Beat",
-    eyebrow: "3ra edicion",
+    eyebrow: "3ra edición",
     image: "/assets/hero-battle.webp",
-    alt: "Bailarin compitiendo frente al publico en Break The Beat",
+    alt: "Bailarín compitiendo frente al público en Break The Beat",
     cta: "Conocer el movimiento",
     text:
       "Un torneo nacional donde el breaking se vive como deporte, cultura y comunidad.",
@@ -37,12 +37,12 @@ export const heroSlides = [
   {
     slug: "impacto",
     title: "Impacto social",
-    eyebrow: "Mas que una batalla",
+    eyebrow: "Más que una batalla",
     image: "/assets/community-lineup.webp",
-    alt: "Comunidad de Break The Beat reunida en una edicion anterior",
+    alt: "Comunidad de Break The Beat reunida en una edición anterior",
     cta: "Ver impacto",
     text:
-      "Historias, talleres y espacios seguros para que jovenes canalicen energia desde el arte urbano.",
+      "Historias, talleres y espacios seguros para que jóvenes canalicen energía desde el arte urbano.",
     href: "/impacto/"
   },
   {
@@ -50,10 +50,10 @@ export const heroSlides = [
     title: "Rewind",
     eyebrow: "Ediciones anteriores",
     image: "/assets/crowd-rewind.webp",
-    alt: "Publico y bailarines reunidos en Break The Beat",
+    alt: "Público y bailarines reunidos en Break The Beat",
     cta: "Ver historia",
     text:
-      "Prensa, premios, documental y comunidad: una linea de tiempo que sigue creciendo.",
+      "Prensa, premios, documental y comunidad: una línea de tiempo que sigue creciendo.",
     href: "/rewind/"
   },
   {
@@ -61,10 +61,10 @@ export const heroSlides = [
     title: "Apoyar el movimiento",
     eyebrow: "Funding",
     image: "/assets/winners.webp",
-    alt: "Ganadores del torneo con cheque de premiacion",
+    alt: "Ganadores del torneo con cheque de premiación",
     cta: "Ver formas de aportar",
     text:
-      "Los canales de apoyo se activaran cuando el equipo confirme cuentas y links oficiales.",
+      "Los canales de apoyo se activarán cuando el equipo confirme cuentas y links oficiales.",
     href: "#apoyar"
   }
 ];
@@ -72,17 +72,17 @@ export const heroSlides = [
 export const featurePages = [
   {
     slug: "movimiento",
-    title: "Que es Break The Beat",
+    title: "Qué es Break The Beat",
     eyebrow: "Movimiento",
     image: "/assets/hero-battle.webp",
-    alt: "Bailarin compitiendo frente al publico en Break The Beat",
+    alt: "Bailarín compitiendo frente al público en Break The Beat",
     summary:
       "Break The Beat es una competencia nacional de breakdance creada por estudiantes de Universidad Casa Grande para visibilizar una cultura que mezcla arte, deporte, identidad y comunidad.",
     bullets: [
-      "Competencia nacional en Guayaquil con bailarines de todo el pais.",
-      "Premios para los mejores bailarines de cada categoria.",
-      "Musica en vivo, freestyle abierto, shows y energia de cypher.",
-      "Un espacio que respeta la cultura intima del breaking y sus codigos."
+      "Competencia nacional en Guayaquil con bailarines de todo el país.",
+      "Premios para los mejores bailarines de cada categoría.",
+      "Música en vivo, freestyle abierto, shows y energía de cypher.",
+      "Un espacio que respeta la cultura íntima del breaking y sus códigos."
     ]
   },
   {
@@ -90,11 +90,11 @@ export const featurePages = [
     title: "Impacto social y cultural",
     eyebrow: "Comunidad",
     image: "/assets/community-lineup.webp",
-    alt: "Comunidad de Break The Beat reunida en una edicion anterior",
+    alt: "Comunidad de Break The Beat reunida en una edición anterior",
     summary:
-      "El proyecto busca abrir espacios seguros para jovenes, contar historias reales de bailarines y mostrar el breakdance como una alternativa positiva frente a contextos complejos.",
+      "El proyecto busca abrir espacios seguros para jóvenes, contar historias reales de bailarines y mostrar el breakdance como una alternativa positiva frente a contextos complejos.",
     bullets: [
-      "+500 asistentes y +50 participantes en la edicion 2025.",
+      "+500 asistentes y +50 participantes en la edición 2025.",
       "+40k vistas en Instagram y +300 comentarios positivos.",
       "Enfoque en talleres, barrios, fundaciones y comunidad.",
       "Narrativa centrada en talento, disciplina y pertenencia."
@@ -105,13 +105,13 @@ export const featurePages = [
     title: "Rewind y reconocimientos",
     eyebrow: "Historia",
     image: "/assets/crowd-rewind.webp",
-    alt: "Publico y bailarines reunidos en Break The Beat",
+    alt: "Público y bailarines reunidos en Break The Beat",
     summary:
-      "Break The Beat ya trascendio el torneo: sus ediciones anteriores impulsaron comunidad, prensa y un documental reconocido en festivales nacionales e internacionales.",
+      "Break The Beat ya trascendió el torneo: sus ediciones anteriores impulsaron comunidad, prensa y un documental reconocido en festivales nacionales e internacionales.",
     bullets: [
-      "Seleccion oficial en Cuenca, Madrid y Choreoscope Barcelona.",
+      "Selección oficial en Cuenca, Madrid y Choreoscope Barcelona.",
       "Mejor corto documental en festivales de Barcelona y Muchu Picchu.",
-      "Mencion de honor en Premios Municipales de Quito 2025.",
+      "Mención de honor en Premios Municipales de Quito 2025.",
       "Cobertura en Diario Expreso, SUPER, MadosTV y medios aliados."
     ]
   },
@@ -122,9 +122,9 @@ export const featurePages = [
     image: "/assets/battle-floor.webp",
     alt: "Bailarines compitiendo en una batalla de breakdance",
     summary:
-      "La experiencia se construye con battles, DJ en vivo, host de la comunidad, premiacion, free press y momentos que hacen que cada edicion tenga pulso propio.",
+      "La experiencia se construye con battles, DJ en vivo, host de la comunidad, premiación, free press y momentos que hacen que cada edición tenga pulso propio.",
     bullets: [
-      "Battles con filtros, jueces y dinamica real de cypher.",
+      "Battles con filtros, jueces y dinámica real de cypher.",
       "DJ y host como parte activa del show.",
       "Premios que buscan reconocer el esfuerzo de los bailarines.",
       "Cobertura audiovisual y prensa para amplificar la comunidad."
@@ -140,22 +140,22 @@ export const stats = [
   { value: "+300", label: "comentarios positivos" },
   { value: "+50", label: "participantes" },
   { value: "+500", label: "asistentes" },
-  { value: "+4", label: "alianzas estrategicas" }
+  { value: "+4", label: "alianzas estratégicas" }
 ];
 
 export const awards = [
-  "Seleccion oficial en el Festival Internacional de Cine Cuenca",
-  "Seleccion oficial en el Madrid Indie Film Festival - MADRIFF",
-  "Mejor corto documental en la primera edicion del Muchu Picchu International Film Festival",
+  "Selección oficial en el Festival Internacional de Cine Cuenca",
+  "Selección oficial en el Madrid Indie Film Festival - MADRIFF",
+  "Mejor corto documental en la primera edición del Muchu Picchu International Film Festival",
   "Mejor corto documental en Indie House Barcelona, julio 2025",
-  "Seleccion oficial para la muestra online de Choreoscope - Barcelona Dance Film Festival",
-  "Mencion de honor en video de mediana duracion en los Premios Municipales de Quito 2025"
+  "Selección oficial para la muestra online de Choreoscope - Barcelona Dance Film Festival",
+  "Mención de honor en video de mediana duración en los Premios Municipales de Quito 2025"
 ];
 
 export const timeline = [
   {
     year: "Origen",
-    title: "Una batalla que se volvio comunidad",
+    title: "Una batalla que se volvió comunidad",
     text:
       "Break The Beat nace como un espacio para que bailarines de breaking compitan, se reconozcan y se encuentren desde la cultura."
   },
@@ -163,19 +163,19 @@ export const timeline = [
     year: "Documental",
     title: "La historia cruza fronteras",
     text:
-      "La primera edicion trascendio el torneo y se convirtio en un documental exhibido en festivales nacionales e internacionales."
+      "La primera edición trascendió el torneo y se convirtió en un documental exhibido en festivales nacionales e internacionales."
   },
   {
     year: "2025",
-    title: "Segunda edicion, mas alcance",
+    title: "Segunda edición, más alcance",
     text:
-      "La comunidad crecio con nuevos talentos, prensa, alianzas y mas de seis horas de evento en la Plaza de Teatros de la calle Panama."
+      "La comunidad creció con nuevos talentos, prensa, alianzas y más de seis horas de evento en la Plaza de Teatros de la calle Panamá."
   },
   {
     year: "2026",
-    title: "Tercera edicion en camino",
+    title: "Tercera edición en camino",
     text:
-      "La meta es consolidar el torneo como referente cultural y deportivo de Guayaquil, con mas auspicios, premios y enfoque social."
+      "La meta es consolidar el torneo como referente cultural y deportivo de Guayaquil, con más auspicios, premios y enfoque social."
   }
 ];
 
@@ -188,14 +188,14 @@ export const highlights = [
     height: 300,
     alt: "Bailarines compitiendo en una batalla de breakdance al aire libre",
     text:
-      "Formato competitivo con energia de cypher, filtros, jueces de la comunidad y musica en vivo.",
+      "Formato competitivo con energía de cypher, filtros, jueces de la comunidad y música en vivo.",
     details:
-      "El torneo se organiza alrededor de filtros, cypher abierto y batallas por categoria. La experiencia integra 2vs2, 7 To Smoke 1vs1, semifinales, final y espacios de freestyle/trucos entre rondas.",
+      "El torneo se organiza alrededor de filtros, cypher abierto y batallas por categoría. La experiencia integra 2vs2, 7 To Smoke 1vs1, semifinales, final y espacios de freestyle/trucos entre rondas.",
     bullets: [
-      "El filtro define quienes avanzan a la competencia principal.",
+      "El filtro define quiénes avanzan a la competencia principal.",
       "El 2vs2 incluye octavos, cuartos, semifinal y final.",
-      "El 7 To Smoke 1vs1 se trabaja como categoria central de batalla.",
-      "Los jueces de la comunidad arman filtros y orden competitivo segun nivel."
+      "El 7 To Smoke 1vs1 se trabaja como categoría central de batalla.",
+      "Los jueces de la comunidad arman filtros y orden competitivo según nivel."
     ]
   },
   {
@@ -204,39 +204,39 @@ export const highlights = [
     image: "/assets/dj-live.webp",
     width: 440,
     height: 293,
-    alt: "DJ del evento mezclando musica en vivo",
+    alt: "DJ del evento mezclando música en vivo",
     text:
       "El beat se decide en el momento; el host y el DJ sostienen el pulso real de la batalla.",
     details:
-      "El DJ trabaja en vivo porque los bailarines compiten sin saber cual sera el beat; el host abre el torneo, presenta jueces, ordena rondas, anuncia descansos y sostiene la energia del publico.",
+      "El DJ trabaja en vivo porque los bailarines compiten sin saber cuál será el beat; el host abre el torneo, presenta jueces, ordena rondas, anuncia descansos y sostiene la energía del público.",
     bullets: [
       "DJ 2025: Vicente Chiriboga / DJ Boga.",
-      "Host 2025: Bryan Perico Hernandez.",
+      "Host 2025: Bryan Perico Hernández.",
       "El host explica que es Break The Beat y presenta a los jueces.",
-      "DJ y host sostienen el ritmo, el orden y la energia de cada ronda."
+      "DJ y host sostienen el ritmo, el orden y la energía de cada ronda."
     ]
   },
   {
-    title: "Premiacion",
+    title: "Premiación",
     eyebrow: "Reconocimiento",
     image: "/assets/winners.webp",
     width: 560,
     height: 374,
-    alt: "Ganadores de Break The Beat posando con cheque de premiacion",
+    alt: "Ganadores de Break The Beat posando con cheque de premiación",
     text:
       "Premios que reconocen el esfuerzo de los bailarines y elevan el nivel del torneo.",
     details:
-      "La premiacion combina premios economicos, certificados, productos de marcas aliadas y registros para redes. El cierre celebra a los ganadores con entrevistas, fotos y videos para amplificar su historia.",
+      "La premiación combina premios económicos, certificados, productos de marcas aliadas y registros para redes. El cierre celebra a los ganadores con entrevistas, fotos y videos para amplificar su historia.",
     bullets: [
-      "Diamond Squad aparece como ganador en cheque de edicion anterior.",
-      "La segunda edicion comunico premio economico para el ganador.",
+      "Diamond Squad aparece como ganador en cheque de edición anterior.",
+      "La segunda edición comunicó premio económico para el ganador.",
       "El evento integra certificados, merch y productos aliados.",
       "La entrega se registra con fotos, entrevistas y piezas para redes."
     ]
   },
   {
     title: "Free press",
-    eyebrow: "Impacto mediatico",
+    eyebrow: "Impacto mediático",
     image: "/assets/press-expreso.webp",
     width: 379,
     height: 800,
@@ -257,16 +257,16 @@ export const highlights = [
 export const legacySponsors = [
   {
     name: "Universidad Casa Grande",
-    type: "Aliado academico",
+    type: "Aliado académico",
     logo: "/assets/sponsors/universidad-casa-grande.png"
   },
   {
     name: "YO Dance Studio",
-    type: "Alianza de difusion",
+    type: "Alianza de difusión",
     logo: "/assets/sponsors/yo-dance-studio.png"
   },
   {
-    name: "Alcaldia de Guayaquil",
+    name: "Alcaldía de Guayaquil",
     type: "Aliado institucional",
     logo: "/assets/sponsors/alcaldia-guayaquil.png"
   },
@@ -296,14 +296,14 @@ export const athletes = [
     type: "Ganador repetido",
     stat: "2 ediciones",
     text:
-      "Bicampeon del torneo y uno de los nombres que ha elevado el nivel competitivo de Break The Beat."
+      "Bicampeón del torneo y uno de los nombres que ha elevado el nivel competitivo de Break The Beat."
   },
   {
     name: "Diamond Squad",
     type: "Ganadores anteriores",
     stat: "2vs2 Battle",
     text:
-      "Crew ganador en categoria 2vs2 y parte del historial competitivo del evento."
+      "Crew ganador en categoría 2vs2 y parte del historial competitivo del evento."
   },
   {
     name: "+50 participantes",
@@ -313,7 +313,7 @@ export const athletes = [
       "Una convocatoria abierta a bailarines de distintas comunidades, estilos y trayectorias."
   },
   {
-    name: "B-Boys y B-Girls del pais",
+    name: "B-Boys y B-Girls del país",
     type: "Convocatoria nacional",
     stat: "18 a 30",
     text:
@@ -325,11 +325,11 @@ export const payments = [
   {
     key: "payphone",
     label: "PayPhone",
-    description: "Boton de pago local para tarjetas emitidas en Ecuador.",
+    description: "Botón de pago local para tarjetas emitidas en Ecuador.",
     enabled: false,
     url: "",
     status: "Link pendiente",
-    disclaimer: "Cuenta receptora y politica de devolucion por confirmar."
+    disclaimer: "Cuenta receptora y política de devolución por confirmar."
   },
   {
     key: "paypal",
@@ -347,7 +347,7 @@ export const payments = [
     enabled: false,
     url: "",
     status: "Datos por definir",
-    disclaimer: "No publicar cuenta hasta definir responsable y rendicion."
+    disclaimer: "No publicar cuenta hasta definir responsable y rendición."
   }
 ];
 
@@ -355,7 +355,7 @@ export const footerGroups = [
   {
     title: "Break The Beat",
     links: [
-      { label: "Que es", href: "/movimiento/" },
+      { label: "Qué es", href: "/movimiento/" },
       { label: "Impacto social", href: "/impacto/" },
       { label: "Rewind", href: "/rewind/" },
       { label: "Highlights", href: "/highlights/" },
@@ -376,9 +376,9 @@ export const footerGroups = [
     title: "Estado del sitio",
     links: [
       { label: "Domingo 27 de septiembre 2026", href: "/#inicio" },
-      { label: "Locacion por anunciar", href: "/#inicio" },
+      { label: "Locación por anunciar", href: "/#inicio" },
       { label: "Links de pago pendientes", href: "/#apoyar" },
-      { label: "Sponsors historicos", href: "/#sponsors" },
+      { label: "Sponsors históricos", href: "/#sponsors" },
     ]
   }
 ];

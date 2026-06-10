@@ -11,15 +11,17 @@ import {
   Music2,
   Sparkles,
   Trophy,
-  UsersRound
+  UsersRound,
+  X
 } from "@lucide/astro";
 import SiteFooter from "../components/SiteFooter.astro";
 import SiteHeader from "../components/SiteHeader.astro";
 import {
+  athletes,
   awards,
-  collaborators,
   event,
   highlights,
+  legacySponsors,
   payments,
   heroSlides,
   stats,
@@ -116,7 +118,7 @@ const description =
         <a href={withBase("/rewind/")}>Rewind</a>
         <a href={withBase("/highlights/")}>Highlights</a>
         <a href="#sponsors">Colaboradores</a>
-        <a href={withBase("/apoyar/")}>Apoyar</a>
+        <a href="#apoyar">Apoyar</a>
         <a href="#contacto">Contacto</a>
       </nav>
 
@@ -231,14 +233,37 @@ const description =
         </div>
         <div class="highlight-grid">
           {highlights.map((item) => (
-            <article class="highlight-card">
+            <article
+              class="highlight-card"
+              role="button"
+              tabindex="0"
+              aria-haspopup="dialog"
+              data-highlight-card
+              data-modal-title={item.title}
+              data-modal-eyebrow={item.eyebrow}
+              data-modal-detail={item.details}
+              data-modal-bullets={JSON.stringify(item.bullets)}
+            >
               <img src={withBase(item.image)} width={item.width} height={item.height} alt={item.alt} decoding="async" />
               <div>
                 <h3>{item.title}</h3>
                 <p>{item.text}</p>
+                <span>Ver info</span>
               </div>
             </article>
           ))}
+        </div>
+        <div class="info-modal" data-info-modal hidden>
+          <div class="info-modal-backdrop" data-modal-close></div>
+          <section class="info-modal-panel" role="dialog" aria-modal="true" aria-labelledby="info-modal-title">
+            <button class="modal-close" type="button" data-modal-close aria-label="Cerrar informacion">
+              <X size={22} aria-hidden="true" />
+            </button>
+            <p class="eyebrow" data-modal-eyebrow></p>
+            <h3 id="info-modal-title" data-modal-title></h3>
+            <p data-modal-detail></p>
+            <ul data-modal-list></ul>
+          </section>
         </div>
       </section>
 
@@ -248,18 +273,35 @@ const description =
             <Trophy size={18} aria-hidden="true" />
             Colaboradores
           </div>
-          <h2>Sponsors y colaboradores actuales.</h2>
+          <h2>Sponsors y colaboradores que han sido parte.</h2>
           <p>
-            Listado inicial basado en aliados, medios y colaboradores de ediciones anteriores.
-            Esta seccion queda por modificar cuando el equipo confirme logos y sponsors 2026.
+            Recopilado desde los dossiers 2025 y 2026, incluyendo marcas de la primera edicion.
+            Esta vista muestra marcas y aliados que ya aparecen en el material del proyecto.
           </p>
         </div>
-        <div class="collaborator-note">Por modificar</div>
-        <div class="collaborator-grid">
-          {collaborators.map((partner) => (
-            <article class="collaborator-card">
+        <div class="sponsor-cloud" aria-label="Sponsors y aliados historicos">
+          {legacySponsors.map((partner) => (
+            <article class="sponsor-pill">
               <span>{partner.type}</span>
               <h3>{partner.name}</h3>
+            </article>
+          ))}
+        </div>
+        <div class="athlete-heading">
+          <p class="kicker">Atletas</p>
+          <h3>Competidores repetidos y ganadores anteriores.</h3>
+          <p>
+            Base inicial armada solo con nombres y datos encontrados en los documentos del proyecto.
+            El registro completo de participantes queda listo para ampliarse cuando exista una lista oficial.
+          </p>
+        </div>
+        <div class="athlete-grid">
+          {athletes.map((athlete) => (
+            <article class="athlete-card">
+              <span>{athlete.type}</span>
+              <strong>{athlete.stat}</strong>
+              <h3>{athlete.name}</h3>
+              <p>{athlete.text}</p>
             </article>
           ))}
         </div>
@@ -353,6 +395,69 @@ const description =
         });
 
         start();
+      }
+
+      const modal = document.querySelector("[data-info-modal]");
+      const highlightCards = Array.from(document.querySelectorAll("[data-highlight-card]"));
+
+      if (modal && highlightCards.length) {
+        const title = modal.querySelector("[data-modal-title]");
+        const eyebrow = modal.querySelector("[data-modal-eyebrow]");
+        const detail = modal.querySelector("[data-modal-detail]");
+        const list = modal.querySelector("[data-modal-list]");
+        const closeButtons = Array.from(modal.querySelectorAll("[data-modal-close]"));
+        let lastFocused = null;
+
+        const closeModal = () => {
+          modal.setAttribute("hidden", "");
+          document.body.classList.remove("modal-open");
+          if (lastFocused instanceof HTMLElement) {
+            lastFocused.focus();
+          }
+        };
+
+        const openModal = (card) => {
+          lastFocused = document.activeElement;
+          title.textContent = card.dataset.modalTitle || "";
+          eyebrow.textContent = card.dataset.modalEyebrow || "";
+          detail.textContent = card.dataset.modalDetail || "";
+          list.replaceChildren();
+
+          try {
+            const bullets = JSON.parse(card.dataset.modalBullets || "[]");
+            bullets.forEach((item) => {
+              const li = document.createElement("li");
+              li.textContent = item;
+              list.append(li);
+            });
+          } catch {
+            list.replaceChildren();
+          }
+
+          modal.removeAttribute("hidden");
+          document.body.classList.add("modal-open");
+          modal.querySelector(".modal-close")?.focus();
+        };
+
+        highlightCards.forEach((card) => {
+          card.addEventListener("click", () => openModal(card));
+          card.addEventListener("keydown", (event) => {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              openModal(card);
+            }
+          });
+        });
+
+        closeButtons.forEach((button) => {
+          button.addEventListener("click", closeModal);
+        });
+
+        window.addEventListener("keydown", (event) => {
+          if (event.key === "Escape" && !modal.hasAttribute("hidden")) {
+            closeModal();
+          }
+        });
       }
     </script>
   </body>

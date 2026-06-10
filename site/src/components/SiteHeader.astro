@@ -19,7 +19,7 @@ const resolveHref = (href: string) =>
   <nav class="desktop-nav">
     {navItems.map((item) => <a href={resolveHref(item.href)}>{item.label}</a>)}
   </nav>
-  <a class="header-cta" href={isHome ? "#apoyar" : withBase("/apoyar/")}>
+  <a class="header-cta" href={isHome ? "#apoyar" : withBase("/#apoyar")}>
     <HandHeart size={18} aria-hidden="true" />
     Apoyar
   </a>

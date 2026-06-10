@@ -19,7 +19,7 @@ export const navItems = [
   { label: "Rewind", href: "/rewind/" },
   { label: "Highlights", href: "/highlights/" },
   { label: "Colaboradores", href: "#sponsors" },
-  { label: "Apoyar", href: "/apoyar/" },
+  { label: "Apoyar", href: "#apoyar" },
   { label: "Contacto", href: "#contacto" }
 ];
 
@@ -66,7 +66,7 @@ export const heroSlides = [
     cta: "Ver formas de aportar",
     text:
       "Los canales de apoyo se activaran cuando el equipo confirme cuentas y links oficiales.",
-    href: "/apoyar/"
+    href: "#apoyar"
   }
 ];
 
@@ -130,21 +130,6 @@ export const featurePages = [
       "Premios que buscan reconocer el esfuerzo de los bailarines.",
       "Cobertura audiovisual y prensa para amplificar la comunidad."
     ]
-  },
-  {
-    slug: "apoyar",
-    title: "Apoyar el movimiento",
-    eyebrow: "Funding",
-    image: "/assets/winners.webp",
-    alt: "Ganadores del torneo con cheque de premiacion",
-    summary:
-      "La web deja preparados los canales de aporte, pero no publica links reales hasta confirmar cuenta responsable, politica de devolucion y forma de rendicion.",
-    bullets: [
-      "PayPhone, PayPal y transferencia quedan listos como opciones futuras.",
-      "No hay checkout integrado ni datos bancarios publicados.",
-      "Los aportes no se presentan como donacion deducible sin respaldo legal.",
-      "Sponsors y colaboradores se gestionan por contacto oficial."
-    ]
   }
 ];
 
@@ -198,52 +183,127 @@ export const timeline = [
 export const highlights = [
   {
     title: "Battles",
+    eyebrow: "Formato competitivo",
     image: "/assets/battle-floor.webp",
     width: 450,
     height: 300,
     alt: "Bailarines compitiendo en una batalla de breakdance al aire libre",
     text:
-      "Formato competitivo con energia de cypher, filtros, jueces de la comunidad y musica en vivo."
+      "Formato competitivo con energia de cypher, filtros, jueces de la comunidad y musica en vivo.",
+    details:
+      "El torneo se organiza alrededor de filtros, cypher abierto y batallas por categoria. En la produccion 2025 aparecen bloques para 2vs2, 7 To Smoke 1vs1, semifinales, final y espacios de freestyle/trucos entre rondas.",
+    bullets: [
+      "El filtro define quienes avanzan a la competencia principal.",
+      "El 2vs2 incluye octavos, cuartos, semifinal y final.",
+      "El 7 To Smoke 1vs1 se trabaja como categoria central de batalla.",
+      "Los jueces de la comunidad arman filtros y orden competitivo segun nivel."
+    ]
   },
   {
     title: "DJ y host",
+    eyebrow: "Pulso en vivo",
     image: "/assets/dj-live.webp",
     width: 440,
     height: 293,
     alt: "DJ del evento mezclando musica en vivo",
     text:
-      "El beat se decide en el momento; el host y el DJ sostienen el pulso real de la batalla."
+      "El beat se decide en el momento; el host y el DJ sostienen el pulso real de la batalla.",
+    details:
+      "La planificacion 2025 marca llegada, prueba y ensayo de DJ y host antes de abrir el evento. El DJ trabaja en vivo porque los bailarines compiten sin saber cual sera el beat; el host abre el torneo, presenta jueces, ordena rondas, anuncia descansos y sostiene la energia del publico.",
+    bullets: [
+      "DJ 2025 registrado en documentos: Vicente Chiriboga / DJ Boga.",
+      "Host 2025 registrado en cronograma: Bryan Perico Hernandez.",
+      "El host explica que es Break The Beat y presenta a los jueces.",
+      "El DJ necesita mesa y equipo tecnico probado antes de la apertura."
+    ]
   },
   {
     title: "Premiacion",
+    eyebrow: "Reconocimiento",
     image: "/assets/winners.webp",
     width: 560,
     height: 374,
     alt: "Ganadores de Break The Beat posando con cheque de premiacion",
     text:
-      "Premios que reconocen el esfuerzo de los bailarines y elevan el nivel del torneo."
+      "Premios que reconocen el esfuerzo de los bailarines y elevan el nivel del torneo.",
+    details:
+      "La premiacion combina premios economicos, certificados, productos de marcas aliadas y registros para redes. El cronograma 2025 incluye premiacion al mejor B-Boy o B-Girl, premiaciones de dos categorias y luego entrevistas, fotos y videos con ganadores.",
+    bullets: [
+      "Diamond Squad aparece como ganador en cheque de edicion anterior.",
+      "La segunda edicion comunico premio economico para el ganador.",
+      "La produccion contempla certificados, merch y productos aliados.",
+      "La entrega se registra con fotos, entrevistas y piezas para redes."
+    ]
   },
   {
     title: "Free press",
+    eyebrow: "Impacto mediatico",
     image: "/assets/press-expreso.webp",
     width: 379,
     height: 800,
     alt: "Captura de prensa sobre Break The Beat en Diario Expreso",
     text:
-      "Cobertura en medios, redes y espacios culturales que amplifican el mensaje del proyecto."
+      "Cobertura en medios, redes y espacios culturales que amplifican el mensaje del proyecto.",
+    details:
+      "El dossier 2026 registra cobertura en Diario Expreso, SUPER, MadosTV y otros espacios. La comunicacion 2025 reporta mas de 4 medios, mas de 20 piezas de contenido, mas de 40k vistas en Instagram y mas de 300 comentarios positivos.",
+    bullets: [
+      "Medios mencionados: Diario Expreso, SUPER y MadosTV.",
+      "+4 medios de cobertura registrados en estadisticas 2025.",
+      "+20 piezas de contenido en redes.",
+      "+40k vistas y +2.5k likes en Instagram."
+    ]
   }
 ];
 
-export const collaborators = [
-  { name: "Universidad Casa Grande", type: "Institucion" },
-  { name: "PAPS", type: "Proyecto academico" },
-  { name: "Alcaldia de Guayaquil", type: "Aliado anterior" },
-  { name: "SUMAR", type: "Espacio aliado anterior" },
-  { name: "Diario Expreso", type: "Prensa" },
-  { name: "SUPER", type: "Prensa" },
-  { name: "MadosTV", type: "Medio aliado" },
-  { name: "Gestores culturales", type: "Comunidad" },
-  { name: "Comunidad breaking", type: "Base del movimiento" }
+export const legacySponsors = [
+  { name: "Universidad Casa Grande", type: "Aliado academico" },
+  { name: "YO Dance Studio", type: "Alianza de difusion" },
+  { name: "Alcaldia de Guayaquil", type: "Aliado institucional" },
+  { name: "ZUMAR", type: "Espacio aliado" },
+  { name: "Ruta Centro", type: "Aliado territorial" },
+  { name: "Aquafit", type: "Marca aliada" },
+  { name: "CV Viniles", type: "Marca / proveedor" },
+  { name: "Pepsi", type: "Marca aliada" },
+  { name: "Sony", type: "Marca aliada" },
+  { name: "La Ganga", type: "Marca aliada" },
+  { name: "Evergood", type: "Marca aliada" },
+  { name: "Pony Malta", type: "Marca aliada" },
+  { name: "Bazzuka", type: "Marca aliada" },
+  { name: "Nature's Garden", type: "Marca aliada" },
+  { name: "Codicia", type: "Marca aliada" },
+  { name: "Cabala Estudio Creativo", type: "Estudio creativo" },
+  { name: "Color Express", type: "Marca / proveedor" }
+];
+
+export const athletes = [
+  {
+    name: "Bboy Olich / Oliver Sanchez",
+    type: "Ganador repetido",
+    stat: "2 ediciones",
+    text:
+      "El archivo de contactos lo registra como competidor que ha ganado en las dos ediciones de Break The Beat."
+  },
+  {
+    name: "Diamond Squad",
+    type: "Ganadores anteriores",
+    stat: "2vs2 Battle",
+    text:
+      "Aparece en los materiales de premiacion como equipo ganador de una edicion anterior."
+  },
+  {
+    name: "+50 participantes",
+    type: "Base competitiva 2025",
+    stat: "Inscritos",
+    text:
+      "El dossier 2026 registra mas de 50 inscritos en Break The Beat 2, con bailarines de distintas comunidades."
+  },
+  {
+    name: "B-Boys y B-Girls del pais",
+    type: "Convocatoria nacional",
+    stat: "18 a 30",
+    text:
+      "Los dossiers definen la audiencia como bailarines amateurs y profesionales, artistas urbanos y comunidades barriales."
+  }
 ];
 
 export const payments = [
@@ -290,11 +350,11 @@ export const footerGroups = [
   {
     title: "Participar",
     links: [
-      { label: "Apoyar el movimiento", href: "/apoyar/" },
+      { label: "Apoyar el movimiento", href: "/#apoyar" },
       { label: "Contacto oficial", href: "/#contacto" },
       { label: "Instagram", href: event.instagramUrl },
       { label: "Email del proyecto", href: `mailto:${event.email}` },
-      { label: "Pagos por confirmar", href: "/apoyar/" }
+      { label: "Pagos por confirmar", href: "/#apoyar" }
     ]
   },
   {
@@ -302,8 +362,8 @@ export const footerGroups = [
     links: [
       { label: "Fecha por anunciar", href: "/#inicio" },
       { label: "Locacion por anunciar", href: "/#inicio" },
-      { label: "Links de pago pendientes", href: "/apoyar/" },
-      { label: "Colaboradores por modificar", href: "/#sponsors" },
+      { label: "Links de pago pendientes", href: "/#apoyar" },
+      { label: "Sponsors historicos", href: "/#sponsors" },
       { label: "Cloudflare Pages ready", href: "https://pages.cloudflare.com/" }
     ]
   }

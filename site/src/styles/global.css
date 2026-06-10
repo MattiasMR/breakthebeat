@@ -156,15 +156,17 @@ a {
   color: var(--ink);
 }
 
+/* El hero llena la pantalla menos el alto de las feature-tabs (~84px),
+   para que la barra inferior y "Explorar secciones" entren sin scroll. */
 .hero {
-  min-height: calc(100svh - 74px);
+  min-height: calc(100svh - 84px);
   display: grid;
   grid-template-columns: 100%;
   grid-template-rows: minmax(0, 1fr) auto;
-  row-gap: clamp(28px, 4vw, 48px);
+  row-gap: clamp(18px, 2.6vw, 32px);
   overflow: hidden;
-  padding-top: 112px;
-  padding-bottom: 28px;
+  padding-top: 96px;
+  padding-bottom: 20px;
 }
 
 .hero-carousel {
@@ -241,9 +243,22 @@ a {
 }
 
 .hero-logo {
-  width: min(480px, 82vw);
+  width: min(390px, 72vw);
   margin: 0 0 4px;
   filter: drop-shadow(0 28px 40px rgba(0, 0, 0, 0.52));
+}
+
+/* Texto solo para lectores de pantalla (ej. el h1 de la slide con logo). */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
 }
 
 h1,
@@ -264,8 +279,8 @@ h1 {
 
 .hero h1 {
   max-width: 900px;
-  font-size: clamp(4rem, 10.2vw, 9.3rem);
-  line-height: 0.82;
+  font-size: clamp(3.2rem, 7.6vw, 7rem);
+  line-height: 0.84;
 }
 
 h2 {
@@ -299,7 +314,7 @@ h3 {
 }
 
 .event-meta {
-  margin: 26px 0 28px;
+  margin: 20px 0 22px;
 }
 
 .event-meta span {
@@ -812,6 +827,17 @@ h3 {
   margin-bottom: 8px;
 }
 
+.footer-credit a {
+  color: var(--paper-strong);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.footer-credit a:hover,
+.footer-credit a:focus-visible {
+  color: var(--magenta);
+}
+
 .detail-hero {
   min-height: 82svh;
   display: grid;
@@ -928,8 +954,16 @@ h3 {
   }
 
   .hero {
-    min-height: 92svh;
-    padding-top: 104px;
+    min-height: calc(100svh - 76px);
+    padding-top: 96px;
+  }
+
+  /* Titulos largos (ej. "Reconocimientos") no se escapan en pantallas chicas:
+     se permite corte con guion solo cuando no queda otra. */
+  h1,
+  h2 {
+    hyphens: auto;
+    overflow-wrap: anywhere;
   }
 
   .hero-slide-link {
@@ -937,11 +971,11 @@ h3 {
   }
 
   h1 {
-    font-size: clamp(3rem, 15vw, 5.2rem);
+    font-size: clamp(2.5rem, 12vw, 4.6rem);
   }
 
   .hero h1 {
-    font-size: clamp(3.4rem, 16vw, 6rem);
+    font-size: clamp(2.8rem, 13vw, 5rem);
   }
 
   h2 {
@@ -1018,6 +1052,26 @@ h3 {
     grid-column: auto;
     justify-self: start;
     text-align: left;
+  }
+}
+
+/* Pantallas bajas (laptops chicas, ventanas reducidas): se compacta el hero
+   para que la barra inferior y las tabs sigan entrando sin scroll. */
+@media (max-height: 760px) {
+  .hero {
+    padding-top: 84px;
+  }
+
+  .hero-logo {
+    width: min(300px, 62vw);
+  }
+
+  .hero h1 {
+    font-size: clamp(2.6rem, 6vw, 5rem);
+  }
+
+  .event-meta {
+    margin: 14px 0 16px;
   }
 }
 

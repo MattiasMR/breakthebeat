@@ -73,7 +73,7 @@ const description =
                 {index === 0 && (
                   <img class="hero-logo" src={withBase("/assets/break-the-beat-logo.webp")} width="900" height="569" alt={event.title} />
                 )}
-                <h1>{slide.title}</h1>
+                <h1 class:list={{ "sr-only": index === 0 }}>{slide.title}</h1>
                 <p class="hero-copy">{slide.text}</p>
                 <div class="event-meta" aria-label="Informacion del evento">
                   <span>

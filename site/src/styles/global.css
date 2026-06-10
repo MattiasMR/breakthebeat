@@ -160,22 +160,29 @@ a {
   color: var(--ink);
 }
 
+/* El hero llena la pantalla menos el alto de las feature-tabs (~84px),
+   para que la barra inferior y "Explorar secciones" entren sin scroll. */
 .hero {
-  min-height: calc(100svh - 74px);
+  min-height: calc(100svh - 84px);
   display: grid;
-  align-items: end;
+  grid-template-columns: 100%;
+  grid-template-rows: minmax(0, 1fr) auto;
+  row-gap: clamp(18px, 2.6vw, 32px);
   overflow: hidden;
-  padding-top: 112px;
-  padding-bottom: 28px;
+  padding-top: 96px;
+  padding-bottom: 20px;
 }
 
 .hero-carousel {
   isolation: isolate;
 }
 
+/* Las slides se apilan en la misma celda del grid (en flujo), asi el hero
+   crece con su contenido y nunca se superpone con lo que viene debajo. */
 .hero-slide {
-  position: absolute;
-  inset: 0;
+  grid-area: 1 / 1;
+  display: grid;
+  min-width: 0;
   opacity: 0;
   pointer-events: none;
   transition: opacity 700ms ease;
@@ -187,11 +194,9 @@ a {
 }
 
 .hero-slide-link {
-  position: absolute;
-  inset: 0;
   display: grid;
   align-items: center;
-  padding: 104px clamp(18px, 5vw, 72px) 126px;
+  height: 100%;
 }
 
 .hero-media,
@@ -242,9 +247,22 @@ a {
 }
 
 .hero-logo {
-  width: min(480px, 82vw);
+  width: min(390px, 72vw);
   margin: 0 0 4px;
   filter: drop-shadow(0 28px 40px rgba(0, 0, 0, 0.52));
+}
+
+/* Texto solo para lectores de pantalla (ej. el h1 de la slide con logo). */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
 }
 
 h1,
@@ -265,8 +283,8 @@ h1 {
 
 .hero h1 {
   max-width: 900px;
-  font-size: clamp(4rem, 10.2vw, 9.3rem);
-  line-height: 0.82;
+  font-size: clamp(3.2rem, 7.6vw, 7rem);
+  line-height: 0.84;
 }
 
 h2 {
@@ -300,7 +318,7 @@ h3 {
 }
 
 .event-meta {
-  margin: 26px 0 28px;
+  margin: 20px 0 22px;
 }
 
 .event-meta span {
@@ -316,14 +334,22 @@ h3 {
   font-weight: 850;
 }
 
-.hero-bottom {
+.hero-footer {
   position: relative;
   z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.hero-bottom {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1px;
-  width: min(920px, 100%);
-  margin-top: 56px;
+  flex: 1 1 460px;
+  max-width: 920px;
   border: 1px solid var(--line);
   border-radius: 8px;
   overflow: hidden;
@@ -331,14 +357,10 @@ h3 {
 }
 
 .hero-controls {
-  position: absolute;
-  z-index: 4;
-  right: clamp(18px, 5vw, 72px);
-  bottom: 28px;
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 8px;
-  width: min(620px, calc(100% - 36px));
+  flex: 0 1 620px;
 }
 
 .hero-controls button {
@@ -952,6 +974,17 @@ h3 {
   margin-bottom: 8px;
 }
 
+.footer-credit a {
+  color: var(--paper-strong);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.footer-credit a:hover,
+.footer-credit a:focus-visible {
+  color: var(--magenta);
+}
+
 .detail-hero {
   min-height: 82svh;
   display: grid;
@@ -1068,21 +1101,28 @@ h3 {
   }
 
   .hero {
-    min-height: 92svh;
-    padding-top: 104px;
+    min-height: calc(100svh - 76px);
+    padding-top: 96px;
+  }
+
+  /* Titulos largos (ej. "Reconocimientos") no se escapan en pantallas chicas:
+     se permite corte con guion solo cuando no queda otra. */
+  h1,
+  h2 {
+    hyphens: auto;
+    overflow-wrap: anywhere;
   }
 
   .hero-slide-link {
     align-items: center;
-    padding: 88px 18px 142px;
   }
 
   h1 {
-    font-size: clamp(3rem, 15vw, 5.2rem);
+    font-size: clamp(2.5rem, 12vw, 4.6rem);
   }
 
   .hero h1 {
-    font-size: clamp(3.4rem, 16vw, 6rem);
+    font-size: clamp(2.8rem, 13vw, 5rem);
   }
 
   h2 {
@@ -1116,11 +1156,8 @@ h3 {
   }
 
   .hero-controls {
-    left: 18px;
-    right: 18px;
-    bottom: 18px;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    width: auto;
+    flex: 1 1 100%;
   }
 
   .hero-bottom span {
@@ -1163,6 +1200,26 @@ h3 {
     grid-column: auto;
     justify-self: start;
     text-align: left;
+  }
+}
+
+/* Pantallas bajas (laptops chicas, ventanas reducidas): se compacta el hero
+   para que la barra inferior y las tabs sigan entrando sin scroll. */
+@media (max-height: 760px) {
+  .hero {
+    padding-top: 84px;
+  }
+
+  .hero-logo {
+    width: min(300px, 62vw);
+  }
+
+  .hero h1 {
+    font-size: clamp(2.6rem, 6vw, 5rem);
+  }
+
+  .event-meta {
+    margin: 14px 0 16px;
   }
 }
 

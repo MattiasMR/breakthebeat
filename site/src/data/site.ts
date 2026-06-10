@@ -2,13 +2,12 @@ export const event = {
   title: "Break The Beat",
   edition: "3ra edicion",
   eyebrow: "Torneo nacional de breakdance",
-  date: "Fecha por anunciar",
+  date: "Domingo 27 de septiembre 2026",
   location: "Locacion por anunciar",
   city: "Guayaquil, Ecuador",
   instagram: "@breakthebeat.ucg",
   instagramUrl: "https://www.instagram.com/breakthebeat.ucg/",
   email: "breakthebeat@casagrande.edu.ec",
-  prize: "$800 USD",
   summary:
     "Una competencia nacional de breakdance creada por estudiantes de Universidad Casa Grande para visibilizar la cultura urbana, abrir espacios seguros y reunir a bailarines de todo el pais."
 };
@@ -81,7 +80,7 @@ export const featurePages = [
       "Break The Beat es una competencia nacional de breakdance creada por estudiantes de Universidad Casa Grande para visibilizar una cultura que mezcla arte, deporte, identidad y comunidad.",
     bullets: [
       "Competencia nacional en Guayaquil con bailarines de todo el pais.",
-      `Premio principal actualizado: ${event.prize}.`,
+      "Premios para los mejores bailarines de cada categoria.",
       "Musica en vivo, freestyle abierto, shows y energia de cypher.",
       "Un espacio que respeta la cultura intima del breaking y sus codigos."
     ]
@@ -300,7 +299,7 @@ export const footerGroups = [
   {
     title: "Estado del sitio",
     links: [
-      { label: "Fecha por anunciar", href: "/#inicio" },
+      { label: "Domingo 27 de septiembre 2026", href: "/#inicio" },
       { label: "Locacion por anunciar", href: "/#inicio" },
       { label: "Links de pago pendientes", href: "/apoyar/" },
       { label: "Colaboradores por modificar", href: "/#sponsors" },
@@ -308,3 +307,4 @@ export const footerGroups = [
     ]
   }
 ];
+

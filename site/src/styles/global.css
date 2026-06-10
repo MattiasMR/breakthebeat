@@ -159,7 +159,9 @@ a {
 .hero {
   min-height: calc(100svh - 74px);
   display: grid;
-  align-items: end;
+  grid-template-columns: 100%;
+  grid-template-rows: minmax(0, 1fr) auto;
+  row-gap: clamp(28px, 4vw, 48px);
   overflow: hidden;
   padding-top: 112px;
   padding-bottom: 28px;
@@ -169,9 +171,12 @@ a {
   isolation: isolate;
 }
 
+/* Las slides se apilan en la misma celda del grid (en flujo), asi el hero
+   crece con su contenido y nunca se superpone con lo que viene debajo. */
 .hero-slide {
-  position: absolute;
-  inset: 0;
+  grid-area: 1 / 1;
+  display: grid;
+  min-width: 0;
   opacity: 0;
   pointer-events: none;
   transition: opacity 700ms ease;
@@ -183,11 +188,9 @@ a {
 }
 
 .hero-slide-link {
-  position: absolute;
-  inset: 0;
   display: grid;
   align-items: center;
-  padding: 104px clamp(18px, 5vw, 72px) 126px;
+  height: 100%;
 }
 
 .hero-media,
@@ -312,14 +315,22 @@ h3 {
   font-weight: 850;
 }
 
-.hero-bottom {
+.hero-footer {
   position: relative;
   z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.hero-bottom {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1px;
-  width: min(920px, 100%);
-  margin-top: 56px;
+  flex: 1 1 460px;
+  max-width: 920px;
   border: 1px solid var(--line);
   border-radius: 8px;
   overflow: hidden;
@@ -327,14 +338,10 @@ h3 {
 }
 
 .hero-controls {
-  position: absolute;
-  z-index: 4;
-  right: clamp(18px, 5vw, 72px);
-  bottom: 28px;
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 8px;
-  width: min(620px, calc(100% - 36px));
+  flex: 0 1 620px;
 }
 
 .hero-controls button {
@@ -927,7 +934,6 @@ h3 {
 
   .hero-slide-link {
     align-items: center;
-    padding: 88px 18px 142px;
   }
 
   h1 {
@@ -968,11 +974,8 @@ h3 {
   }
 
   .hero-controls {
-    left: 18px;
-    right: 18px;
-    bottom: 18px;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    width: auto;
+    flex: 1 1 100%;
   }
 
   .hero-bottom span {

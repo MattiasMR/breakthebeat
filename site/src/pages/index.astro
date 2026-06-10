@@ -84,7 +84,6 @@ const description =
                     <MapPin size={18} aria-hidden="true" />
                     {event.city}
                   </span>
-                  <span>{event.prize} premio principal</span>
                 </div>
                 <span class="button button-primary">
                   {slide.cta}
@@ -94,18 +93,20 @@ const description =
             </a>
           </article>
         ))}
-        <div class="hero-bottom">
-          <span>{event.edition}</span>
-          <span>{event.prize} premio principal</span>
-          <span>{event.location}</span>
-        </div>
-        <div class="hero-controls" aria-label="Cambiar historia principal">
-          {heroSlides.map((slide, index) => (
-            <button class:list={{ "is-active": index === 0 }} type="button" data-hero-control aria-label={`Ver ${slide.title}`}>
-              <span>{String(index + 1).padStart(2, "0")}</span>
-              {slide.eyebrow}
-            </button>
-          ))}
+        <div class="hero-footer">
+          <div class="hero-bottom">
+            <span>{event.edition}</span>
+            <span>{event.date}</span>
+            <span>{event.location}</span>
+          </div>
+          <div class="hero-controls" aria-label="Cambiar historia principal">
+            {heroSlides.map((slide, index) => (
+              <button class:list={{ "is-active": index === 0 }} type="button" data-hero-control aria-label={`Ver ${slide.title}`}>
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                {slide.eyebrow}
+              </button>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -132,8 +133,8 @@ const description =
             <p>
               Break The Beat junta a bailarines de todo el pais en una competencia
               donde el arte urbano se vive como deporte, espectaculo y comunidad.
-              Habra musica en vivo, shows, freestyle abierto y un premio principal
-              de {event.prize}.
+              Habra musica en vivo, shows, freestyle abierto y premios para los
+              mejores bailarines.
             </p>
           </article>
           <article>

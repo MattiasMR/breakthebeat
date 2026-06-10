@@ -173,7 +173,7 @@ export const timeline = [
   },
   {
     year: "2026",
-    title: "Tercera edicion en produccion",
+    title: "Tercera edicion en camino",
     text:
       "La meta es consolidar el torneo como referente cultural y deportivo de Guayaquil, con mas auspicios, premios y enfoque social."
   }
@@ -190,7 +190,7 @@ export const highlights = [
     text:
       "Formato competitivo con energia de cypher, filtros, jueces de la comunidad y musica en vivo.",
     details:
-      "El torneo se organiza alrededor de filtros, cypher abierto y batallas por categoria. En la produccion 2025 aparecen bloques para 2vs2, 7 To Smoke 1vs1, semifinales, final y espacios de freestyle/trucos entre rondas.",
+      "El torneo se organiza alrededor de filtros, cypher abierto y batallas por categoria. La experiencia integra 2vs2, 7 To Smoke 1vs1, semifinales, final y espacios de freestyle/trucos entre rondas.",
     bullets: [
       "El filtro define quienes avanzan a la competencia principal.",
       "El 2vs2 incluye octavos, cuartos, semifinal y final.",
@@ -208,12 +208,12 @@ export const highlights = [
     text:
       "El beat se decide en el momento; el host y el DJ sostienen el pulso real de la batalla.",
     details:
-      "La planificacion 2025 marca llegada, prueba y ensayo de DJ y host antes de abrir el evento. El DJ trabaja en vivo porque los bailarines compiten sin saber cual sera el beat; el host abre el torneo, presenta jueces, ordena rondas, anuncia descansos y sostiene la energia del publico.",
+      "El DJ trabaja en vivo porque los bailarines compiten sin saber cual sera el beat; el host abre el torneo, presenta jueces, ordena rondas, anuncia descansos y sostiene la energia del publico.",
     bullets: [
       "DJ 2025: Vicente Chiriboga / DJ Boga.",
       "Host 2025: Bryan Perico Hernandez.",
       "El host explica que es Break The Beat y presenta a los jueces.",
-      "El DJ necesita mesa y equipo tecnico probado antes de la apertura."
+      "DJ y host sostienen el ritmo, el orden y la energia de cada ronda."
     ]
   },
   {
@@ -226,11 +226,11 @@ export const highlights = [
     text:
       "Premios que reconocen el esfuerzo de los bailarines y elevan el nivel del torneo.",
     details:
-      "La premiacion combina premios economicos, certificados, productos de marcas aliadas y registros para redes. El cronograma 2025 incluye premiacion al mejor B-Boy o B-Girl, premiaciones de dos categorias y luego entrevistas, fotos y videos con ganadores.",
+      "La premiacion combina premios economicos, certificados, productos de marcas aliadas y registros para redes. El cierre celebra a los ganadores con entrevistas, fotos y videos para amplificar su historia.",
     bullets: [
       "Diamond Squad aparece como ganador en cheque de edicion anterior.",
       "La segunda edicion comunico premio economico para el ganador.",
-      "La produccion contempla certificados, merch y productos aliados.",
+      "El evento integra certificados, merch y productos aliados.",
       "La entrega se registra con fotos, entrevistas y piezas para redes."
     ]
   },

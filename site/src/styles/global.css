@@ -498,7 +498,8 @@ h3 {
 .stat-card {
   min-height: 132px;
   padding: 20px;
-  background: var(--black);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.08);
   color: var(--paper-strong);
 }
 
@@ -542,7 +543,12 @@ h3 {
   border-radius: 8px;
 }
 
-.awards {
+.section-dark .impact-feature div {
+  border-color: rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.awards.section-dark {
   background:
     linear-gradient(rgba(5, 5, 5, 0.82), rgba(5, 5, 5, 0.82)),
     var(--awards-bg, none) center / cover fixed;
@@ -563,6 +569,12 @@ h3 {
   border-radius: 8px;
   background: rgba(5, 5, 5, 0.58);
   backdrop-filter: blur(12px);
+}
+
+.awards.section-light .award-item {
+  border-color: rgba(5, 5, 5, 0.12);
+  background: var(--black);
+  color: var(--paper-strong);
 }
 
 .award-item span {
@@ -593,6 +605,7 @@ h3 {
   min-height: 270px;
   padding: 22px;
   background: var(--paper-strong);
+  color: var(--ink);
 }
 
 .timeline-item span {
@@ -646,12 +659,25 @@ h3 {
     background 180ms ease;
 }
 
+.section-light .highlight-card {
+  border-color: rgba(5, 5, 5, 0.12);
+  background: var(--black);
+  color: var(--paper);
+  box-shadow: 0 14px 34px rgba(5, 5, 5, 0.1);
+}
+
 .highlight-card:hover,
 .highlight-card:focus-visible {
   border-color: rgba(243, 35, 131, 0.82);
   background: rgba(243, 35, 131, 0.14);
   outline: none;
   transform: translateY(-3px);
+}
+
+.section-light .highlight-card:hover,
+.section-light .highlight-card:focus-visible {
+  background: #160914;
+  box-shadow: 0 20px 42px rgba(5, 5, 5, 0.16);
 }
 
 .highlight-card img {
@@ -821,6 +847,12 @@ h3 {
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.06);
   color: var(--paper);
+}
+
+.section-light .athlete-card {
+  border-color: rgba(5, 5, 5, 0.12);
+  background: var(--black);
+  box-shadow: 0 14px 34px rgba(5, 5, 5, 0.1);
 }
 
 .athlete-card strong {
@@ -1209,6 +1241,26 @@ h3 {
     grid-column: auto;
     justify-self: start;
     text-align: left;
+  }
+}
+
+@media (min-width: 1600px) {
+  .hero-content {
+    max-width: 1180px;
+  }
+
+  .hero-logo {
+    width: clamp(430px, 26vw, 620px);
+  }
+
+  .hero h1 {
+    max-width: 1120px;
+    font-size: clamp(7rem, 6.2vw, 9.8rem);
+  }
+
+  .hero-copy {
+    max-width: 760px;
+    font-size: clamp(1.25rem, 1.05vw, 1.7rem);
   }
 }
 

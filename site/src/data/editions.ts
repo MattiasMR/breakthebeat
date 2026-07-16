@@ -76,17 +76,19 @@ export interface Edition {
 }
 
 const commonSponsors = {
-  pepsi: { name: "Pepsi", logo: "/assets/brands/pepsi.png" },
-  sony: { name: "Sony", logo: "/assets/brands/sony.png" },
-  bazuka: { name: "Bazuka", logo: "/assets/brands/bazuka.png" },
-  evergood: { name: "Evergood", logo: "/assets/brands/evergood.png" },
-  loGanga: { name: "Lo Ganga", logo: "/assets/brands/lo-ganga.png" },
+  pepsi: { name: "Pepsi", logo: "/assets/sponsors/pepsi.png" },
+  sony: { name: "Sony", logo: "/assets/sponsors/sony.png" },
+  bazzuka: { name: "Bazzuka", logo: "/assets/sponsors/bazzuka.png" },
+  evergood: { name: "Evergood", logo: "/assets/sponsors/evergood.png" },
+  laGanga: { name: "La Ganga", logo: "/assets/sponsors/la-ganga.png" },
   naturesGarden: {
     name: "Nature's Garden",
-    logo: "/assets/brands/natures-garden.png"
+    logo: "/assets/sponsors/natures-garden.png"
   },
-  codicia: { name: "Codicia", logo: "/assets/brands/codicia.png" },
-  ponyMalta: { name: "Pony Malta", logo: "/assets/brands/pony-malta.png" }
+  codicia: { name: "Codicia", logo: "/assets/sponsors/codicia.png" },
+  ponyMalta: { name: "Pony Malta", logo: "/assets/sponsors/pony-malta.png" },
+  colorExpress: { name: "Color Express", logo: "/assets/sponsors/color-express.png" },
+  cabala: { name: "Cábala Estudio Creativo", logo: "/assets/sponsors/cabala.png" }
 } satisfies Record<string, Sponsor>;
 
 export const editions: Edition[] = [
@@ -213,13 +215,13 @@ export const editions: Edition[] = [
         commonSponsors.pepsi,
         commonSponsors.sony,
         commonSponsors.naturesGarden,
-        commonSponsors.bazuka,
-        commonSponsors.loGanga,
+        commonSponsors.bazzuka,
+        commonSponsors.laGanga,
         commonSponsors.codicia,
         commonSponsors.evergood,
         commonSponsors.ponyMalta,
-        { name: "Color Express" },
-        { name: "Cábala Estudio Creativo" }
+        commonSponsors.colorExpress,
+        commonSponsors.cabala
       ]
     },
     eventInfo: {
@@ -368,19 +370,23 @@ export const editions: Edition[] = [
       note:
         "El media kit 2026 presenta este grupo como marcas que acompañaron las ediciones anteriores; no se atribuyen a la tercera edición.",
       items: [
-        { name: "Alcaldía de Guayaquil", logo: "/assets/brands/alcaldia-guayaquil.png" },
-        { name: "ZUMAR", logo: "/assets/brands/zumar.png" },
-        { name: "Ruta Centro", logo: "/assets/brands/ruta-centro.png" },
-        { name: "Aquafit", logo: "/assets/brands/aquafit.png" },
-        { name: "LV Vinilos", logo: "/assets/brands/lv-vinilos.png" },
+        { name: "Universidad Casa Grande", logo: "/assets/sponsors/universidad-casa-grande.png" },
+        { name: "YO Dance Studio", logo: "/assets/sponsors/yo-dance-studio.png" },
+        { name: "Alcaldía de Guayaquil", logo: "/assets/sponsors/alcaldia-guayaquil.png" },
+        { name: "ZUMAR", logo: "/assets/sponsors/zumar.png" },
+        { name: "Ruta Centro", logo: "/assets/sponsors/ruta-centro.png" },
+        { name: "Aquafit", logo: "/assets/sponsors/aquafit.png" },
+        { name: "CV Viniles", logo: "/assets/sponsors/cv-viniles.png" },
         commonSponsors.pepsi,
         commonSponsors.sony,
-        commonSponsors.bazuka,
+        commonSponsors.bazzuka,
         commonSponsors.evergood,
-        commonSponsors.loGanga,
+        commonSponsors.laGanga,
         commonSponsors.naturesGarden,
         commonSponsors.codicia,
-        commonSponsors.ponyMalta
+        commonSponsors.ponyMalta,
+        commonSponsors.colorExpress,
+        commonSponsors.cabala
       ]
     },
     eventInfo: {

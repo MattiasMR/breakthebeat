@@ -1,0 +1,66 @@
+---
+import Icon from "../../components/Icon.astro";
+import { withBase } from "../../utils/paths";
+import "../../styles/global.css";
+import "../../styles/portal.css";
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#050505" />
+    <link rel="icon" type="image/png" href={withBase("/assets/favicon.png")} />
+    <title>Check-in | Break The Beat</title>
+  </head>
+  <body class="checkin-body">
+    <header class="checkin-topbar">
+      <a href={withBase("/admin/")}><Icon name="arrow-left" size={19} /> Volver al panel</a>
+      <strong>Check-in 2026</strong>
+    </header>
+    <main class="checkin-main">
+      <section class="scanner-panel">
+        <div class="scanner-heading">
+          <p class="eyebrow">Ingreso de participantes</p>
+          <h1>Escanea el QR.</h1>
+          <p>La cámara solo lee el token de acceso. No muestra información médica.</p>
+        </div>
+        <div class="video-frame">
+          <video data-scanner-video playsinline muted></video>
+          <div class="scanner-guide" aria-hidden="true"></div>
+          <div class="scanner-placeholder" data-scanner-placeholder><Icon name="camera" size={34} /><span>Activa la cámara para comenzar</span></div>
+        </div>
+        <div class="scanner-actions">
+          <button class="button button-primary" type="button" data-start-scanner><Icon name="camera" size={18} /> Activar cámara</button>
+          <button class="button button-secondary" type="button" data-stop-scanner disabled>Detener</button>
+        </div>
+        <p class="scanner-status" data-scanner-status role="status"></p>
+      </section>
+
+      <section class="manual-checkin">
+        <div><Icon name="keyboard" size={24} /><h2>Ingreso manual</h2></div>
+        <form data-manual-checkin>
+          <label class="field"><span>Código personal</span><input name="code" autocomplete="off" placeholder="BTB26-XXXXXXXX-A" required minlength="6" /></label>
+          <button class="button button-secondary dark" type="submit"><Icon name="qr-code" size={18} /> Validar código</button>
+        </form>
+      </section>
+
+      <section class="checkin-result" data-checkin-result hidden aria-live="polite">
+        <span class="checkin-result-icon"><Icon name="qr-code" size={28} /></span>
+        <div>
+          <p data-result-label>Ingreso confirmado</p>
+          <h2 data-result-name></h2>
+          <strong data-result-code></strong>
+          <span data-result-categories></span>
+          <small data-result-time></small>
+        </div>
+        <button class="button button-secondary dark" type="button" data-scan-next><Icon name="rotate-ccw" size={18} /> Escanear siguiente</button>
+      </section>
+    </main>
+    <script>
+      import "../../scripts/check-in";
+    </script>
+  </body>
+</html>

@@ -1,0 +1,57 @@
+---
+import Icon from "../components/Icon.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+import SiteHeader from "../components/SiteHeader.astro";
+import { event } from "../data/site";
+import { withBase } from "../utils/paths";
+import "../styles/global.css";
+import "../styles/portal.css";
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Confirmación de inscripción a Break The Beat 2026." />
+    <meta name="theme-color" content="#050505" />
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="icon" type="image/png" href={withBase("/assets/favicon.png")} />
+    <title>Inscripción confirmada | Break The Beat</title>
+  </head>
+  <body class="portal-body">
+    <SiteHeader />
+    <main class="portal-main confirmation-main">
+      <section class="confirmation-shell" data-confirmation-shell hidden>
+        <div class="confirmation-heading">
+          <span class="success-icon"><Icon name="check-circle-2" size={38} /></span>
+          <p class="eyebrow">Todo está listo</p>
+          <h1>Inscripción confirmada.</h1>
+          <p>Guarda los códigos y preséntalos en el ingreso. Cada participante de una dupla tiene su propio QR.</p>
+          <div class="confirmation-reference">Inscripción <strong data-registration-code></strong></div>
+        </div>
+        <div class="confirmation-email-status" data-email-status></div>
+        <div class="qr-grid" data-qr-grid></div>
+        <div class="confirmation-security">
+          <Icon name="shield-check" size={24} />
+          <span>Los QR contienen únicamente un token aleatorio. No incluyen datos personales ni médicos.</span>
+        </div>
+        <a class="button button-secondary" href={withBase("/")}><Icon name="arrow-left" size={18} /> Volver al sitio</a>
+      </section>
+
+      <section class="confirmation-shell confirmation-empty" data-confirmation-empty hidden>
+        <Icon name="mail-check" size={42} />
+        <h1>No hay una confirmación reciente en esta pestaña.</h1>
+        <p>Si ya te inscribiste, revisa el correo enviado a cada participante. También puedes contactar al equipo.</p>
+        <div class="confirmation-empty-actions">
+          <a class="button button-primary" href={withBase("/inscripcion/")}>Ir a inscripción</a>
+          <a class="button button-secondary" href={`mailto:${event.email}`}>Contactar</a>
+        </div>
+      </section>
+    </main>
+    <SiteFooter />
+    <script>
+      import "../scripts/confirmation";
+    </script>
+  </body>
+</html>

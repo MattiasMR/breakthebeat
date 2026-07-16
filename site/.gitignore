@@ -4,3 +4,6 @@ dist/
 .vercel/
 .netlify/
 *.log
+.env
+.env.*
+!.env.example

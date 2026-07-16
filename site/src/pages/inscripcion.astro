@@ -1,0 +1,217 @@
+---
+import Icon from "../components/Icon.astro";
+import CategoryFields from "../components/CategoryFields.astro";
+import MedicalFields from "../components/MedicalFields.astro";
+import ProfileFields from "../components/ProfileFields.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+import SiteHeader from "../components/SiteHeader.astro";
+import { event } from "../data/site";
+import { withBase } from "../utils/paths";
+import "../styles/global.css";
+import "../styles/portal.css";
+
+const pageTitle = `Inscripción 2026 | ${event.title}`;
+const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Inscripción oficial para Break The Beat 2026." />
+    <meta name="theme-color" content="#050505" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <link rel="icon" type="image/png" href={withBase("/assets/favicon.png")} />
+    <title>{pageTitle}</title>
+  </head>
+  <body class="portal-body">
+    <SiteHeader />
+    <main class="portal-main registration-page-main">
+      <div class="registration-page-topline">
+        <a class="text-link portal-back" href={withBase("/")}><Icon name="arrow-left" size={18} /> Volver al inicio</a>
+      </div>
+
+      <section class="registration-layout" aria-labelledby="registration-title">
+        <aside class="registration-event-card" aria-labelledby="event-card-title">
+          <img class="registration-event-image" src={withBase("/assets/guayaquil-venue.webp")} width="1600" height="1067" alt="Plaza de los Teatros en Guayaquil" />
+          <div class="registration-event-shade"></div>
+          <div class="registration-event-content">
+            <p class="eyebrow">3ra edición · 2026</p>
+            <img class="registration-event-logo" src={withBase("/assets/break-the-beat-logo.webp")} width="900" height="569" alt="" />
+            <h2 id="event-card-title">Break The Beat 2026</h2>
+            <p class="registration-event-summary">Un torneo nacional donde el breaking se vive como deporte, cultura y comunidad.</p>
+
+            <dl class="registration-event-details">
+              <div><dt><Icon name="calendar-days" size={19} /> Fecha</dt><dd>{event.date}</dd></div>
+              <div><dt><Icon name="map-pin" size={19} /> Lugar</dt><dd>{event.location}<span>{event.city}</span></dd></div>
+            </dl>
+
+            <div class="registration-event-categories" aria-label="Categorías disponibles">
+              <span>1 vs 1</span><span>2 vs 2</span><span>BGirls</span>
+            </div>
+
+            <div class="registration-event-footer">
+              <span>Organiza Universidad Casa Grande</span>
+              <a class="button button-secondary" href={`${withBase("/evento/")}?edicion=3`}>Ver información del evento <Icon name="arrow-up-right" size={17} /></a>
+            </div>
+          </div>
+        </aside>
+
+        <div class="registration-form-column">
+          <header class="registration-form-intro">
+            <p class="eyebrow">Inscripción oficial</p>
+            <h1 id="registration-title">Tu lugar en la pista empieza aquí.</h1>
+            <p>Completa el formulario dentro de la web. Si participas en 2 vs 2, necesitarás la información completa de tu compañero.</p>
+          </header>
+
+          <div class="privacy-callout registration-privacy-callout">
+            <Icon name="shield-check" size={28} />
+            <div>
+              <strong>Información protegida</strong>
+              <span>Los datos médicos solo serán visibles para el equipo autorizado y nunca aparecerán en tu QR.</span>
+            </div>
+          </div>
+
+          <aside class="step-sidebar registration-progress" aria-label="Progreso de la inscripción">
+          <p class="step-sidebar-label">Tu progreso</p>
+          <ol data-progress-list>
+            <li class="is-active" data-progress-step="categories"><span>1</span><div><strong>Categorías</strong><small>Cómo competirás</small></div></li>
+            <li data-progress-step="captain"><span>2</span><div><strong>Tus datos</strong><small>Perfil principal</small></div></li>
+            <li data-progress-step="partner"><span>3</span><div><strong>Compañero</strong><small>Solo para 2 vs 2</small></div></li>
+            <li data-progress-step="medical"><span>4</span><div><strong>Emergencia</strong><small>Salud y contacto</small></div></li>
+            <li data-progress-step="review"><span>5</span><div><strong>Revisión</strong><small>Confirma los datos</small></div></li>
+            <li data-progress-step="consents"><span>6</span><div><strong>Autorización</strong><small>Documentos y envío</small></div></li>
+          </ol>
+          <div class="secure-note"><Icon name="lock-keyhole" size={18} /><span>Conexión cifrada. No guardamos datos en este dispositivo después del envío.</span></div>
+          </aside>
+
+          <div class="registration-panel">
+          <div class="system-banner is-loading" data-registration-status role="status">
+            Verificando si las inscripciones están abiertas…
+          </div>
+          <form id="registration-form" novalidate>
+            <fieldset id="registration-fields" class="form-shell" disabled>
+              <legend class="sr-only" id="registration-title">Formulario de inscripción</legend>
+
+              <section class="form-step is-active" data-form-step="categories">
+                <div class="form-step-heading">
+                  <p class="step-kicker">Paso 1 de 6</p>
+                  <h2>¿En qué categorías participarás?</h2>
+                  <p>Puedes seleccionar más de una. Elegir 2 vs 2 activará el perfil completo del compañero.</p>
+                </div>
+                <CategoryFields prefix="captain" />
+                <p class="field-error" data-category-error hidden>Selecciona al menos una categoría.</p>
+                <div class="form-actions align-end">
+                  <button class="button button-primary" type="button" data-next>
+                    Continuar <Icon name="arrow-right" size={18} />
+                  </button>
+                </div>
+              </section>
+
+              <section class="form-step" data-form-step="captain" hidden>
+                <div class="form-step-heading">
+                  <p class="step-kicker">Paso 2 de 6</p>
+                  <h2>Cuéntanos quién eres.</h2>
+                  <p>Usaremos estos datos para tu acreditación, comunicación y merch.</p>
+                </div>
+                <ProfileFields prefix="captain" />
+                <div class="form-actions">
+                  <button class="button button-ghost" type="button" data-back><Icon name="arrow-left" size={18} /> Atrás</button>
+                  <button class="button button-primary" type="button" data-next>Continuar <Icon name="arrow-right" size={18} /></button>
+                </div>
+              </section>
+
+              <section class="form-step" data-form-step="partner" hidden data-partner-step>
+                <div class="form-step-heading">
+                  <p class="step-kicker">Paso 3 de 6</p>
+                  <h2>Registra a tu compañero.</h2>
+                  <p>Completa su perfil y marca cualquier categoría individual adicional en la que participará.</p>
+                </div>
+                <CategoryFields prefix="partner" partner />
+                <ProfileFields prefix="partner" />
+                <div class="form-actions">
+                  <button class="button button-ghost" type="button" data-back><Icon name="arrow-left" size={18} /> Atrás</button>
+                  <button class="button button-primary" type="button" data-next>Continuar <Icon name="arrow-right" size={18} /></button>
+                </div>
+              </section>
+
+              <section class="form-step" data-form-step="medical" hidden>
+                <div class="form-step-heading">
+                  <p class="step-kicker">Paso 4 de 6</p>
+                  <h2>Información médica y de emergencia.</h2>
+                  <p>Será confidencial y se utilizará únicamente durante la organización y atención de emergencias del evento.</p>
+                </div>
+                <div class="medical-stack">
+                  <MedicalFields prefix="captain" title="Participante principal" />
+                  <div data-partner-medical hidden>
+                    <MedicalFields prefix="partner" title="Compañero de dupla" />
+                  </div>
+                </div>
+                <div class="form-actions">
+                  <button class="button button-ghost" type="button" data-back><Icon name="arrow-left" size={18} /> Atrás</button>
+                  <button class="button button-primary" type="button" data-next>Revisar <Icon name="arrow-right" size={18} /></button>
+                </div>
+              </section>
+
+              <section class="form-step" data-form-step="review" hidden>
+                <div class="form-step-heading">
+                  <p class="step-kicker">Paso 5 de 6</p>
+                  <h2>Revisa antes de autorizar.</h2>
+                  <p>Los datos médicos se resumen como alertas, sin repetir sus detalles en esta pantalla.</p>
+                </div>
+                <div class="review-grid" data-review></div>
+                <div class="form-actions">
+                  <button class="button button-ghost" type="button" data-back><Icon name="arrow-left" size={18} /> Corregir</button>
+                  <button class="button button-primary" type="button" data-next>Autorizar <Icon name="arrow-right" size={18} /></button>
+                </div>
+              </section>
+
+              <section class="form-step" data-form-step="consents" hidden>
+                <div class="form-step-heading">
+                  <p class="step-kicker">Paso 6 de 6</p>
+                  <h2>Documentos y autorizaciones.</h2>
+                  <p>Abre y revisa los documentos vigentes antes de marcar cada aceptación.</p>
+                </div>
+                <div class="legal-documents" data-legal-documents></div>
+                <div class="consent-list">
+                  <label><input type="checkbox" name="consent.terms" required /><span><strong>Acepto los términos y reglas del evento.</strong></span></label>
+                  <label><input type="checkbox" name="consent.privacy" required /><span><strong>Acepto el aviso de privacidad.</strong></span></label>
+                  <label><input type="checkbox" name="consent.health" required /><span><strong>Autorizo explícitamente el tratamiento de información médica.</strong></span></label>
+                  <label><input type="checkbox" name="consent.image" required /><span><strong>Acepto el permiso de imagen y voz.</strong></span></label>
+                  <label data-captain-authority hidden><input type="checkbox" name="consent.captainAuthority" /><span><strong>Declaro que tengo autorización de mi compañero para proporcionar sus datos y aceptar estos documentos en su representación.</strong></span></label>
+                </div>
+                <div class="turnstile-block">
+                  {turnstileSiteKey ? (
+                    <div class="cf-turnstile" data-sitekey={turnstileSiteKey} data-theme="dark" data-action="registration"></div>
+                  ) : (
+                    <p>Turnstile todavía no está configurado. El envío permanecerá bloqueado.</p>
+                  )}
+                </div>
+                <div class="submit-alert" data-submit-alert role="alert" hidden></div>
+                <div class="form-actions">
+                  <button class="button button-ghost" type="button" data-back><Icon name="arrow-left" size={18} /> Atrás</button>
+                  <button class="button button-primary" type="submit" data-submit>
+                    <Icon name="check-circle-2" size={18} /> Confirmar inscripción
+                  </button>
+                </div>
+              </section>
+            </fieldset>
+          </form>
+          </div>
+        </div>
+      </section>
+
+      <section class="portal-help">
+        <Icon name="users-round" size={28} />
+        <div><strong>¿Necesitas ayuda?</strong><span>Escríbenos a <a href={`mailto:${event.email}`}>{event.email}</a>.</span></div>
+      </section>
+    </main>
+    <SiteFooter />
+
+    {turnstileSiteKey && <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>}
+    <script>
+      import "../scripts/registration";
+    </script>
+  </body>
+</html>

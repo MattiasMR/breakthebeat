@@ -1,0 +1,46 @@
+---
+interface Props {
+  prefix: "captain" | "partner";
+}
+
+const { prefix } = Astro.props;
+---
+
+<div class="field-grid">
+  <label class="field field-wide">
+    <span>Nombre completo o artístico <b aria-hidden="true">*</b></span>
+    <input name={`${prefix}.displayName`} autocomplete="name" minlength="2" maxlength="120" required placeholder="Ej. Carlos Pérez / bboy break" />
+  </label>
+  <label class="field field-wide">
+    <span>Instagram o TikTok <b aria-hidden="true">*</b></span>
+    <input name={`${prefix}.socialUrl`} type="url" inputmode="url" required placeholder="https://instagram.com/usuario" />
+  </label>
+  <fieldset class="field field-wide compact-fieldset">
+    <legend>Talla para merch <b aria-hidden="true">*</b></legend>
+    <div class="inline-choices">
+      {(["S", "M", "L"] as const).map((size) => (
+        <label><input type="radio" name={`${prefix}.shirtSize`} value={size} required /> <span>{size}</span></label>
+      ))}
+    </div>
+  </fieldset>
+  <label class="field">
+    <span>Edad <small>(solo mayores de 18)</small> <b aria-hidden="true">*</b></span>
+    <input name={`${prefix}.age`} type="number" min="18" max="100" inputmode="numeric" required placeholder="18" />
+  </label>
+  <label class="field">
+    <span>País <b aria-hidden="true">*</b></span>
+    <input name={`${prefix}.country`} autocomplete="country-name" required maxlength="80" placeholder="Ecuador" />
+  </label>
+  <label class="field">
+    <span>Ciudad <b aria-hidden="true">*</b></span>
+    <input name={`${prefix}.city`} autocomplete="address-level2" required maxlength="100" placeholder="Guayaquil" />
+  </label>
+  <label class="field">
+    <span>Número de celular <b aria-hidden="true">*</b></span>
+    <input name={`${prefix}.phone`} type="tel" autocomplete="tel" required minlength="8" maxlength="24" pattern="\+[1-9][0-9 ()-]{7,22}" title="Incluye el código internacional, por ejemplo +593" placeholder="+593 99 123 4567" />
+  </label>
+  <label class="field field-wide">
+    <span>Correo electrónico <b aria-hidden="true">*</b></span>
+    <input name={`${prefix}.email`} type="email" autocomplete="email" required maxlength="254" placeholder="nombre@correo.com" />
+  </label>
+</div>

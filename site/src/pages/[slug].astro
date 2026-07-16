@@ -1,5 +1,5 @@
 ---
-import { ArrowLeft, ArrowRight } from "@lucide/astro";
+import Icon from "../components/Icon.astro";
 import SiteFooter from "../components/SiteFooter.astro";
 import SiteHeader from "../components/SiteHeader.astro";
 import { event, featurePages } from "../data/site";
@@ -43,7 +43,7 @@ const description = page.summary;
         <div class="detail-overlay"></div>
         <div class="detail-content">
           <a class="text-link detail-back" href={withBase("/")}>
-            <ArrowLeft size={18} aria-hidden="true" />
+            <Icon name="arrow-left" size={18} />
             Volver
           </a>
           <p class="eyebrow">{page.eyebrow}</p>
@@ -51,7 +51,7 @@ const description = page.summary;
           <p>{page.summary}</p>
           <a class="button button-primary" href={withBase("/#contacto")}>
             Contacto oficial
-            <ArrowRight size={18} aria-hidden="true" />
+            <Icon name="arrow-right" size={18} />
           </a>
         </div>
       </section>

@@ -1,0 +1,127 @@
+---
+import Icon from "../../components/Icon.astro";
+import { withBase } from "../../utils/paths";
+import "../../styles/global.css";
+import "../../styles/portal.css";
+
+const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#050505" />
+    <link rel="icon" type="image/png" href={withBase("/assets/favicon.png")} />
+    <title>Administración | Break The Beat</title>
+  </head>
+  <body class="admin-body">
+    <header class="admin-topbar">
+      <a href={withBase("/")} class="admin-brand"><img src={withBase("/assets/break-the-beat-logo.webp")} alt="Break The Beat" /></a>
+      <span>Administración 2026</span>
+    </header>
+
+    <main class="admin-main">
+      <section class="admin-login-shell" data-login-shell>
+        <div class="admin-login-copy">
+          <p class="eyebrow">Acceso restringido</p>
+          <h1>Panel de inscripciones.</h1>
+          <p>Este espacio contiene información personal, médica y de emergencia. Cada acción importante queda registrada.</p>
+          <div class="privacy-callout"><Icon name="shield-alert" size={26} /><span>La sesión se cierra después de 30 minutos sin actividad.</span></div>
+        </div>
+        <form class="admin-login-card" data-login-form>
+          <h2>Iniciar sesión</h2>
+          <label class="field"><span>Nombre de usuario</span><input name="username" autocomplete="username" minlength="3" maxlength="40" required /></label>
+          <label class="field"><span>Contraseña</span><input name="password" type="password" autocomplete="current-password" minlength="12" maxlength="128" required /></label>
+          <div class="turnstile-block compact">
+            {turnstileSiteKey ? (
+              <div class="cf-turnstile" data-sitekey={turnstileSiteKey} data-theme="dark" data-action="admin_login"></div>
+            ) : (
+              <p>Turnstile no está configurado.</p>
+            )}
+          </div>
+          <div class="submit-alert" data-login-alert role="alert" hidden></div>
+          <button class="button button-primary" type="submit" data-login-submit>Entrar al panel</button>
+        </form>
+      </section>
+
+      <section class="admin-dashboard" data-dashboard hidden>
+        <div class="admin-dashboard-heading">
+          <div>
+            <p class="eyebrow">Break The Beat 2026</p>
+            <h1>Inscripciones</h1>
+            <p>Sesión de <strong data-admin-username></strong></p>
+          </div>
+          <div class="admin-heading-actions">
+            <a class="button button-primary" href={withBase("/admin/check-in/")}><Icon name="qr-code" size={18} /> Abrir check-in</a>
+            <button class="button button-secondary" type="button" data-logout><Icon name="log-out" size={18} /> Salir</button>
+          </div>
+        </div>
+
+        <div class="admin-notice" data-admin-notice role="status"></div>
+
+        <section class="event-control-card">
+          <div>
+            <strong>Estado del formulario público</strong>
+            <span data-event-state>Cargando…</span>
+          </div>
+          <button class="button button-secondary dark" type="button" data-toggle-registration disabled>Cambiar estado</button>
+        </section>
+
+        <section class="metric-grid" aria-label="Resumen de inscripciones">
+          <article><Icon name="user-round-check" size={22} /><span>Participantes</span><strong data-stat="participants">0</strong></article>
+          <article><Icon name="bar-chart-3" size={22} /><span>Inscripciones</span><strong data-stat="registrations">0</strong></article>
+          <article><span>2×2</span><span>Duplas</span><strong data-stat="duos">0</strong></article>
+          <article><Icon name="qr-code" size={22} /><span>Check-ins</span><strong data-stat="checkedIn">0</strong></article>
+          <article class="medical-metric"><Icon name="shield-alert" size={22} /><span>Alertas médicas</span><strong data-stat="medicalAlerts">0</strong></article>
+        </section>
+
+        <section class="distribution-grid">
+          <article class="distribution-card"><h2>Categorías</h2><div data-category-stats></div></article>
+          <article class="distribution-card"><h2>Tallas</h2><div data-size-stats></div></article>
+          <article class="distribution-card"><h2>Países</h2><div data-country-stats></div></article>
+          <article class="distribution-card"><h2>Ciudades</h2><div data-city-stats></div></article>
+        </section>
+
+        <section class="admin-table-section">
+          <div class="admin-table-heading">
+            <div><h2>Participantes</h2><p><span data-filtered-count>0</span> resultados visibles</p></div>
+            <div class="table-action-row">
+              <button class="button button-secondary dark" type="button" data-export><Icon name="download" size={17} /> CSV operativo</button>
+              <button class="button button-secondary dark" type="button" data-export-emergency><Icon name="shield-alert" size={17} /> CSV emergencia</button>
+              <button class="button danger-button" type="button" data-delete-selected disabled><Icon name="trash-2" size={17} /> Eliminar selección</button>
+            </div>
+          </div>
+
+          <div class="filter-grid">
+            <label class="field filter-search"><span>Buscar</span><input type="search" data-filter="query" placeholder="Nombre, correo, código…" /></label>
+            <label class="field"><span>Categoría</span><select data-filter="category"><option value="all">Todas</option><option value="1v1">1 vs 1</option><option value="2v2">2 vs 2</option><option value="bgirls">BGirls</option></select></label>
+            <label class="field"><span>Talla</span><select data-filter="shirtSize"><option value="all">Todas</option><option>S</option><option>M</option><option>L</option></select></label>
+            <label class="field"><span>Estado</span><select data-filter="status"><option value="all">Todos</option><option value="confirmed">Confirmado</option><option value="cancelled">Cancelado</option></select></label>
+            <label class="field"><span>Check-in</span><select data-filter="checkIn"><option value="all">Todos</option><option value="yes">Realizado</option><option value="no">Pendiente</option></select></label>
+          </div>
+
+          <div class="data-table-wrap">
+            <table class="data-table">
+              <thead><tr><th><span class="sr-only">Seleccionar</span></th><th>Participante</th><th>Categorías</th><th>Talla / origen</th><th>Estado</th><th>Acciones</th></tr></thead>
+              <tbody data-participant-rows></tbody>
+            </table>
+          </div>
+          <div class="table-empty" data-table-empty hidden>No hay participantes que coincidan con los filtros.</div>
+        </section>
+      </section>
+    </main>
+
+    <dialog class="participant-dialog" data-participant-dialog>
+      <button class="dialog-close" type="button" data-dialog-close aria-label="Cerrar">×</button>
+      <div data-participant-detail></div>
+    </dialog>
+
+    {turnstileSiteKey && <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>}
+    <script>
+      import "../../scripts/admin";
+    </script>
+  </body>
+</html>

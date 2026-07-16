@@ -1,0 +1,158 @@
+---
+import Icon from "../components/Icon.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+import SiteHeader from "../components/SiteHeader.astro";
+import { editions } from "../data/editions";
+import { event } from "../data/site";
+import { withBase } from "../utils/paths";
+import "../styles/global.css";
+
+const pageTitle = "Información del evento | Break The Beat";
+const description =
+  "Fechas, sedes, categorías, premios y estado de cada edición de Break The Beat.";
+---
+
+<!doctype html>
+<html lang="es" data-edition="3">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#050505" />
+    <link rel="icon" type="image/png" href={withBase("/assets/favicon.png")} />
+    <title>{pageTitle}</title>
+  </head>
+  <body>
+    <SiteHeader />
+
+    <main class="event-page">
+      <header class="event-page-header section-dark">
+        <a class="detail-back text-link" href={withBase("/")}>
+          <Icon name="arrow-left" size={18} />
+          Volver al inicio
+        </a>
+        <div class="event-page-header-grid">
+          <div>
+            <p class="eyebrow">Break The Beat · Event series</p>
+            <h1>Información del evento.</h1>
+            <p>
+              Cambia de edición para consultar únicamente la fecha, sede, categorías,
+              premios y estado que corresponden a ese año.
+            </p>
+          </div>
+          <label class="edition-picker edition-picker-light">
+            <span>
+              <small>Event series</small>
+              Elegir edición
+            </span>
+            <select data-edition-select aria-label="Elegir edición de Break The Beat">
+              {editions.map((edition) => (
+                <option value={edition.id} selected={edition.isCurrent}>
+                  {edition.shortLabel} · {edition.year}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+      </header>
+
+      {editions.map((edition) => (
+        <article
+          class="event-edition section-light"
+          data-edition-panel={edition.id}
+          data-page-title={`${edition.label} | Información del evento`}
+          hidden={!edition.isCurrent}
+          aria-labelledby={`event-title-${edition.id}`}
+        >
+          <div class="event-edition-top">
+            <div>
+              <span class="event-status">{edition.status}</span>
+              <p class="kicker">{edition.label} · {edition.year}</p>
+              <h2 id={`event-title-${edition.id}`}>{edition.hero.title}</h2>
+            </div>
+            <div class="event-edition-actions">
+              {edition.isCurrent && (
+                <a class="button button-primary" href={withBase("/inscripcion/")}>
+                  Inscribirme para competir
+                  <Icon name="ticket-check" size={18} />
+                </a>
+              )}
+              <a class="button button-secondary dark" href={`${withBase("/")}?edicion=${edition.id}`}>
+                Ver página de la edición
+                <Icon name="arrow-right" size={18} />
+              </a>
+            </div>
+          </div>
+
+          <nav class="event-tabs" aria-label={`Secciones de ${edition.label}`}>
+            <a href={`#resumen-${edition.id}`}>Información</a>
+            <a href={`#categorias-${edition.id}`}>Categorías</a>
+            <a href={`#premios-${edition.id}`}>Premios</a>
+          </nav>
+
+          <section class="event-summary-grid" id={`resumen-${edition.id}`}>
+            <div class="event-summary-copy">
+              <p class="kicker">Resumen</p>
+              <h3>Sobre esta edición</h3>
+              <p>{edition.eventInfo.description}</p>
+            </div>
+            <dl class="event-facts">
+              <div>
+                <dt><Icon name="calendar-days" size={18} /> Fecha</dt>
+                <dd>{edition.date}</dd>
+              </div>
+              <div>
+                <dt><Icon name="map-pin" size={18} /> Lugar</dt>
+                <dd>{edition.location}, {edition.city}</dd>
+              </div>
+              <div>
+                <dt><Icon name="music-2" size={18} /> Horario</dt>
+                <dd>{edition.eventInfo.schedule}</dd>
+              </div>
+            </dl>
+          </section>
+
+          <section class="event-info-block" id={`categorias-${edition.id}`}>
+            <div>
+              <p class="kicker">Competencia</p>
+              <h3>Categorías</h3>
+              {edition.eventInfo.categoriesNote && <p>{edition.eventInfo.categoriesNote}</p>}
+            </div>
+            <div class="event-category-grid">
+              {edition.eventInfo.categories.map((category) => (
+                <article>
+                  <Icon name="trophy" size={24} />
+                  <strong>{category}</strong>
+                </article>
+              ))}
+            </div>
+          </section>
+
+          <section class="event-info-block event-prize" id={`premios-${edition.id}`}>
+            <div>
+              <p class="kicker">Premiación</p>
+              <h3>Premios</h3>
+            </div>
+            <p>{edition.eventInfo.prize}</p>
+          </section>
+
+          {edition.isCurrent && (
+            <aside class="event-note">
+              <Icon name="sparkles" size={22} />
+              <p>
+                El canal de transmisión y cualquier workshop se publicarán únicamente
+                cuando la organización confirme esos datos. Síguenos en{" "}
+                <a href={event.instagramUrl} target="_blank" rel="noreferrer">{event.instagram}</a>.
+              </p>
+            </aside>
+          )}
+        </article>
+      ))}
+    </main>
+
+    <SiteFooter />
+    <script>
+      import "../scripts/edition-switcher";
+    </script>
+  </body>
+</html>

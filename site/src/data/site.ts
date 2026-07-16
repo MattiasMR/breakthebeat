@@ -3,7 +3,7 @@ export const event = {
   edition: "3ra edicion",
   eyebrow: "Torneo nacional de breakdance",
   date: "Domingo 27 de septiembre 2026",
-  location: "Locacion por anunciar",
+  location: "Plaza de los Teatros, calle Panamá",
   city: "Guayaquil, Ecuador",
   instagram: "@breakthebeat.ucg",
   instagramUrl: "https://www.instagram.com/breakthebeat.ucg/",
@@ -13,13 +13,10 @@ export const event = {
 };
 
 export const navItems = [
-  { label: "Que es", href: "/movimiento/" },
-  { label: "Impacto", href: "/impacto/" },
-  { label: "Rewind", href: "/rewind/" },
-  { label: "Highlights", href: "/highlights/" },
-  { label: "Colaboradores", href: "#sponsors" },
-  { label: "Apoyar", href: "/apoyar/" },
-  { label: "Contacto", href: "#contacto" }
+  { label: "Quiénes somos", href: "#quienes-somos" },
+  { label: "Impacto", href: "#impacto" },
+  { label: "Highlights", href: "#highlights" },
+  { label: "Sponsors", href: "#sponsors" }
 ];
 
 export const heroSlides = [
@@ -58,7 +55,7 @@ export const heroSlides = [
   },
   {
     slug: "apoyar",
-    title: "Apoyar el movimiento",
+    title: "Donar ahora",
     eyebrow: "Funding",
     image: "/assets/winners.webp",
     alt: "Ganadores del torneo con cheque de premiacion",
@@ -132,8 +129,8 @@ export const featurePages = [
   },
   {
     slug: "apoyar",
-    title: "Apoyar el movimiento",
-    eyebrow: "Funding",
+    title: "Donar ahora",
+    eyebrow: "Donaciones",
     image: "/assets/winners.webp",
     alt: "Ganadores del torneo con cheque de premiacion",
     summary:
@@ -279,17 +276,17 @@ export const footerGroups = [
   {
     title: "Break The Beat",
     links: [
-      { label: "Que es", href: "/movimiento/" },
-      { label: "Impacto social", href: "/impacto/" },
-      { label: "Rewind", href: "/rewind/" },
-      { label: "Highlights", href: "/highlights/" },
-      { label: "Colaboradores", href: "/#sponsors" }
+      { label: "Quiénes somos", href: "/#quienes-somos" },
+      { label: "Impacto", href: "/#impacto" },
+      { label: "Highlights", href: "/#highlights" },
+      { label: "Sponsors", href: "/#sponsors" },
+      { label: "Información del evento", href: "/evento/" }
     ]
   },
   {
     title: "Participar",
     links: [
-      { label: "Apoyar el movimiento", href: "/apoyar/" },
+      { label: "Donar ahora", href: "/apoyar/" },
       { label: "Contacto oficial", href: "/#contacto" },
       { label: "Instagram", href: event.instagramUrl },
       { label: "Email del proyecto", href: `mailto:${event.email}` },
@@ -300,9 +297,9 @@ export const footerGroups = [
     title: "Estado del sitio",
     links: [
       { label: "Domingo 27 de septiembre 2026", href: "/#inicio" },
-      { label: "Locacion por anunciar", href: "/#inicio" },
+      { label: "Plaza de los Teatros, calle Panamá", href: "/#inicio" },
       { label: "Links de pago pendientes", href: "/apoyar/" },
-      { label: "Colaboradores por modificar", href: "/#sponsors" }
+      { label: "Sponsors 2026 por confirmar", href: "/#sponsors" }
     ]
   }
 ];

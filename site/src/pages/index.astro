@@ -1,40 +1,21 @@
 ---
-import {
-  ArrowRight,
-  ArrowUpRight,
-  AtSign,
-  CalendarDays,
-  HandHeart,
-  Mail,
-  MapPin,
-  Megaphone,
-  Music2,
-  Sparkles,
-  Trophy,
-  UsersRound
-} from "@lucide/astro";
+import Icon from "../components/Icon.astro";
 import SiteFooter from "../components/SiteFooter.astro";
 import SiteHeader from "../components/SiteHeader.astro";
-import {
-  awards,
-  collaborators,
-  event,
-  highlights,
-  payments,
-  heroSlides,
-  stats,
-  timeline
-} from "../data/site";
+import { editions } from "../data/editions";
+import { event } from "../data/site";
 import { withBase } from "../utils/paths";
 import "../styles/global.css";
 
-const pageTitle = "Break The Beat | 3ra edicion";
+const pageTitle = "Break The Beat | 3ra edición";
 const description =
-  "Sitio oficial de Break The Beat, torneo nacional de breakdance en Guayaquil con impacto cultural, comunidad, sponsors y aportes.";
+  "Sitio oficial de Break The Beat. Explora el impacto, highlights, sponsors e información de cada edición del torneo nacional de breaking en Guayaquil.";
+const editionInfoUrl = (id: string) => `${withBase("/evento/")}?edicion=${id}`;
+const resolveEditionHref = (href: string) => (href.startsWith("/") ? withBase(href) : href);
 ---
 
 <!doctype html>
-<html lang="es">
+<html lang="es" data-edition="3">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -43,282 +24,321 @@ const description =
     <meta property="og:type" content="website" />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={withBase("/assets/hero-battle.webp")} />
+    <meta property="og:image" content={withBase("/assets/guayaquil-venue.webp")} />
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" type="image/png" href={withBase("/assets/favicon.png")} />
-    <link rel="preload" as="image" href={withBase("/assets/hero-battle.webp")} fetchpriority="high" />
+    <link rel="preload" as="image" href={withBase("/assets/guayaquil-venue.webp")} fetchpriority="high" />
     <title>{pageTitle}</title>
   </head>
   <body>
     <SiteHeader isHome />
 
     <main id="inicio">
-      <section class="hero hero-carousel section-dark" data-hero-carousel aria-label="Historias principales">
-        {heroSlides.map((slide, index) => (
-          <article class:list={["hero-slide", { "is-active": index === 0 }]} data-hero-slide>
-            <a class="hero-slide-link" href={withBase(slide.href)} aria-label={`${slide.cta}: ${slide.title}`}>
-              <div class="hero-media" aria-hidden="true">
+      <section class="edition-hero section-dark" aria-label="Ediciones de Break The Beat">
+        {editions.map((edition) => (
+          <article
+            class="edition-hero-panel"
+            data-edition-panel={edition.id}
+            data-page-title={`Break The Beat | ${edition.label}`}
+            hidden={!edition.isCurrent}
+          >
+            <div class="edition-hero-media" aria-hidden="true">
+              <img
+                src={withBase(edition.hero.image)}
+                width="1600"
+                height="900"
+                alt=""
+                fetchpriority={edition.isCurrent ? "high" : undefined}
+                loading={edition.isCurrent ? "eager" : "lazy"}
+                decoding="async"
+              />
+            </div>
+            <div class="edition-hero-overlay"></div>
+            <div class="edition-hero-inner">
+              <div class="edition-hero-copy">
+                <p class="eyebrow">{edition.hero.eyebrow}</p>
                 <img
-                  src={withBase(slide.image)}
-                  width="800"
-                  height="450"
-                  alt=""
-                  fetchpriority={index === 0 ? "high" : undefined}
-                  decoding="async"
+                  class="hero-logo"
+                  src={withBase("/assets/break-the-beat-logo.webp")}
+                  width="900"
+                  height="569"
+                  alt={event.title}
                 />
-              </div>
-              <div class="hero-overlay"></div>
-              <div class="hero-content">
-                <p class="eyebrow">{slide.eyebrow}</p>
-                {index === 0 && (
-                  <img class="hero-logo" src={withBase("/assets/break-the-beat-logo.webp")} width="900" height="569" alt={event.title} />
-                )}
-                <h1 class:list={{ "sr-only": index === 0 }}>{slide.title}</h1>
-                <p class="hero-copy">{slide.text}</p>
-                <div class="event-meta" aria-label="Informacion del evento">
+                <h1>{edition.hero.title}</h1>
+                <p class="hero-copy">{edition.hero.summary}</p>
+                <div class="event-meta" aria-label="Información resumida del evento">
                   <span>
-                    <CalendarDays size={18} aria-hidden="true" />
-                    {event.date}
+                    <Icon name="calendar-days" size={18} />
+                    {edition.date}
                   </span>
                   <span>
-                    <MapPin size={18} aria-hidden="true" />
-                    {event.city}
+                    <Icon name="map-pin" size={18} />
+                    {edition.location}, {edition.city}
                   </span>
                 </div>
-                <span class="button button-primary">
-                  {slide.cta}
-                  <ArrowRight size={19} aria-hidden="true" />
-                </span>
+                <div class="hero-actions">
+                  <a class="button button-primary" href={editionInfoUrl(edition.id)}>
+                    Ver información del evento
+                    <Icon name="arrow-right" size={19} />
+                  </a>
+                  {edition.isCurrent ? (
+                    <a class="button button-secondary" href={withBase("/inscripcion/")}>
+                      Inscribirme para competir
+                      <Icon name="ticket-check" size={18} />
+                    </a>
+                  ) : (
+                    <a class="button button-secondary" href="#highlights">
+                      Ver archivo de la edición
+                      <Icon name="arrow-right" size={18} />
+                    </a>
+                  )}
+                </div>
               </div>
-            </a>
+
+              <aside class="stream-card" aria-label={edition.stream.title}>
+                <div class="stream-card-heading">
+                  <span>{edition.stream.eyebrow}</span>
+                  <Icon name="camera" size={20} />
+                </div>
+                {edition.stream.embedUrl ? (
+                  <iframe
+                    src={edition.stream.embedUrl}
+                    title={edition.stream.title}
+                    allow="autoplay; encrypted-media; picture-in-picture"
+                    allowfullscreen
+                    loading="lazy"
+                  ></iframe>
+                ) : (
+                  <div class="stream-placeholder">
+                    <Icon name="camera" size={42} />
+                    <div>
+                      <h2>{edition.stream.title}</h2>
+                      <p>{edition.stream.description}</p>
+                    </div>
+                  </div>
+                )}
+                <a
+                  class="stream-link"
+                  href={resolveEditionHref(edition.stream.href)}
+                  target={edition.stream.href.startsWith("http") ? "_blank" : undefined}
+                  rel={edition.stream.href.startsWith("http") ? "noreferrer" : undefined}
+                >
+                  {edition.stream.cta}
+                  <Icon name="arrow-up-right" size={17} />
+                </a>
+              </aside>
+            </div>
           </article>
         ))}
-        <div class="hero-footer">
-          <div class="hero-bottom">
-            <span>{event.edition}</span>
-            <span>{event.date}</span>
-            <span>{event.location}</span>
-          </div>
-          <div class="hero-controls" aria-label="Cambiar historia principal">
-            {heroSlides.map((slide, index) => (
-              <button class:list={{ "is-active": index === 0 }} type="button" data-hero-control aria-label={`Ver ${slide.title}`}>
-                <span>{String(index + 1).padStart(2, "0")}</span>
-                {slide.eyebrow}
-              </button>
-            ))}
-          </div>
-        </div>
-      </section>
 
-      <nav class="feature-tabs section-dark" aria-label="Explorar secciones">
-        <span class="feature-tabs-label">Explorar secciones</span>
-        <a href={withBase("/movimiento/")}>Movimiento</a>
-        <a href={withBase("/impacto/")}>Impacto</a>
-        <a href={withBase("/rewind/")}>Rewind</a>
-        <a href={withBase("/highlights/")}>Highlights</a>
-        <a href="#sponsors">Colaboradores</a>
-        <a href={withBase("/apoyar/")}>Apoyar</a>
-        <a href="#contacto">Contacto</a>
-      </nav>
-
-      <section class="intro section-dark" id="que-es">
-        <div class="section-label">
-          <Sparkles size={18} aria-hidden="true" />
-          Que es
-        </div>
-        <div class="intro-grid">
-          <article>
-            <p class="kicker">No es solo acrobacia ni ritmo</p>
-            <h2>Es rebeldia con causa.</h2>
-            <p>
-              Break The Beat junta a bailarines de todo el pais en una competencia
-              donde el arte urbano se vive como deporte, espectaculo y comunidad.
-              Habra musica en vivo, shows, freestyle abierto y premios para los
-              mejores bailarines.
-            </p>
-          </article>
-          <article>
-            <p class="kicker">Nuestro motor</p>
-            <h2>Un escenario seguro para canalizar energia.</h2>
-            <p>
-              En Guayaquil, el breaking ha sido refugio, protesta y orgullo barrial.
-              Esta tercera edicion busca abrir espacios donde jovenes puedan expresarse
-              desde el movimiento, lejos de la violencia y cerca de una comunidad que
-              los reconoce.
-            </p>
-          </article>
-        </div>
-      </section>
-
-      <section class="impact section-light" id="impacto">
-        <div class="section-heading">
-          <div class="section-label">
-            <Megaphone size={18} aria-hidden="true" />
-            Impacto 2025
-          </div>
-          <h2>Una edicion que puso al breaking en conversacion.</h2>
-        </div>
-        <div class="stats-grid">
-          {stats.map((stat) => (
-            <article class="stat-card">
-              <strong>{stat.value}</strong>
-              <span>{stat.label}</span>
-            </article>
-          ))}
-        </div>
-        <div class="impact-feature">
-          <img src={withBase("/assets/community-lineup.webp")} width="800" height="533" alt="Comunidad de Break The Beat reunida en el evento" />
-          <div>
-            <p class="kicker">Comunidad primero</p>
-            <h3>Mas que un torneo, una red de historias.</h3>
-            <p>
-              El proyecto busca profundizar en las historias humanas detras de los
-              bailarines y equipos, mostrando como el breakdance puede abrir caminos
-              de identidad, disciplina y pertenencia.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <section class="awards section-dark" style={`--awards-bg: url("${withBase("/assets/bboy-street.webp")}")`}>
-        <div class="section-heading compact">
-          <div class="section-label">
-            <Trophy size={18} aria-hidden="true" />
-            Reconocimientos
-          </div>
-          <h2>La historia de Break The Beat ya viajo por festivales.</h2>
-        </div>
-        <div class="award-list">
-          {awards.map((award) => (
-            <article class="award-item">
-              <span aria-hidden="true"></span>
-              <p>{award}</p>
-            </article>
+        <div class="edition-series">
+          <label class="edition-picker">
+            <span>
+              <small>Event series</small>
+              Elegir edición
+            </span>
+            <select data-edition-select aria-label="Elegir edición de Break The Beat">
+              {editions.map((edition) => (
+                <option value={edition.id} selected={edition.isCurrent}>
+                  {edition.shortLabel} · {edition.year}
+                </option>
+              ))}
+            </select>
+          </label>
+          {editions.map((edition) => (
+            <div class="edition-series-meta" data-edition-panel={edition.id} hidden={!edition.isCurrent} aria-live="polite">
+              <span>{edition.label}</span>
+              <span>{edition.date}</span>
+              <span>{edition.location}</span>
+              <strong>{edition.status}</strong>
+            </div>
           ))}
         </div>
       </section>
 
-      <section class="rewind section-light" id="rewind">
-        <div class="section-heading">
-          <div class="section-label">
-            <Music2 size={18} aria-hidden="true" />
-            Galaxia Break The Beat
-          </div>
-          <h2>Rewind de un movimiento en crecimiento.</h2>
-        </div>
-        <div class="timeline">
-          {timeline.map((item) => (
-            <article class="timeline-item">
-              <span>{item.year}</span>
-              <h3>{item.title}</h3>
-              <p>{item.text}</p>
-            </article>
-          ))}
-        </div>
-        <div class="rewind-strip" aria-label="Momentos de Break The Beat">
-          <img src={withBase("/assets/crowd-rewind.webp")} width="800" height="533" alt="Publico y bailarines en una edicion anterior de Break The Beat" />
-          <img src={withBase("/assets/bboy-street.webp")} width="800" height="533" alt="Bboy haciendo un movimiento en un espacio urbano" />
-          <img src={withBase("/assets/guayaquil-venue.webp")} width="800" height="413" alt="Espacio urbano de Guayaquil relacionado con el evento" />
-        </div>
-      </section>
-
-      <section class="highlights section-dark" id="highlights">
-        <div class="section-heading">
-          <div class="section-label">
-            <UsersRound size={18} aria-hidden="true" />
-            Highlights
-          </div>
-          <h2>El pulso del evento, por categorias y momentos.</h2>
-        </div>
-        <div class="highlight-grid">
-          {highlights.map((item) => (
-            <article class="highlight-card">
-              <img src={withBase(item.image)} width={item.width} height={item.height} alt={item.alt} decoding="async" />
-              <div>
-                <h3>{item.title}</h3>
-                <p>{item.text}</p>
+      <section class="edition-content section-light" id="impacto" aria-label="Impacto de la edición">
+        {editions.map((edition) => (
+          <div data-edition-panel={edition.id} hidden={!edition.isCurrent}>
+            <div class="section-heading">
+              <div class="section-label">
+                <Icon name="megaphone" size={18} />
+                {edition.impact.eyebrow}
               </div>
-            </article>
-          ))}
-        </div>
+              <h2>{edition.impact.title}</h2>
+              <p>{edition.impact.summary}</p>
+            </div>
+            <div class="story-card-grid">
+              {edition.impact.cards.map((card) => (
+                <article class="story-card">
+                  <img src={withBase(card.image)} width="800" height="540" alt={card.alt} loading="lazy" decoding="async" />
+                  <div>
+                    <span>{card.eyebrow}</span>
+                    <h3>{card.title}</h3>
+                    <p>{card.text}</p>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        ))}
       </section>
 
-      <section class="sponsors section-light" id="sponsors">
-        <div class="section-heading">
-          <div class="section-label">
-            <Trophy size={18} aria-hidden="true" />
-            Colaboradores
-          </div>
-          <h2>Sponsors y colaboradores actuales.</h2>
-          <p>
-            Listado inicial basado en aliados, medios y colaboradores de ediciones anteriores.
-            Esta seccion queda por modificar cuando el equipo confirme logos y sponsors 2026.
-          </p>
-        </div>
-        <div class="collaborator-note">Por modificar</div>
-        <div class="collaborator-grid">
-          {collaborators.map((partner) => (
-            <article class="collaborator-card">
-              <span>{partner.type}</span>
-              <h3>{partner.name}</h3>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section class="support section-dark" id="apoyar">
-        <div class="support-copy">
-          <div class="section-label">
-            <HandHeart size={18} aria-hidden="true" />
-            Apoyar
-          </div>
-          <h2>Apoyar el movimiento es ayudar a que el beat llegue mas lejos.</h2>
-          <p>
-            Los aportes se activaran cuando el equipo confirme cuenta responsable,
-            links oficiales, politica de devolucion y forma de rendicion. Por ahora,
-            la web deja listos los canales sin publicar datos sensibles.
-          </p>
-          <p class="legal-note">
-            Los aportes no se presentan como donacion deducible de impuestos salvo
-            que exista respaldo legal y administrativo confirmado.
-          </p>
-        </div>
-        <div class="payment-grid">
-          {payments.map((payment) => (
-            <article class="payment-card">
-              <div>
-                <h3>{payment.label}</h3>
-                <p>{payment.description}</p>
+      <section class="edition-content section-dark" id="highlights" aria-label="Highlights de la edición">
+        {editions.map((edition) => (
+          <div data-edition-panel={edition.id} hidden={!edition.isCurrent}>
+            <div class="section-heading">
+              <div class="section-label">
+                <Icon name="sparkles" size={18} />
+                {edition.highlights.eyebrow}
               </div>
-              {payment.enabled && payment.url ? (
-                <a class="button button-primary" href={payment.url} target="_blank" rel="noreferrer">
-                  Abrir pago
-                  <ArrowUpRight size={18} aria-hidden="true" />
+              <h2>{edition.highlights.title}</h2>
+              <p>{edition.highlights.summary}</p>
+            </div>
+            <div class="story-card-grid">
+              {edition.highlights.cards.map((card) => (
+                <article class="story-card story-card-dark">
+                  <img src={withBase(card.image)} width="800" height="540" alt={card.alt} loading="lazy" decoding="async" />
+                  <div>
+                    <span>{card.eyebrow}</span>
+                    <h3>{card.title}</h3>
+                    <p>{card.text}</p>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        ))}
+      </section>
+
+      <section class="edition-content about-edition section-light" id="quienes-somos" aria-label="Quiénes somos">
+        {editions.map((edition) => (
+          <div class="about-edition-grid" data-edition-panel={edition.id} hidden={!edition.isCurrent}>
+            <div>
+              <div class="section-label">
+                <Icon name="users-round" size={18} />
+                {edition.about.eyebrow}
+              </div>
+              <h2>{edition.about.title}</h2>
+            </div>
+            <div class="about-edition-copy">
+              {edition.about.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
+              <a class="text-link text-link-dark" href={editionInfoUrl(edition.id)}>
+                Conocer esta edición
+                <Icon name="arrow-right" size={18} />
+              </a>
+            </div>
+          </div>
+        ))}
+      </section>
+
+      <section class="edition-content section-dark" id="historia" aria-label="Historia de la edición">
+        {editions.map((edition) => (
+          <div data-edition-panel={edition.id} hidden={!edition.isCurrent}>
+            <div class="section-heading compact">
+              <div class="section-label">
+                <Icon name="music-2" size={18} />
+                Rewind · {edition.label}
+              </div>
+              <h2>La historia de esta edición.</h2>
+            </div>
+            <div class="milestone-grid">
+              {edition.milestones.map((milestone) => (
+                <article>
+                  <span>{milestone.eyebrow}</span>
+                  <h3>{milestone.title}</h3>
+                  <p>{milestone.text}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        ))}
+      </section>
+
+      <section class="edition-content sponsors-edition section-light" id="sponsors" aria-label="Sponsors de la edición">
+        {editions.map((edition) => (
+          <div data-edition-panel={edition.id} hidden={!edition.isCurrent}>
+            <div class="section-heading">
+              <div class="section-label">
+                <Icon name="hand-heart" size={18} />
+                {edition.sponsors.eyebrow}
+              </div>
+              <h2>{edition.sponsors.title}</h2>
+              <p>{edition.sponsors.note}</p>
+            </div>
+            {edition.sponsors.items.length > 0 ? (
+              <div class="sponsor-logo-grid">
+                {edition.sponsors.items.map((sponsor) => (
+                  <article class="sponsor-logo-card">
+                    {sponsor.logo ? (
+                      <img src={withBase(sponsor.logo)} width="360" height="200" alt={sponsor.name} loading="lazy" decoding="async" />
+                    ) : (
+                      <strong>{sponsor.name}</strong>
+                    )}
+                  </article>
+                ))}
+              </div>
+            ) : (
+              <div class="sponsor-empty">
+                <span>Convocatoria 2026</span>
+                <h3>Los sponsors se publicarán cuando estén confirmados.</h3>
+                <p>Si tu marca quiere apoyar la tercera edición, contacta al equipo oficial de Break The Beat.</p>
+                <a class="button button-secondary dark" href={`mailto:${event.email}`}>
+                  Contactar al equipo
+                  <Icon name="mail" size={18} />
                 </a>
+              </div>
+            )}
+          </div>
+        ))}
+      </section>
+
+      <section class="edition-content edition-actions section-dark" aria-label="Acciones de la edición">
+        {editions.map((edition) => (
+          <div class="edition-actions-grid" data-edition-panel={edition.id} hidden={!edition.isCurrent}>
+            <div>
+              <p class="eyebrow">{edition.label} · {edition.year}</p>
+              <h2>{edition.isCurrent ? "La pista te espera." : "Esta edición forma parte del archivo."}</h2>
+            </div>
+            <div class="edition-actions-buttons">
+              <a class="button button-secondary" href={editionInfoUrl(edition.id)}>
+                Información del evento
+                <Icon name="arrow-right" size={18} />
+              </a>
+              {edition.isCurrent ? (
+                <>
+                  <a class="button button-primary" href={withBase("/inscripcion/")}>
+                    Inscribirme
+                    <Icon name="ticket-check" size={18} />
+                  </a>
+                  <a class="button button-secondary" href={withBase("/apoyar/")}>
+                    Donar ahora
+                    <Icon name="arrow-up-right" size={18} />
+                  </a>
+                </>
               ) : (
-                <span class="button button-disabled" aria-disabled="true">
-                  {payment.status}
-                </span>
+                <a class="button button-primary" href="#highlights">
+                  Ver highlights
+                  <Icon name="sparkles" size={18} />
+                </a>
               )}
-              <small>{payment.disclaimer}</small>
-            </article>
-          ))}
-        </div>
+            </div>
+          </div>
+        ))}
       </section>
 
       <section class="contact section-light" id="contacto">
         <div>
-          <p class="kicker">Contacto oficial</p>
-          <h2>Hablemos de cultura, comunidad y sponsors.</h2>
+          <div class="section-label">
+            <Icon name="mail" size={18} />
+            Contacto
+          </div>
+          <h2>Hablemos del movimiento.</h2>
         </div>
         <div class="contact-actions">
-          <a class="button button-primary" href={event.instagramUrl} target="_blank" rel="noreferrer">
-            <AtSign size={19} aria-hidden="true" />
+          <a class="button button-secondary dark" href={`mailto:${event.email}`}>{event.email}</a>
+          <a class="button button-secondary dark" href={event.instagramUrl} target="_blank" rel="noreferrer">
             {event.instagram}
-          </a>
-          <a class="button button-secondary dark" href={`mailto:${event.email}`}>
-            <Mail size={19} aria-hidden="true" />
-            {event.email}
+            <Icon name="arrow-up-right" size={18} />
           </a>
         </div>
       </section>
@@ -326,35 +346,7 @@ const description =
 
     <SiteFooter />
     <script>
-      const carousel = document.querySelector("[data-hero-carousel]");
-      if (carousel) {
-        const slides = Array.from(carousel.querySelectorAll("[data-hero-slide]"));
-        const controls = Array.from(carousel.querySelectorAll("[data-hero-control]"));
-        let activeIndex = 0;
-        let timer;
-
-        const setActive = (nextIndex) => {
-          activeIndex = nextIndex;
-          slides.forEach((slide, index) => slide.classList.toggle("is-active", index === activeIndex));
-          controls.forEach((control, index) => control.classList.toggle("is-active", index === activeIndex));
-        };
-
-        const start = () => {
-          timer = window.setInterval(() => {
-            setActive((activeIndex + 1) % slides.length);
-          }, 5200);
-        };
-
-        controls.forEach((control, index) => {
-          control.addEventListener("click", () => {
-            window.clearInterval(timer);
-            setActive(index);
-            start();
-          });
-        });
-
-        start();
-      }
+      import "../scripts/edition-switcher";
     </script>
   </body>
 </html>

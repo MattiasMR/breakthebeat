@@ -1,5 +1,5 @@
 ---
-import { HandHeart } from "@lucide/astro";
+import Icon from "./Icon.astro";
 import { navItems } from "../data/site";
 import { withBase } from "../utils/paths";
 
@@ -19,8 +19,22 @@ const resolveHref = (href: string) =>
   <nav class="desktop-nav">
     {navItems.map((item) => <a href={resolveHref(item.href)}>{item.label}</a>)}
   </nav>
-  <a class="header-cta" href={isHome ? "#apoyar" : withBase("/apoyar/")}>
-    <HandHeart size={18} aria-hidden="true" />
-    Apoyar
-  </a>
+  <div class="header-actions">
+    <a class="header-register" href={withBase("/inscripcion/")}>
+      <span>Inscribirme</span>
+      <Icon name="ticket-check" size={18} />
+    </a>
+    <a class="header-cta" href={withBase("/apoyar/")}>
+      <span>Donar<span class="header-optional-label"> ahora</span></span>
+      <Icon name="arrow-up-right" size={18} />
+    </a>
+  </div>
+  <details class="mobile-nav">
+    <summary aria-label="Abrir navegación">Menú</summary>
+    <nav aria-label="Navegación móvil">
+      {navItems.map((item) => <a href={resolveHref(item.href)}>{item.label}</a>)}
+      <a href={withBase("/evento/")}>Información del evento</a>
+      <a href={withBase("/inscripcion/")}>Inscribirme</a>
+    </nav>
+  </details>
 </header>

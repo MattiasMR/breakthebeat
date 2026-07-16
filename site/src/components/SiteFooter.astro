@@ -1,5 +1,5 @@
 ---
-import { ArrowUpRight } from "@lucide/astro";
+import Icon from "./Icon.astro";
 import { event, footerGroups } from "../data/site";
 import { withBase } from "../utils/paths";
 ---
@@ -11,7 +11,7 @@ import { withBase } from "../utils/paths";
     </a>
     <a class="footer-more" href="#inicio">
       Ver mas
-      <ArrowUpRight size={17} aria-hidden="true" />
+      <Icon name="arrow-up-right" size={17} />
     </a>
   </div>
   <div class="footer-grid">

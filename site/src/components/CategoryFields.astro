@@ -1,0 +1,24 @@
+---
+interface Props {
+  prefix: "captain" | "partner";
+  partner?: boolean;
+}
+
+const { prefix, partner = false } = Astro.props;
+---
+
+<div class="choice-grid category-choice-grid" data-category-group={prefix}>
+  <label class="choice-card">
+    <input type="checkbox" name={`${prefix}.categories`} value="1v1" />
+    <span><strong>1 vs 1</strong><small>Competencia individual</small></span>
+  </label>
+  <label class="choice-card">
+    <input type="checkbox" name={`${prefix}.categories`} value="2v2" checked={partner} disabled={partner} data-forced-category={partner || undefined} />
+    {partner && <input type="hidden" name="partner.categories" value="2v2" data-forced-category />}
+    <span><strong>2 vs 2</strong><small>{partner ? "Categoría de la dupla" : "Requiere registrar al compañero"}</small></span>
+  </label>
+  <label class="choice-card">
+    <input type="checkbox" name={`${prefix}.categories`} value="bgirls" />
+    <span><strong>BGirls</strong><small>Categoría femenina</small></span>
+  </label>
+</div>

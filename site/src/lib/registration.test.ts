@@ -43,8 +43,9 @@ describe("registrationPayloadSchema", () => {
     expect(registrationPayloadSchema.safeParse(payload([participant({ age: 17 })])).success).toBe(false);
   });
 
-  it("exige teléfono internacional y una red social permitida", () => {
+  it("exige teléfono internacional y acepta @usuario o una red social permitida", () => {
     expect(registrationPayloadSchema.safeParse(payload([participant({ phone: "0991234567" })])).success).toBe(false);
+    expect(registrationPayloadSchema.safeParse(payload([participant({ socialUrl: "@bboy.test" })])).success).toBe(true);
     expect(registrationPayloadSchema.safeParse(payload([participant({ socialUrl: "https://example.com/perfil" })])).success).toBe(false);
   });
 

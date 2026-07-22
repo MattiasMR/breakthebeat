@@ -26,6 +26,7 @@ if (!form || !formFields || !systemBanner) throw new Error("Registration form ma
 
 const steps = Array.from(form.querySelectorAll<HTMLElement>("[data-form-step]"));
 const submitAlert = form.querySelector<HTMLElement>("[data-submit-alert]");
+const medicalAlert = form.querySelector<HTMLElement>("[data-medical-alert]");
 const review = form.querySelector<HTMLElement>("[data-review]");
 const legalDocuments = form.querySelector<HTMLElement>("[data-legal-documents]");
 const categoryError = form.querySelector<HTMLElement>("[data-category-error]");
@@ -47,6 +48,12 @@ const setSubmitAlert = (message = "") => {
   if (!submitAlert) return;
   submitAlert.textContent = message;
   submitAlert.hidden = !message;
+};
+
+const setMedicalAlert = (message = "") => {
+  if (!medicalAlert) return;
+  medicalAlert.textContent = message;
+  medicalAlert.hidden = !message;
 };
 
 const showStep = (name: string) => {
@@ -209,12 +216,15 @@ const validateCurrentStep = () => {
     const data = new FormData(form);
     const participants = [collectParticipant("captain", data)];
     if (isDuo()) participants.push(collectParticipant("partner", data));
-    const invalidParticipant = participants.find((participant) => !participantSchema.safeParse(participant).success);
-    if (invalidParticipant) {
-      setSubmitAlert("Revisa los detalles médicos y de emergencia marcados como obligatorios.");
+    const invalidResult = participants
+      .map((participant) => participantSchema.safeParse(participant))
+      .find((result) => !result.success);
+    if (invalidResult && !invalidResult.success) {
+      setMedicalAlert(invalidResult.error.issues[0]?.message ?? "Revisa los datos obligatorios.");
       return false;
     }
   }
+  setMedicalAlert();
   setSubmitAlert();
   return true;
 };
@@ -350,10 +360,12 @@ form.addEventListener("change", (event) => {
   const target = event.target as HTMLInputElement;
   if (target.name === "captain.categories") syncDuo();
   syncConditionalFields();
+  setMedicalAlert();
   saveDraft();
 });
 form.addEventListener("input", () => {
   syncConditionalFields();
+  setMedicalAlert();
   saveDraft();
 });
 

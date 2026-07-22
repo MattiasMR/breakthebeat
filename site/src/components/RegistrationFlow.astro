@@ -88,6 +88,7 @@ const { turnstileSiteKey, variant = "page" } = Astro.props;
               <MedicalFields prefix="partner" title="Compañero de dupla" />
             </div>
           </div>
+          <div class="submit-alert" data-medical-alert role="alert" hidden></div>
           <div class="form-actions">
             <button class="button button-ghost" type="button" data-back><Icon name="arrow-left" size={18} /> Atrás</button>
             <button class="button button-primary" type="button" data-next>Revisar <Icon name="arrow-right" size={18} /></button>

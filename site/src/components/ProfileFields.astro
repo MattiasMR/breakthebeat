@@ -13,7 +13,7 @@ const { prefix } = Astro.props;
   </label>
   <label class="field field-wide">
     <span>Instagram o TikTok <b aria-hidden="true">*</b></span>
-    <input name={`${prefix}.socialUrl`} type="url" inputmode="url" required placeholder="https://instagram.com/usuario" />
+    <input name={`${prefix}.socialUrl`} type="text" required maxlength="200" placeholder="@usuario" />
   </label>
   <fieldset class="field field-wide compact-fieldset">
     <legend>Talla para merch <b aria-hidden="true">*</b></legend>
@@ -37,7 +37,7 @@ const { prefix } = Astro.props;
   </label>
   <label class="field">
     <span>Número de celular <b aria-hidden="true">*</b></span>
-    <input name={`${prefix}.phone`} type="tel" autocomplete="tel" required minlength="8" maxlength="24" pattern="\+[1-9][0-9 ()-]{7,22}" title="Incluye el código internacional, por ejemplo +593" placeholder="+593 99 123 4567" />
+    <input name={`${prefix}.phone`} type="tel" autocomplete="tel" required minlength="8" maxlength="24" title="Incluye el código internacional, por ejemplo +593" placeholder="+593 99 123 4567" />
   </label>
   <label class="field field-wide">
     <span>Correo electrónico <b aria-hidden="true">*</b></span>

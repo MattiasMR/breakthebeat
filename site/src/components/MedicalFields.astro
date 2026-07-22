@@ -76,7 +76,7 @@ const { prefix, title } = Astro.props;
       </label>
       <label class="field field-wide">
         <span>Teléfono <b aria-hidden="true">*</b></span>
-        <input name={`${prefix}.medical.emergencyPhone`} type="tel" required minlength="8" maxlength="24" pattern="\+[1-9][0-9 ()-]{7,22}" title="Incluye el código internacional, por ejemplo +593" placeholder="+593 99 123 4567" />
+        <input name={`${prefix}.medical.emergencyPhone`} type="tel" required minlength="8" maxlength="24" title="Incluye el código internacional, por ejemplo +593" placeholder="+593 99 123 4567" />
       </label>
     </div>
   </div>

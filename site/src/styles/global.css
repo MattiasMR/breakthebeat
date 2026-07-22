@@ -2184,7 +2184,7 @@ html[data-home-overhaul] body {
 }
 
 html[data-home-overhaul] body {
-  overflow-x: hidden;
+  overflow-x: clip;
   color: #fff;
   font-family: "Poppins", sans-serif;
 }
@@ -2260,7 +2260,7 @@ html[data-home-overhaul] body {
 }
 
 .home-page {
-  overflow: hidden;
+  overflow: clip;
   background: #000;
 }
 
@@ -2464,10 +2464,7 @@ html[data-home-overhaul] body {
 }
 
 .home-edition-bar {
-  position: absolute;
-  z-index: 7;
-  right: clamp(12px, 2.5vw, 48px);
-  bottom: 72px;
+  position: relative;
   display: flex;
   align-items: stretch;
   overflow: hidden;
@@ -2476,6 +2473,27 @@ html[data-home-overhaul] body {
   background: rgba(0, 0, 0, 0.72);
   box-shadow: 0 18px 44px rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(18px);
+}
+
+.home-editions {
+  position: relative;
+  background: #000;
+}
+
+.home-edition-toolbar {
+  position: sticky;
+  z-index: 12;
+  top: 96px;
+  min-height: 94px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding: 18px clamp(18px, 2.5vw, 48px) 0;
+  pointer-events: none;
+}
+
+.home-edition-toolbar .home-edition-bar {
+  pointer-events: auto;
 }
 
 .home-edition-bar label,
@@ -2667,7 +2685,7 @@ html[data-home-overhaul] body {
 .home-impact {
   position: relative;
   min-height: 820px;
-  padding-top: 66px;
+  padding-top: 34px;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   background: #000;
 }
@@ -2783,9 +2801,8 @@ html[data-home-overhaul] body {
 }
 
 .home-allies-panel:not([data-edition-panel="3"]) .home-allies-logos img {
-  max-width: 104px;
-  height: 38px;
-  filter: brightness(0) invert(1);
+  max-width: 118px;
+  height: 42px;
 }
 
 .home-allies-logos img {
@@ -2943,9 +2960,9 @@ html[data-home-overhaul] body {
 }
 
 .home-registration-dialog {
-  width: min(760px, calc(100% - 32px));
+  width: min(980px, calc(100% - 24px));
   max-width: none;
-  max-height: min(900px, calc(100svh - 32px));
+  max-height: calc(100svh - 16px);
   margin: auto;
   padding: 0;
   overflow: visible;
@@ -2962,10 +2979,10 @@ html[data-home-overhaul] body {
 
 .home-registration-dialog-scroll {
   position: relative;
-  max-height: min(900px, calc(100svh - 32px));
+  max-height: calc(100svh - 16px);
   overflow-x: hidden;
   overflow-y: auto;
-  padding: clamp(28px, 5vw, 48px);
+  padding: clamp(22px, 3vw, 34px);
   border-radius: 34px;
   background: #ede6d8;
   box-shadow: 0 30px 90px rgba(0, 0, 0, 0.48);
@@ -3005,12 +3022,12 @@ html[data-home-overhaul] body {
 
 .home-registration-heading h2 {
   margin: 0;
-  font: 500 clamp(3.2rem, 8vw, 5rem)/0.82 "Aurochs Heavy", Impact, sans-serif;
+  font: 500 clamp(2.8rem, 5.2vw, 4.4rem)/0.82 "Aurochs Heavy", Impact, sans-serif;
   text-transform: uppercase;
 }
 
 .home-registration-heading p {
-  margin: 14px 0 30px;
+  margin: 8px 0 16px;
   color: rgba(0, 0, 0, 0.5);
   font-size: 0.9rem;
 }
@@ -3020,7 +3037,8 @@ html[data-home-overhaul] body {
 }
 
 .home-registration-dialog .system-banner {
-  margin-bottom: 20px;
+  margin-bottom: 12px;
+  padding: 10px 12px;
   border: 0;
   border-radius: 14px;
   font-size: 0.78rem;
@@ -3035,11 +3053,11 @@ html[data-home-overhaul] body {
 }
 
 .home-registration-dialog .form-step-heading {
-  margin-bottom: 24px;
+  margin-bottom: 14px;
 }
 
 .home-registration-dialog .form-step-heading h2 {
-  margin-bottom: 10px;
+  margin-bottom: 6px;
   font-family: "Poppins", sans-serif;
   font-size: clamp(1.45rem, 4vw, 2rem);
   line-height: 1.05;
@@ -3064,22 +3082,23 @@ html[data-home-overhaul] body {
 }
 
 .home-registration-dialog .choice-card > span {
-  min-height: 104px;
+  min-height: 88px;
+  padding: 16px;
   border-radius: 18px;
 }
 
 .home-registration-dialog .field input,
 .home-registration-dialog .field select,
 .home-registration-dialog .field textarea {
-  min-height: 56px;
-  padding-inline: 22px;
+  min-height: 48px;
+  padding-inline: 16px;
   border: 1px solid rgba(0, 0, 0, 0.12);
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.72);
 }
 
 .home-registration-dialog .field textarea {
-  padding-block: 16px;
+  padding-block: 12px;
   border-radius: 22px;
 }
 
@@ -3091,8 +3110,42 @@ html[data-home-overhaul] body {
 }
 
 .home-registration-dialog .medical-panel {
-  padding: 20px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  padding: 16px;
   border-radius: 20px;
+}
+
+.home-registration-dialog .medical-panel .form-card-heading,
+.home-registration-dialog .medical-panel .conditional-field,
+.home-registration-dialog .medical-panel .conditional-grid,
+.home-registration-dialog .medical-panel .emergency-block {
+  grid-column: 1 / -1;
+}
+
+.home-registration-dialog .medical-panel .emergency-block .field-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.home-registration-dialog .medical-panel .emergency-block .field-wide {
+  grid-column: auto;
+}
+
+.home-registration-dialog [data-form-step="captain"] .field-grid,
+.home-registration-dialog [data-form-step="partner"] .field-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.home-registration-dialog [data-form-step="captain"] .field-wide,
+.home-registration-dialog [data-form-step="partner"] .field-wide {
+  grid-column: auto;
+}
+
+.home-registration-dialog [data-form-step="captain"] .field-grid > :first-child,
+.home-registration-dialog [data-form-step="partner"] .field-grid > :first-child {
+  grid-column: span 2;
 }
 
 .home-registration-dialog .conditional-field,
@@ -3103,12 +3156,14 @@ html[data-home-overhaul] body {
 }
 
 .home-registration-dialog .form-actions {
+  margin-top: 18px;
+  padding-top: 14px;
   border-top-color: rgba(0, 0, 0, 0.12);
 }
 
 .home-registration-dialog .button-primary,
 .home-registration-dialog .button-ghost {
-  min-height: 56px;
+  min-height: 50px;
   border-radius: 999px;
 }
 
@@ -3235,11 +3290,15 @@ html[data-home-overhaul] body {
   }
 
   .home-edition-bar {
-    right: 16px;
-    bottom: 58px;
-    left: 16px;
+    width: 100%;
     display: grid;
     grid-template-columns: 1fr;
+  }
+
+  .home-edition-toolbar {
+    top: 74px;
+    min-height: 124px;
+    padding: 12px 16px 0;
   }
 
   .home-edition-bar label,
@@ -3275,7 +3334,7 @@ html[data-home-overhaul] body {
   }
 
   .home-impact {
-    padding-top: 54px;
+    padding-top: 36px;
   }
 
   .home-impact h2 {
@@ -3352,6 +3411,24 @@ html[data-home-overhaul] body {
 
   .home-registration-dialog .form-actions {
     flex-direction: column-reverse;
+  }
+
+  .home-registration-dialog [data-form-step="captain"] .field-grid,
+  .home-registration-dialog [data-form-step="partner"] .field-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .home-registration-dialog .medical-panel,
+  .home-registration-dialog .medical-panel .emergency-block .field-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .home-registration-dialog [data-form-step="captain"] .field-wide,
+  .home-registration-dialog [data-form-step="partner"] .field-wide,
+  .home-registration-dialog [data-form-step="captain"] .field-grid > :first-child,
+  .home-registration-dialog [data-form-step="partner"] .field-grid > :first-child {
+    grid-column: 1 / -1;
   }
 
   .home-registration-dialog .button-primary,

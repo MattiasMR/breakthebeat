@@ -15,6 +15,11 @@ const editionInfoUrl = (id: string) => `${withBase("/evento/")}?edicion=${id}`;
 const galleryImages = Array.from({ length: 12 }, (_, index) =>
   withBase(`/assets/home-2026/gallery-${String(index + 1).padStart(2, "0")}.webp`)
 );
+const homeSponsorLogo = (logo: string, editionId: string) => {
+  if (editionId === "3") return withBase(logo);
+  const filename = logo.split("/").at(-1)?.replace(/\.png$/i, ".webp") ?? "";
+  return withBase(`/assets/sponsors/home/${filename}`);
+};
 const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
 ---
 
@@ -143,24 +148,6 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
           </article>
         ))}
 
-        <div class="home-edition-bar" id="ediciones">
-          <label>
-            <span>Ediciones</span>
-            <select data-edition-select aria-label="Elegir edición de Break The Beat">
-              {editions.map((edition) => (
-                <option value={edition.id} selected={edition.isCurrent}>
-                  {edition.shortLabel} · {edition.year}
-                </option>
-              ))}
-            </select>
-          </label>
-          {editions.map((edition) => (
-            <div class="home-edition-meta" data-edition-panel={edition.id} hidden={!edition.isCurrent} aria-live="polite">
-              <span>{edition.location}</span>
-              <strong>{edition.status}</strong>
-            </div>
-          ))}
-        </div>
       </section>
 
       <div class="home-tape" aria-hidden="true">
@@ -209,41 +196,64 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
         </div>
       </section>
 
-      <section class="home-impact" id="impacto">
-        <div class="home-impact-heading">
-          <h2>Lo que <strong>ya logramos</strong></h2>
-        </div>
-        <div class="home-stat-grid" aria-label="Cifras acumuladas de Break The Beat">
-          <article><b>↗</b><strong>+500 asistentes</strong><span>En nuestras anteriores dos ediciones</span></article>
-          <article><b>↗</b><strong>+50 breakers</strong><span>Inscritos en diferentes categorías</span></article>
-          <article><b>↗</b><strong>+40K en medios</strong><span>Vistas e interacciones en medios</span></article>
-          <article><b>↗</b><strong>1 documental</strong><span>Con reconocimientos internacionales</span></article>
-        </div>
-        <div class="home-gallery" aria-label="Galería de ediciones anteriores">
-          {galleryImages.map((src) => <img src={src} width="1100" height="734" alt="" loading="lazy" decoding="async" />)}
-        </div>
-      </section>
-
-      <section class="home-allies" aria-label="Sponsors por edición" data-edition-sponsors>
-        {editions.map((edition) => (
-          <div
-            class="home-allies-panel"
-            data-edition-panel={edition.id}
-            hidden={!edition.isCurrent}
-            aria-label={`Sponsors de ${edition.shortLabel}`}
-          >
-            <h2 class="sr-only">{edition.sponsors.eyebrow}</h2>
-            <div class="home-allies-logos">
-              {edition.sponsors.items.map((sponsor) =>
-                sponsor.logo ? (
-                  <img src={withBase(sponsor.logo)} width="480" height="320" alt={sponsor.name} loading="lazy" decoding="async" />
-                ) : (
-                  <strong>{sponsor.name}</strong>
-                )
-              )}
-            </div>
+      <section class="home-editions" id="ediciones" aria-label="Ediciones de Break The Beat">
+        <div class="home-edition-toolbar">
+          <div class="home-edition-bar">
+            <label>
+              <span>Ediciones</span>
+              <select data-edition-select aria-label="Elegir edición de Break The Beat">
+                {editions.map((edition) => (
+                  <option value={edition.id} selected={edition.isCurrent}>
+                    {edition.shortLabel} · {edition.year}
+                  </option>
+                ))}
+              </select>
+            </label>
+            {editions.map((edition) => (
+              <div class="home-edition-meta" data-edition-panel={edition.id} hidden={!edition.isCurrent} aria-live="polite">
+                <span>{edition.location}</span>
+                <strong>{edition.status}</strong>
+              </div>
+            ))}
           </div>
-        ))}
+        </div>
+
+        <section class="home-impact" id="impacto">
+          <div class="home-impact-heading">
+            <h2>Lo que <strong>ya logramos</strong></h2>
+          </div>
+          <div class="home-stat-grid" aria-label="Cifras acumuladas de Break The Beat">
+            <article><b>↗</b><strong>+500 asistentes</strong><span>En nuestras anteriores dos ediciones</span></article>
+            <article><b>↗</b><strong>+50 breakers</strong><span>Inscritos en diferentes categorías</span></article>
+            <article><b>↗</b><strong>+40K en medios</strong><span>Vistas e interacciones en medios</span></article>
+            <article><b>↗</b><strong>1 documental</strong><span>Con reconocimientos internacionales</span></article>
+          </div>
+          <div class="home-gallery" aria-label="Galería de ediciones anteriores">
+            {galleryImages.map((src) => <img src={src} width="1100" height="734" alt="" loading="lazy" decoding="async" />)}
+          </div>
+        </section>
+
+        <section class="home-allies" aria-label="Sponsors por edición" data-edition-sponsors>
+          {editions.map((edition) => (
+            <div
+              class="home-allies-panel"
+              data-edition-panel={edition.id}
+              hidden={!edition.isCurrent}
+              aria-label={`Sponsors de ${edition.shortLabel}`}
+            >
+              <h2 class="sr-only">{edition.sponsors.eyebrow}</h2>
+              <div class="home-allies-logos">
+                {edition.sponsors.items.map((sponsor) =>
+                  sponsor.logo ? (
+                    <img src={homeSponsorLogo(sponsor.logo, edition.id)} width="480" height="120" alt={sponsor.name} loading="lazy" decoding="async" />
+                  ) : (
+                    <strong>{sponsor.name}</strong>
+                  )
+                )}
+              </div>
+            </div>
+          ))}
+        </section>
       </section>
 
       <section class="home-final-cta">

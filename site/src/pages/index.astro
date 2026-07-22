@@ -3,7 +3,6 @@ import Icon from "../components/Icon.astro";
 import SiteFooter from "../components/SiteFooter.astro";
 import SiteHeader from "../components/SiteHeader.astro";
 import { editions } from "../data/editions";
-import { event } from "../data/site";
 import { withBase } from "../utils/paths";
 import "../styles/global.css";
 
@@ -14,7 +13,7 @@ const editionInfoUrl = (id: string) => `${withBase("/evento/")}?edicion=${id}`;
 const galleryImages = Array.from({ length: 12 }, (_, index) =>
   withBase(`/assets/home-2026/gallery-${String(index + 1).padStart(2, "0")}.webp`)
 );
-const historicalSponsors = editions.find((edition) => edition.id === "2")?.sponsors.items.slice(0, 5) ?? [];
+const currentSponsors = editions.find((edition) => edition.isCurrent)?.sponsors.items ?? [];
 ---
 
 <!doctype html>
@@ -120,10 +119,10 @@ const historicalSponsors = editions.find((edition) => edition.id === "2")?.spons
                   data-countdown="2026-09-27T00:00:00-05:00"
                   aria-label="Cuenta regresiva para Break The Beat 2026"
                 >
-                  <div><strong data-countdown-days>00</strong><span>Días</span></div>
-                  <div><strong data-countdown-hours>00</strong><span>Horas</span></div>
-                  <div><strong data-countdown-minutes>00</strong><span>Min</span></div>
-                  <div><strong data-countdown-seconds>00</strong><span>Seg</span></div>
+                  <div><div><strong data-countdown-days>00</strong></div><span>Días</span></div>
+                  <div><div><strong data-countdown-hours>00</strong></div><span>Horas</span></div>
+                  <div><div><strong data-countdown-minutes>00</strong></div><span>Min</span></div>
+                  <div><div><strong data-countdown-seconds>00</strong></div><span>Seg</span></div>
                   <p class="sr-only" data-countdown-live aria-live="polite"></p>
                 </div>
               ) : (
@@ -134,10 +133,12 @@ const historicalSponsors = editions.find((edition) => edition.id === "2")?.spons
                 {edition.isCurrent && (
                   <a class="home-button home-button-pink" href={withBase("/inscripcion/")}>¡Quiero unirme!</a>
                 )}
-                <a class="home-text-link" href={editionInfoUrl(edition.id)}>
-                  Información de la edición
-                  <Icon name="arrow-up-right" size={18} />
-                </a>
+                {!edition.isCurrent && (
+                  <a class="home-text-link" href={editionInfoUrl(edition.id)}>
+                    Información de la edición
+                    <Icon name="arrow-up-right" size={18} />
+                  </a>
+                )}
               </div>
             </div>
           </article>
@@ -164,9 +165,16 @@ const historicalSponsors = editions.find((edition) => edition.id === "2")?.spons
       </section>
 
       <div class="home-tape" aria-hidden="true">
-        <div>
-          {Array.from({ length: 8 }, () => (
-            <span>Break your limits <b>★</b></span>
+        <div class="home-tape-track">
+          {Array.from({ length: 2 }, () => (
+            <div class="home-tape-group">
+              {Array.from({ length: 12 }, () => (
+                <span>
+                  <span><strong>break</strong> your <em>limits</em></span>
+                  <img src={withBase("/assets/home-2026/dancer.svg")} width="24" height="39" alt="" />
+                </span>
+              ))}
+            </div>
           ))}
         </div>
       </div>
@@ -217,18 +225,17 @@ const historicalSponsors = editions.find((edition) => edition.id === "2")?.spons
         </div>
       </section>
 
-      <section class="home-allies" aria-label="Aliados de ediciones anteriores">
-        <p>Aliados de ediciones anteriores</p>
+      <section class="home-allies" aria-label="Sponsors de Break The Beat 2026">
+        <h2 class="sr-only">Sponsors de Break The Beat 2026</h2>
         <div class="home-allies-logos">
-          {historicalSponsors.map((sponsor) =>
+          {currentSponsors.map((sponsor) =>
             sponsor.logo ? (
-              <img src={withBase(sponsor.logo)} width="360" height="200" alt={sponsor.name} loading="lazy" decoding="async" />
+              <img src={withBase(sponsor.logo)} width="480" height="320" alt={sponsor.name} loading="lazy" decoding="async" />
             ) : (
               <strong>{sponsor.name}</strong>
             )
           )}
         </div>
-        <a href={`mailto:${event.email}`}>Sponsors 2026 por confirmar <Icon name="arrow-up-right" size={17} /></a>
       </section>
 
       <section class="home-final-cta">

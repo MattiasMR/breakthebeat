@@ -9,6 +9,12 @@ interface Props {
 
 const { variant = "default" } = Astro.props;
 const isHomeOverhaul = variant === "home";
+const homeSocials = [
+  { label: "Instagram", href: event.instagramUrl },
+  { label: "Tiktok" },
+  { label: "Youtube" },
+  { label: "Whatsapp" }
+];
 ---
 
 {isHomeOverhaul ? (
@@ -23,15 +29,17 @@ const isHomeOverhaul = variant === "home";
       </nav>
       <nav aria-label="Redes sociales">
         <h2>Redes</h2>
-        <a href={event.instagramUrl} target="_blank" rel="noreferrer">
-          Instagram
-          <Icon name="arrow-up-right" size={15} />
-        </a>
+        {homeSocials.map((social) =>
+          social.href ? (
+            <a href={social.href} target="_blank" rel="noreferrer">{social.label}</a>
+          ) : (
+            <span>{social.label}</span>
+          )
+        )}
       </nav>
       <div class="home-footer-contact">
         <h2>Contáctanos</h2>
         <a href={`mailto:${event.email}`}>{event.email}</a>
-        <p>{event.city}</p>
       </div>
     </div>
     <img

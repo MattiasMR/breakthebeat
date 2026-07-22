@@ -76,6 +76,11 @@ export interface Edition {
 }
 
 const commonSponsors = {
+  axe: { name: "Axe", logo: "/assets/sponsors/axe.webp" },
+  losAndes: { name: "Los Andes", logo: "/assets/sponsors/los-andes.webp" },
+  rexona: { name: "Rexona", logo: "/assets/sponsors/rexona.webp" },
+  cafeOro: { name: "Café Oro", logo: "/assets/sponsors/cafe-oro.webp" },
+  makai: { name: "Makai Hotel", logo: "/assets/sponsors/makai.webp" },
   pepsi: { name: "Pepsi", logo: "/assets/sponsors/pepsi.png" },
   sony: { name: "Sony", logo: "/assets/sponsors/sony.png" },
   bazzuka: { name: "Bazzuka", logo: "/assets/sponsors/bazzuka.png" },
@@ -531,10 +536,15 @@ export const editions: Edition[] = [
     ],
     sponsors: {
       eyebrow: "Sponsors · Edición 3",
-      title: "Marcas de la tercera edición por confirmar.",
-      note:
-        "Las marcas de ediciones anteriores no se muestran como sponsors 2026. Esta vista se actualizará cuando existan acuerdos confirmados.",
-      items: []
+      title: "Marcas que impulsan la tercera edición.",
+      note: "Axe, Los Andes, Rexona, Café Oro y Makai Hotel acompañan Break The Beat 2026.",
+      items: [
+        commonSponsors.axe,
+        commonSponsors.losAndes,
+        commonSponsors.rexona,
+        commonSponsors.cafeOro,
+        commonSponsors.makai
+      ]
     },
     eventInfo: {
       description:

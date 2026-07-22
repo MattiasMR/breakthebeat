@@ -24,14 +24,19 @@ const headerNavItems = isHomeOverhaul
 
 <header class:list={["site-header", { "site-header-home": isHomeOverhaul }]} aria-label="Navegación principal">
   <a class="brand-mark" href={isHome ? "#inicio" : withBase("/")} aria-label="Break The Beat inicio">
-    <img src={withBase("/assets/break-the-beat-logo.webp")} width="900" height="569" alt="Break The Beat" />
+    <img
+      src={withBase(isHomeOverhaul ? "/assets/home-2026/header-logo.webp" : "/assets/break-the-beat-logo.webp")}
+      width="900"
+      height="569"
+      alt="Break The Beat"
+    />
   </a>
   <nav class="desktop-nav">
     {headerNavItems.map((item) => <a href={item.href}>{item.label}</a>)}
   </nav>
   <div class="header-actions">
     <a class="header-register" href={withBase("/inscripcion/")}>
-      <span>Inscribirme</span>
+      <span>{isHomeOverhaul ? "Inscríbete" : "Inscribirme"}</span>
       <Icon name="ticket-check" size={18} />
     </a>
     {!isHomeOverhaul && (

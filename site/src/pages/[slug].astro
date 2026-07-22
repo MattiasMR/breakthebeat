@@ -16,6 +16,7 @@ export function getStaticPaths() {
 const { page } = Astro.props;
 const pageTitle = `${page.title} | ${event.title}`;
 const description = page.summary;
+const isDonationPage = page.slug === "apoyar";
 ---
 
 <!doctype html>
@@ -49,28 +50,102 @@ const description = page.summary;
           <p class="eyebrow">{page.eyebrow}</p>
           <h1>{page.title}</h1>
           <p>{page.summary}</p>
-          <a class="button button-primary" href={withBase("/#contacto")}>
-            Contacto oficial
-            <Icon name="arrow-right" size={18} />
-          </a>
+          {isDonationPage ? (
+            <a class="button button-primary" href="#donar">
+              Elegir cuánto donar
+              <Icon name="hand-heart" size={18} />
+            </a>
+          ) : (
+            <a class="button button-primary" href={`mailto:${event.email}`}>
+              Contacto oficial
+              <Icon name="mail" size={18} />
+            </a>
+          )}
         </div>
       </section>
 
-      <section class="detail-body section-light">
-        <div class="section-heading compact">
-          <div class="section-label">Detalle</div>
-          <h2>Lo importante de esta parte.</h2>
-        </div>
-        <div class="detail-list">
-          {page.bullets.map((item) => (
-            <article>
-              <span aria-hidden="true"></span>
-              <p>{item}</p>
-            </article>
-          ))}
-        </div>
-      </section>
+      {isDonationPage ? (
+        <section class="donation-section section-light" id="donar">
+          <div class="section-heading compact">
+            <div class="section-label">Aporte directo</div>
+            <h2>Elige el monto que quieres donar.</h2>
+            <p>
+              Indica tu aporte y te ayudaremos a solicitar los datos oficiales de transferencia
+              al equipo de Break The Beat.
+            </p>
+          </div>
+
+          <div class="donation-layout">
+            <form class="donation-card" data-donation-form data-contact-email={event.email} novalidate>
+              <fieldset>
+                <legend>Monto en dólares</legend>
+                <div class="donation-amounts">
+                  {[10, 25, 50, 100].map((amount) => (
+                    <label class="donation-option">
+                      <input type="radio" name="donationAmount" value={amount} />
+                      <span>USD {amount}</span>
+                    </label>
+                  ))}
+                </div>
+              </fieldset>
+
+              <label class="donation-custom">
+                <span>Otro monto</span>
+                <div>
+                  <strong>USD</strong>
+                  <input
+                    type="number"
+                    name="customAmount"
+                    min="1"
+                    step="1"
+                    inputmode="decimal"
+                    placeholder="Ingresa el monto"
+                    aria-describedby="donation-help"
+                  />
+                </div>
+              </label>
+
+              <button class="button button-primary" type="submit">
+                Solicitar datos para donar
+                <Icon name="mail" size={18} />
+              </button>
+              <p class="donation-feedback" data-donation-feedback aria-live="polite"></p>
+              <p class="donation-help" id="donation-help">
+                Esta página no realiza el cobro. Abriremos un correo con el monto elegido para que
+                el equipo confirme la cuenta receptora y la forma de rendición.
+              </p>
+            </form>
+
+            <div class="detail-list donation-assurances">
+              {page.bullets.map((item) => (
+                <article>
+                  <span aria-hidden="true"></span>
+                  <p>{item}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : (
+        <section class="detail-body section-light">
+          <div class="section-heading compact">
+            <div class="section-label">Detalle</div>
+            <h2>Lo importante de esta parte.</h2>
+          </div>
+          <div class="detail-list">
+            {page.bullets.map((item) => (
+              <article>
+                <span aria-hidden="true"></span>
+                <p>{item}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
     </main>
     <SiteFooter />
+    <script>
+      import "../scripts/donation";
+    </script>
   </body>
 </html>

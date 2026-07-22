@@ -1099,6 +1099,156 @@ h3 {
   font-weight: 850;
 }
 
+.donation-section {
+  padding: clamp(72px, 9vw, 128px) clamp(24px, 6vw, 96px);
+}
+
+.donation-section .section-heading {
+  max-width: 900px;
+}
+
+.donation-section .section-heading > p {
+  max-width: 720px;
+  color: rgba(5, 5, 5, 0.7);
+  font-size: clamp(1rem, 1.5vw, 1.18rem);
+  font-weight: 650;
+}
+
+.donation-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: clamp(20px, 4vw, 54px);
+  align-items: start;
+  margin-top: 36px;
+}
+
+.donation-card {
+  display: grid;
+  gap: 24px;
+  padding: clamp(24px, 4vw, 38px);
+  border: 2px solid var(--black);
+  border-radius: 14px;
+  background: var(--paper-strong);
+  box-shadow: 10px 10px 0 var(--magenta);
+}
+
+.donation-card fieldset {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.donation-card legend,
+.donation-custom > span {
+  margin-bottom: 12px;
+  color: var(--black);
+  font-size: 0.82rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.donation-amounts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.donation-option {
+  position: relative;
+  cursor: pointer;
+}
+
+.donation-option input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.donation-option span {
+  min-height: 56px;
+  display: grid;
+  place-items: center;
+  border: 2px solid var(--black);
+  border-radius: 9px;
+  background: #fff;
+  color: var(--black);
+  font-size: 1rem;
+  font-weight: 950;
+}
+
+.donation-option input:checked + span {
+  background: var(--magenta);
+  color: #fff;
+}
+
+.donation-option input:focus-visible + span {
+  outline: 3px solid var(--black);
+  outline-offset: 3px;
+}
+
+.donation-custom {
+  display: grid;
+}
+
+.donation-custom > div {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  overflow: hidden;
+  border: 2px solid var(--black);
+  border-radius: 9px;
+  background: #fff;
+}
+
+.donation-custom strong {
+  padding: 0 14px;
+  font-size: 0.82rem;
+}
+
+.donation-custom input {
+  width: 100%;
+  min-height: 58px;
+  padding: 0 16px;
+  border: 0;
+  border-left: 2px solid var(--black);
+  background: #fff;
+  color: var(--black);
+  font: 800 1rem "Space Grotesk", sans-serif;
+}
+
+.donation-custom input:focus {
+  outline: 3px solid var(--magenta);
+  outline-offset: -3px;
+}
+
+.donation-card .button {
+  width: 100%;
+  justify-content: center;
+}
+
+.donation-feedback {
+  min-height: 1.4em;
+  margin: -10px 0 0;
+  color: #a0004a;
+  font-weight: 850;
+}
+
+.donation-help {
+  margin: -12px 0 0;
+  color: rgba(5, 5, 5, 0.68);
+  font-size: 0.84rem;
+  line-height: 1.55;
+}
+
+.donation-assurances {
+  grid-template-columns: 1fr;
+}
+
+.donation-assurances article {
+  min-height: 104px;
+}
+
 @media (max-width: 1060px) {
   .desktop-nav {
     display: none;
@@ -1184,6 +1334,10 @@ h3 {
   .award-list,
   .rewind-strip,
   .detail-list {
+    grid-template-columns: 1fr;
+  }
+
+  .donation-layout {
     grid-template-columns: 1fr;
   }
 
@@ -2539,6 +2693,26 @@ html[data-home-overhaul] body {
   color: #ff0076;
 }
 
+.home-edition-detail {
+  min-height: 58px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border-left: 1px solid rgba(255, 255, 255, 0.14);
+  background: #ff0076;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.home-edition-detail:hover,
+.home-edition-detail:focus-visible {
+  background: #fff;
+  color: #000;
+}
+
 .home-tape {
   position: relative;
   z-index: 9;
@@ -3297,17 +3471,19 @@ html[data-home-overhaul] body {
 
   .home-edition-toolbar {
     top: 74px;
-    min-height: 124px;
+    min-height: 176px;
     padding: 12px 16px 0;
   }
 
   .home-edition-bar label,
-  .home-edition-meta {
+  .home-edition-meta,
+  .home-edition-detail {
     min-height: 48px;
     justify-content: space-between;
   }
 
-  .home-edition-meta {
+  .home-edition-meta,
+  .home-edition-detail {
     border-top: 1px solid rgba(255, 255, 255, 0.14);
     border-left: 0;
   }

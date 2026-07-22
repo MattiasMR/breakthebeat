@@ -13,9 +13,9 @@ export const event = {
 };
 
 export const navItems = [
-  { label: "Quiénes somos", href: "#quienes-somos" },
+  { label: "Quiénes somos", href: "#evento" },
   { label: "Impacto", href: "#impacto" },
-  { label: "Highlights", href: "#highlights" },
+  { label: "Ediciones", href: "#ediciones" },
   { label: "Sponsors", href: "#sponsors" }
 ];
 
@@ -134,12 +134,12 @@ export const featurePages = [
     image: "/assets/winners.webp",
     alt: "Ganadores del torneo con cheque de premiación",
     summary:
-      "La web deja preparados los canales de aporte, pero no publica links reales hasta confirmar cuenta responsable, política de devolución y forma de rendición.",
+      "Elige cuánto quieres aportar y solicita los datos oficiales de transferencia directamente al equipo de Break The Beat.",
     bullets: [
-      "PayPhone, PayPal y transferencia quedan listos como opciones futuras.",
-      "No hay checkout integrado ni datos bancarios publicados.",
-      "Los aportes no se presentan como donación deducible sin respaldo legal.",
-      "Sponsors y colaboradores se gestionan por contacto oficial."
+      "Puedes indicar el monto de tu aporte en dólares.",
+      "El equipo confirma por correo la cuenta receptora y los pasos de transferencia.",
+      "La web no procesa el cobro ni publica datos bancarios sin confirmación oficial.",
+      "Los auspicios y colaboraciones se gestionan directamente con el proyecto."
     ]
   }
 ];
@@ -276,9 +276,9 @@ export const footerGroups = [
   {
     title: "Break The Beat",
     links: [
-      { label: "Quiénes somos", href: "/#quienes-somos" },
+      { label: "Quiénes somos", href: "/#evento" },
       { label: "Impacto", href: "/#impacto" },
-      { label: "Highlights", href: "/#highlights" },
+      { label: "Ediciones", href: "/#ediciones" },
       { label: "Sponsors", href: "/#sponsors" },
       { label: "Información del evento", href: "/evento/" }
     ]
@@ -287,7 +287,7 @@ export const footerGroups = [
     title: "Participar",
     links: [
       { label: "Donar ahora", href: "/apoyar/" },
-      { label: "Contacto oficial", href: "/#contacto" },
+      { label: "Contacto oficial", href: `mailto:${event.email}` },
       { label: "Instagram", href: event.instagramUrl },
       { label: "Email del proyecto", href: `mailto:${event.email}` },
       { label: "Pagos por confirmar", href: "/apoyar/" }
@@ -299,7 +299,7 @@ export const footerGroups = [
       { label: "Domingo 27 de septiembre 2026", href: "/#inicio" },
       { label: "Plaza de los Teatros, calle Panamá", href: "/#inicio" },
       { label: "Links de pago pendientes", href: "/apoyar/" },
-      { label: "Sponsors 2026 por confirmar", href: "/#sponsors" }
+      { label: "Sponsors 2026", href: "/#sponsors" }
     ]
   }
 ];

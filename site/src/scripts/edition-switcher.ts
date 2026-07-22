@@ -3,6 +3,7 @@ const DEFAULT_EDITION = "3";
 
 const panels = Array.from(document.querySelectorAll<HTMLElement>("[data-edition-panel]"));
 const selectors = Array.from(document.querySelectorAll<HTMLSelectElement>("[data-edition-select]"));
+const detailLinks = Array.from(document.querySelectorAll<HTMLAnchorElement>("[data-edition-detail]"));
 
 function editionFromUrl() {
   const requested = new URL(window.location.href).searchParams.get("edicion");
@@ -24,6 +25,13 @@ function showEdition(editionId: string, updateUrl = true) {
 
   selectors.forEach((selector) => {
     selector.value = activeId;
+  });
+
+  detailLinks.forEach((link) => {
+    const url = new URL(link.href, window.location.href);
+    url.searchParams.set("edicion", activeId);
+    link.href = `${url.pathname}${url.search}${url.hash}`;
+    link.setAttribute("aria-label", `Ver información de la edición ${activeId}`);
   });
 
   document.documentElement.dataset.edition = activeId;

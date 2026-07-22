@@ -215,6 +215,10 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
                 <strong>{edition.status}</strong>
               </div>
             ))}
+            <a class="home-edition-detail" href={editionInfoUrl("3")} data-edition-detail>
+              Ver información
+              <Icon name="arrow-right" size={16} />
+            </a>
           </div>
         </div>
 
@@ -233,7 +237,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
           </div>
         </section>
 
-        <section class="home-allies" aria-label="Sponsors por edición" data-edition-sponsors>
+        <section class="home-allies" id="sponsors" aria-label="Sponsors por edición" data-edition-sponsors>
           {editions.map((edition) => (
             <div
               class="home-allies-panel"

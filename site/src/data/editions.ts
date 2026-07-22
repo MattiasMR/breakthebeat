@@ -452,10 +452,10 @@ export const editions: Edition[] = [
           alt: "Público joven acompañando una edición anterior"
         },
         {
-          eyebrow: "$600 USD",
-          title: "Premio anunciado",
+          eyebrow: "$500 + $200 USD",
+          title: "Premios anunciados",
           text:
-            "El media kit 2026 anuncia un premio de seiscientos dólares para la persona ganadora.",
+            "La premiación contempla USD 500 para el primer lugar y USD 200 para el segundo lugar.",
           image: "/assets/winners.webp",
           alt: "Ganadores de una edición anterior de Break The Beat"
         },
@@ -550,7 +550,7 @@ export const editions: Edition[] = [
       description:
         "La tercera edición será una competencia nacional de breaking con música en vivo, shows, freestyle abierto y participación de bailarines de todo Ecuador.",
       categories: ["1 vs 1", "2 vs 2", "BGirls"],
-      prize: "USD 600 para la persona ganadora, según el media kit 2026.",
+      prize: "1er lugar: USD 500. 2do lugar: USD 200.",
       schedule: "Domingo 27 Sept, 2026 · 10 AM."
     }
   }

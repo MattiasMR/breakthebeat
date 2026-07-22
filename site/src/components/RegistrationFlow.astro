@@ -18,8 +18,9 @@ const { turnstileSiteKey, variant = "page" } = Astro.props;
     <ol data-progress-list>
       <li class="is-active" data-progress-step="categories"><span>1</span><div><strong>Categorías</strong><small>Cómo competirás</small></div></li>
       <li data-progress-step="captain"><span>2</span><div><strong>Tus datos</strong><small>Perfil principal</small></div></li>
-      <li data-progress-step="partner"><span>3</span><div><strong>Compañero</strong><small>Solo para 2 vs 2</small></div></li>
-      <li data-progress-step="medical"><span>4</span><div><strong>Emergencia</strong><small>Salud y contacto</small></div></li>
+      <li data-progress-step="partner" hidden><span>3</span><div><strong>Compañero</strong><small>Solo para 2 vs 2</small></div></li>
+      <li data-progress-step="health"><span>3</span><div><strong>Salud</strong><small>Información confidencial</small></div></li>
+      <li data-progress-step="emergency"><span>4</span><div><strong>Emergencia</strong><small>Persona de contacto</small></div></li>
       <li data-progress-step="review"><span>5</span><div><strong>Revisión</strong><small>Confirma los datos</small></div></li>
       <li data-progress-step="consents"><span>6</span><div><strong>Autorización</strong><small>Documentos y envío</small></div></li>
     </ol>
@@ -36,7 +37,7 @@ const { turnstileSiteKey, variant = "page" } = Astro.props;
 
         <section class="form-step is-active" data-form-step="categories">
           <div class="form-step-heading">
-            <p class="step-kicker">Paso 1 de 6</p>
+            <p class="step-kicker" data-step-kicker>Paso 1 de 6</p>
             <h2>¿En qué categorías participarás?</h2>
             <p>Puedes seleccionar más de una. Elegir 2 vs 2 activará el perfil completo del compañero.</p>
           </div>
@@ -51,7 +52,7 @@ const { turnstileSiteKey, variant = "page" } = Astro.props;
 
         <section class="form-step" data-form-step="captain" hidden>
           <div class="form-step-heading">
-            <p class="step-kicker">Paso 2 de 6</p>
+            <p class="step-kicker" data-step-kicker>Paso 2 de 6</p>
             <h2>Cuéntanos quién eres.</h2>
             <p>Usaremos estos datos para tu acreditación, comunicación y merch.</p>
           </div>
@@ -64,7 +65,7 @@ const { turnstileSiteKey, variant = "page" } = Astro.props;
 
         <section class="form-step" data-form-step="partner" hidden data-partner-step>
           <div class="form-step-heading">
-            <p class="step-kicker">Paso 3 de 6</p>
+            <p class="step-kicker" data-step-kicker>Paso 3 de 7</p>
             <h2>Registra a tu compañero.</h2>
             <p>Completa su perfil y marca cualquier categoría individual adicional en la que participará.</p>
           </div>
@@ -76,16 +77,34 @@ const { turnstileSiteKey, variant = "page" } = Astro.props;
           </div>
         </section>
 
-        <section class="form-step" data-form-step="medical" hidden>
+        <section class="form-step" data-form-step="health" hidden>
           <div class="form-step-heading">
-            <p class="step-kicker">Paso 4 de 6</p>
-            <h2>Información médica y de emergencia.</h2>
+            <p class="step-kicker" data-step-kicker>Paso 3 de 6</p>
+            <h2>Información de salud.</h2>
             <p>Será confidencial y se utilizará únicamente durante la organización y atención de emergencias del evento.</p>
           </div>
           <div class="medical-stack">
-            <MedicalFields prefix="captain" title="Participante principal" />
+            <MedicalFields prefix="captain" title="Participante principal" section="health" />
             <div data-partner-medical hidden>
-              <MedicalFields prefix="partner" title="Compañero de dupla" />
+              <MedicalFields prefix="partner" title="Compañero de dupla" section="health" />
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="button button-ghost" type="button" data-back><Icon name="arrow-left" size={18} /> Atrás</button>
+            <button class="button button-primary" type="button" data-next>Continuar <Icon name="arrow-right" size={18} /></button>
+          </div>
+        </section>
+
+        <section class="form-step" data-form-step="emergency" hidden>
+          <div class="form-step-heading">
+            <p class="step-kicker" data-step-kicker>Paso 4 de 6</p>
+            <h2>Contacto de emergencia.</h2>
+            <p>Indica a quién debe contactar la organización si necesitas asistencia durante el evento.</p>
+          </div>
+          <div class="medical-stack">
+            <MedicalFields prefix="captain" title="Participante principal" section="emergency" />
+            <div data-partner-medical hidden>
+              <MedicalFields prefix="partner" title="Compañero de dupla" section="emergency" />
             </div>
           </div>
           <div class="submit-alert" data-medical-alert role="alert" hidden></div>
@@ -97,7 +116,7 @@ const { turnstileSiteKey, variant = "page" } = Astro.props;
 
         <section class="form-step" data-form-step="review" hidden>
           <div class="form-step-heading">
-            <p class="step-kicker">Paso 5 de 6</p>
+            <p class="step-kicker" data-step-kicker>Paso 5 de 6</p>
             <h2>Revisa antes de autorizar.</h2>
             <p>Los datos médicos se resumen como alertas, sin repetir sus detalles en esta pantalla.</p>
           </div>
@@ -110,7 +129,7 @@ const { turnstileSiteKey, variant = "page" } = Astro.props;
 
         <section class="form-step" data-form-step="consents" hidden>
           <div class="form-step-heading">
-            <p class="step-kicker">Paso 6 de 6</p>
+            <p class="step-kicker" data-step-kicker>Paso 6 de 6</p>
             <h2>Documentos y autorizaciones.</h2>
             <p>Abre y revisa los documentos vigentes antes de marcar cada aceptación.</p>
           </div>

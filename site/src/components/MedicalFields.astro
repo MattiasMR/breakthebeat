@@ -2,82 +2,89 @@
 interface Props {
   prefix: "captain" | "partner";
   title: string;
+  section?: "all" | "health" | "emergency";
 }
 
-const { prefix, title } = Astro.props;
+const { prefix, title, section = "all" } = Astro.props;
 ---
 
-<article class="medical-panel" data-medical-panel={prefix}>
+<article class="medical-panel" data-medical-panel={prefix} data-medical-section={section}>
   <div class="form-card-heading">
     <p class="step-kicker">Información confidencial</p>
     <h3>{title}</h3>
   </div>
 
-  <fieldset class="field compact-fieldset">
-    <legend>¿Existe alguna condición médica que debamos conocer? <b aria-hidden="true">*</b></legend>
-    <div class="inline-choices">
-      <label><input type="radio" name={`${prefix}.medical.hasCondition`} value="true" required data-detail-toggle={`${prefix}-condition`} /> <span>Sí</span></label>
-      <label><input type="radio" name={`${prefix}.medical.hasCondition`} value="false" required data-detail-toggle={`${prefix}-condition`} /> <span>No</span></label>
-    </div>
-  </fieldset>
-  <label class="field conditional-field" data-detail={`${prefix}-condition`} hidden>
-    <span>Describe la condición médica <b aria-hidden="true">*</b></span>
-    <textarea name={`${prefix}.medical.conditionDetail`} rows="3" maxlength="1000"></textarea>
-  </label>
-
-  <fieldset class="field compact-fieldset">
-    <legend>¿Es alérgico/a a algún medicamento o alimento? <b aria-hidden="true">*</b></legend>
-    <div class="inline-choices">
-      <label><input type="radio" name={`${prefix}.medical.hasAllergies`} value="true" required data-detail-toggle={`${prefix}-allergy`} /> <span>Sí</span></label>
-      <label><input type="radio" name={`${prefix}.medical.hasAllergies`} value="false" required data-detail-toggle={`${prefix}-allergy`} /> <span>No</span></label>
-    </div>
-  </fieldset>
-  <div class="conditional-grid" data-detail={`${prefix}-allergy`} hidden>
-    <label class="field">
-      <span>Medicamento</span>
-      <textarea name={`${prefix}.medical.medicationAllergyDetail`} rows="3" maxlength="1000"></textarea>
-    </label>
-    <label class="field">
-      <span>Alimento</span>
-      <textarea name={`${prefix}.medical.foodAllergyDetail`} rows="3" maxlength="1000"></textarea>
-    </label>
-  </div>
-
-  <fieldset class="field compact-fieldset">
-    <legend>¿Toma algún medicamento permanentemente? <b aria-hidden="true">*</b></legend>
-    <div class="inline-choices">
-      <label><input type="radio" name={`${prefix}.medical.takesMedication`} value="true" required data-detail-toggle={`${prefix}-medication`} /> <span>Sí</span></label>
-      <label><input type="radio" name={`${prefix}.medical.takesMedication`} value="false" required data-detail-toggle={`${prefix}-medication`} /> <span>No</span></label>
-    </div>
-  </fieldset>
-  <label class="field conditional-field" data-detail={`${prefix}-medication`} hidden>
-    <span>Indica cuál y la dosis <b aria-hidden="true">*</b></span>
-    <textarea name={`${prefix}.medical.medicationDetail`} rows="3" maxlength="1000"></textarea>
-  </label>
-
-  <div class="emergency-block">
-    <h4>Contacto de emergencia</h4>
-    <div class="field-grid">
-      <label class="field">
-        <span>Relación <b aria-hidden="true">*</b></span>
-        <select name={`${prefix}.medical.emergencyRelationship`} required>
-          <option value="">Seleccionar</option>
-          <option>Padre</option>
-          <option>Madre</option>
-          <option>Hermano/a</option>
-          <option>Pareja</option>
-          <option>Amigo/a</option>
-          <option>Otro</option>
-        </select>
+  {section !== "emergency" && (
+    <>
+      <fieldset class="field compact-fieldset">
+        <legend>¿Existe alguna condición médica que debamos conocer? <b aria-hidden="true">*</b></legend>
+        <div class="inline-choices">
+          <label><input type="radio" name={`${prefix}.medical.hasCondition`} value="true" required data-detail-toggle={`${prefix}-condition`} /> <span>Sí</span></label>
+          <label><input type="radio" name={`${prefix}.medical.hasCondition`} value="false" required data-detail-toggle={`${prefix}-condition`} /> <span>No</span></label>
+        </div>
+      </fieldset>
+      <label class="field conditional-field" data-detail={`${prefix}-condition`} hidden>
+        <span>Describe la condición médica <b aria-hidden="true">*</b></span>
+        <textarea name={`${prefix}.medical.conditionDetail`} rows="3" maxlength="1000"></textarea>
       </label>
-      <label class="field">
-        <span>Nombre completo <b aria-hidden="true">*</b></span>
-        <input name={`${prefix}.medical.emergencyName`} required minlength="2" maxlength="120" />
+
+      <fieldset class="field compact-fieldset">
+        <legend>¿Es alérgico/a a algún medicamento o alimento? <b aria-hidden="true">*</b></legend>
+        <div class="inline-choices">
+          <label><input type="radio" name={`${prefix}.medical.hasAllergies`} value="true" required data-detail-toggle={`${prefix}-allergy`} /> <span>Sí</span></label>
+          <label><input type="radio" name={`${prefix}.medical.hasAllergies`} value="false" required data-detail-toggle={`${prefix}-allergy`} /> <span>No</span></label>
+        </div>
+      </fieldset>
+      <div class="conditional-grid" data-detail={`${prefix}-allergy`} hidden>
+        <label class="field">
+          <span>Medicamento</span>
+          <textarea name={`${prefix}.medical.medicationAllergyDetail`} rows="3" maxlength="1000"></textarea>
+        </label>
+        <label class="field">
+          <span>Alimento</span>
+          <textarea name={`${prefix}.medical.foodAllergyDetail`} rows="3" maxlength="1000"></textarea>
+        </label>
+      </div>
+
+      <fieldset class="field compact-fieldset">
+        <legend>¿Toma algún medicamento permanentemente? <b aria-hidden="true">*</b></legend>
+        <div class="inline-choices">
+          <label><input type="radio" name={`${prefix}.medical.takesMedication`} value="true" required data-detail-toggle={`${prefix}-medication`} /> <span>Sí</span></label>
+          <label><input type="radio" name={`${prefix}.medical.takesMedication`} value="false" required data-detail-toggle={`${prefix}-medication`} /> <span>No</span></label>
+        </div>
+      </fieldset>
+      <label class="field conditional-field" data-detail={`${prefix}-medication`} hidden>
+        <span>Indica cuál y la dosis <b aria-hidden="true">*</b></span>
+        <textarea name={`${prefix}.medical.medicationDetail`} rows="3" maxlength="1000"></textarea>
       </label>
-      <label class="field field-wide">
-        <span>Teléfono <b aria-hidden="true">*</b></span>
-        <input name={`${prefix}.medical.emergencyPhone`} type="tel" required minlength="8" maxlength="24" title="Incluye el código internacional, por ejemplo +593" placeholder="+593 99 123 4567" />
-      </label>
+    </>
+  )}
+
+  {section !== "health" && (
+    <div class="emergency-block">
+      <h4>Contacto de emergencia</h4>
+      <div class="field-grid">
+        <label class="field">
+          <span>Relación <b aria-hidden="true">*</b></span>
+          <select name={`${prefix}.medical.emergencyRelationship`} required>
+            <option value="">Seleccionar</option>
+            <option>Padre</option>
+            <option>Madre</option>
+            <option>Hermano/a</option>
+            <option>Pareja</option>
+            <option>Amigo/a</option>
+            <option>Otro</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>Nombre completo <b aria-hidden="true">*</b></span>
+          <input name={`${prefix}.medical.emergencyName`} required minlength="2" maxlength="120" />
+        </label>
+        <label class="field field-wide">
+          <span>Teléfono <b aria-hidden="true">*</b></span>
+          <input name={`${prefix}.medical.emergencyPhone`} type="tel" required minlength="8" maxlength="24" title="Incluye el código internacional, por ejemplo +593" placeholder="+593 99 123 4567" />
+        </label>
+      </div>
     </div>
-  </div>
+  )}
 </article>

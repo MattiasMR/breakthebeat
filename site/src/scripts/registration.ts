@@ -25,6 +25,7 @@ const systemBanner = document.querySelector<HTMLElement>("[data-registration-sta
 if (!form || !formFields || !systemBanner) throw new Error("Registration form markup is incomplete");
 
 const steps = Array.from(form.querySelectorAll<HTMLElement>("[data-form-step]"));
+const progressItems = Array.from(document.querySelectorAll<HTMLElement>("[data-progress-step]"));
 const submitAlert = form.querySelector<HTMLElement>("[data-submit-alert]");
 const medicalAlert = form.querySelector<HTMLElement>("[data-medical-alert]");
 const review = form.querySelector<HTMLElement>("[data-review]");
@@ -36,8 +37,8 @@ let registrationEnabled = false;
 const isDuo = () => Boolean(form.querySelector<HTMLInputElement>('input[name="captain.categories"][value="2v2"]')?.checked);
 
 const activeStepNames = () => isDuo()
-  ? ["categories", "captain", "partner", "medical", "review", "consents"]
-  : ["categories", "captain", "medical", "review", "consents"];
+  ? ["categories", "captain", "partner", "health", "emergency", "review", "consents"]
+  : ["categories", "captain", "health", "emergency", "review", "consents"];
 
 const setBanner = (message: string, state: "loading" | "ready" | "closed" | "error") => {
   systemBanner.textContent = message;
@@ -56,10 +57,29 @@ const setMedicalAlert = (message = "") => {
   medicalAlert.hidden = !message;
 };
 
-const showStep = (name: string) => {
-  currentStepName = name;
+const updateProgress = (name = currentStepName) => {
   const activeNames = activeStepNames();
   const activeIndex = activeNames.indexOf(name);
+
+  progressItems.forEach((item) => {
+    const stepName = item.dataset.progressStep ?? "";
+    const index = activeNames.indexOf(stepName);
+    item.hidden = index === -1;
+    item.classList.toggle("is-active", index === activeIndex);
+    item.classList.toggle("is-complete", index !== -1 && index < activeIndex);
+    const number = item.querySelector<HTMLElement>(":scope > span");
+    if (number && index !== -1) number.textContent = String(index + 1);
+  });
+
+  steps.forEach((step) => {
+    const index = activeNames.indexOf(step.dataset.formStep ?? "");
+    const kicker = step.querySelector<HTMLElement>("[data-step-kicker]");
+    if (kicker && index !== -1) kicker.textContent = `Paso ${index + 1} de ${activeNames.length}`;
+  });
+};
+
+const showStep = (name: string) => {
+  currentStepName = name;
 
   steps.forEach((step) => {
     const stepName = step.dataset.formStep ?? "";
@@ -67,14 +87,7 @@ const showStep = (name: string) => {
     step.hidden = !active;
     step.classList.toggle("is-active", active);
   });
-
-  document.querySelectorAll<HTMLElement>("[data-progress-step]").forEach((item) => {
-    const stepName = item.dataset.progressStep ?? "";
-    const index = activeNames.indexOf(stepName);
-    item.hidden = index === -1;
-    item.classList.toggle("is-active", index === activeIndex);
-    item.classList.toggle("is-complete", index !== -1 && index < activeIndex);
-  });
+  updateProgress(name);
 
   const heading = steps.find((step) => step.dataset.formStep === name)?.querySelector<HTMLElement>("h2");
   if (heading) {
@@ -97,8 +110,9 @@ const setPartnerEnabled = (enabled: boolean) => {
     }
     control.disabled = !enabled;
   });
-  const partnerMedical = form.querySelector<HTMLElement>("[data-partner-medical]");
-  if (partnerMedical) partnerMedical.hidden = !enabled;
+  form.querySelectorAll<HTMLElement>("[data-partner-medical]").forEach((partnerMedical) => {
+    partnerMedical.hidden = !enabled;
+  });
   const authority = form.querySelector<HTMLElement>("[data-captain-authority]");
   if (authority) authority.hidden = !enabled;
   const authorityInput = authority?.querySelector<HTMLInputElement>("input");
@@ -111,7 +125,11 @@ const setPartnerEnabled = (enabled: boolean) => {
 
 const syncDuo = () => {
   setPartnerEnabled(isDuo());
-  if (!isDuo() && currentStepName === "partner") showStep("medical");
+  if (!isDuo() && currentStepName === "partner") {
+    showStep("health");
+    return;
+  }
+  updateProgress();
 };
 
 const syncConditionalFields = () => {
@@ -212,7 +230,7 @@ const validateCurrentStep = () => {
   }
   if (!validateVisibleControls(step)) return false;
 
-  if (currentStepName === "medical") {
+  if (currentStepName === "emergency") {
     const data = new FormData(form);
     const participants = [collectParticipant("captain", data)];
     if (isDuo()) participants.push(collectParticipant("partner", data));
@@ -371,7 +389,7 @@ form.addEventListener("input", () => {
 
 form.querySelectorAll<HTMLButtonElement>("[data-next]").forEach((button) => button.addEventListener("click", () => {
   if (!validateCurrentStep()) return;
-  if (currentStepName === "medical") renderReview();
+  if (currentStepName === "emergency") renderReview();
   const names = activeStepNames();
   const next = names[names.indexOf(currentStepName) + 1];
   if (next) showStep(next);
@@ -411,7 +429,9 @@ form.addEventListener("submit", async (event) => {
         DUPLICATE_PARTICIPANT: "Uno de los correos ya está inscrito. Contacta al equipo para corregir o unir el registro.",
         REGISTRATION_CLOSED: "Las inscripciones se cerraron antes de completar el envío.",
         LEGAL_DOCUMENTS_NOT_READY: "Los documentos legales aún no están listos para recibir inscripciones.",
-        TURNSTILE_FAILED: "La verificación humana expiró. Inténtalo nuevamente."
+        TURNSTILE_FAILED: "La verificación humana expiró. Inténtalo nuevamente.",
+        INVALID_REGISTRATION: "Hay un dato con formato inválido. Vuelve a la revisión y comprueba tus perfiles.",
+        INTERNAL_ERROR: "El servidor no pudo completar la inscripción. Tus datos siguen en el formulario; inténtalo nuevamente."
       };
       throw new Error(messages[code] ?? "No pudimos guardar la inscripción. Revisa tu conexión e intenta nuevamente.");
     }

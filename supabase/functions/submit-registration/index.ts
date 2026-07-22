@@ -7,7 +7,7 @@ import { sendRegistrationEmails, updateEmailStatus, type EmailRegistration } fro
 
 declare const EdgeRuntime: { waitUntil(promise: Promise<unknown>): void } | undefined;
 
-Deno.serve(async (request) => {
+const handleRequest = async (request: Request) => {
   if (request.method === "OPTIONS") return optionsResponse(request);
   if (request.method !== "POST") return errorResponse(request, "METHOD_NOT_ALLOWED", 405);
   if (!isAllowedOrigin(request)) return errorResponse(request, "ORIGIN_NOT_ALLOWED", 403);
@@ -84,4 +84,13 @@ Deno.serve(async (request) => {
       categories: participant.categories
     }))
   }, 201);
+};
+
+Deno.serve(async (request) => {
+  try {
+    return await handleRequest(request);
+  } catch (error) {
+    console.error("Unhandled submit-registration error", error);
+    return errorResponse(request, "INTERNAL_ERROR", 500);
+  }
 });

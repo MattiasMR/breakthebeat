@@ -34,9 +34,8 @@ if (form) {
       return;
     }
 
-    const email = form.dataset.contactEmail;
-    if (!email) {
-      if (feedback) feedback.textContent = "El correo oficial no está disponible en este momento.";
+    if (!form.checkValidity()) {
+      form.reportValidity();
       return;
     }
 
@@ -44,17 +43,8 @@ if (form) {
       minimumFractionDigits: 0,
       maximumFractionDigits: 2
     }).format(amount);
-    const subject = `Quiero donar USD ${formattedAmount} a Break The Beat`;
-    const body = [
-      "Hola, equipo de Break The Beat:",
-      "",
-      `Quiero realizar un aporte de USD ${formattedAmount}.`,
-      "Por favor, confírmenme la cuenta receptora, los pasos de transferencia y la forma de rendición.",
-      "",
-      "Gracias."
-    ].join("\n");
-
-    if (feedback) feedback.textContent = "Abriendo tu correo con el monto elegido…";
-    window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    if (feedback) {
+      feedback.textContent = `Demo lista: aquí continuarías al pago de USD ${formattedAmount}. No se enviaron tus datos.`;
+    }
   });
 }

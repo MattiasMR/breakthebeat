@@ -1222,6 +1222,53 @@ h3 {
   outline-offset: -3px;
 }
 
+.donation-personal-data {
+  padding-top: 22px !important;
+  border-top: 2px solid var(--black) !important;
+}
+
+.donation-personal-data > p {
+  margin: -4px 0 18px;
+  color: rgba(5, 5, 5, 0.68);
+  font-size: 0.84rem;
+  line-height: 1.5;
+}
+
+.donation-fields {
+  display: grid;
+  gap: 14px;
+}
+
+.donation-fields label {
+  display: grid;
+  gap: 7px;
+  color: var(--black);
+  font-size: 0.78rem;
+  font-weight: 850;
+}
+
+.donation-fields label small {
+  color: rgba(5, 5, 5, 0.58);
+  font-size: inherit;
+  font-weight: 650;
+}
+
+.donation-fields input {
+  width: 100%;
+  min-height: 52px;
+  padding: 0 14px;
+  border: 2px solid var(--black);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--black);
+  font: 750 0.96rem "Space Grotesk", sans-serif;
+}
+
+.donation-fields input:focus {
+  outline: 3px solid var(--magenta);
+  outline-offset: 2px;
+}
+
 .donation-card .button {
   width: 100%;
   justify-content: center;
@@ -2693,24 +2740,162 @@ html[data-home-overhaul] body {
   color: #ff0076;
 }
 
-.home-edition-detail {
-  min-height: 58px;
+.home-edition-stage,
+.home-allies[data-edition-transition] {
+  transition: opacity 130ms ease-out, transform 130ms ease-out;
+}
+
+.home-edition-stage.is-edition-fading,
+.home-allies.is-edition-fading {
+  opacity: 0;
+  transform: translateY(5px);
+}
+
+.home-edition-stage {
+  overflow: hidden;
+  background: #ede6d8;
+  color: #090909;
+}
+
+.home-event-edition {
+  padding: clamp(76px, 8vw, 126px) clamp(24px, 6vw, 96px);
+}
+
+.home-event-heading {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 32px;
+  padding-bottom: clamp(32px, 5vw, 62px);
+  border-bottom: 2px solid #090909;
+}
+
+.home-event-heading h2 {
+  max-width: 960px;
+  margin: 0;
+  font-family: "Aurochs Heavy", Impact, sans-serif;
+  font-size: clamp(2.8rem, 7.4vw, 7.2rem);
+  font-weight: 800;
+  line-height: 0.86;
+  letter-spacing: -0.035em;
+  text-transform: uppercase;
+}
+
+.home-event-heading .event-status {
+  background: #ff0076;
+  color: #fff;
+}
+
+.home-event-summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(330px, 0.72fr);
+  gap: clamp(34px, 7vw, 100px);
+  padding: clamp(44px, 6vw, 82px) 0;
+  border-bottom: 2px solid #090909;
+}
+
+.home-event-copy > p:last-child {
+  max-width: 780px;
+  margin: 0;
+  font-size: clamp(1.05rem, 1.8vw, 1.35rem);
+  font-weight: 600;
+  line-height: 1.55;
+}
+
+.home-event-facts {
+  display: grid;
+  gap: 1px;
+  margin: 0;
+  overflow: hidden;
+  border: 2px solid #090909;
+  border-radius: 10px;
+  background: #090909;
+}
+
+.home-event-facts > div {
+  padding: 20px;
+  background: #f9f2e6;
+}
+
+.home-event-facts dt {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  color: #b40053;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.home-event-facts dd {
+  margin: 0;
+  font-weight: 700;
+}
+
+.home-event-details {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr);
+  gap: clamp(24px, 5vw, 72px);
+  padding-top: clamp(44px, 6vw, 82px);
+}
+
+.home-event-details h3 {
+  margin: 0 0 20px;
+  font-family: "Aurochs Heavy", Impact, sans-serif;
+  font-size: clamp(2.1rem, 4vw, 4rem);
+  line-height: 0.9;
+  text-transform: uppercase;
+}
+
+.home-event-details section > p:not(.kicker) {
+  max-width: 680px;
+  margin: -8px 0 24px;
+}
+
+.home-event-categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.home-event-categories span {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 9px 16px;
-  border-left: 1px solid rgba(255, 255, 255, 0.14);
-  background: #ff0076;
+  min-height: 48px;
+  padding: 10px 14px;
+  border: 2px solid #090909;
+  border-radius: 999px;
+  background: #090909;
   color: #fff;
-  font-size: 0.72rem;
-  font-weight: 700;
-  white-space: nowrap;
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-transform: uppercase;
 }
 
-.home-edition-detail:hover,
-.home-edition-detail:focus-visible {
-  background: #fff;
-  color: #000;
+.home-event-categories svg {
+  color: #ff0076;
+}
+
+.home-event-prize strong {
+  display: block;
+  padding: clamp(24px, 4vw, 38px);
+  border-radius: 10px;
+  background: #ff0076;
+  color: #090909;
+  font-size: clamp(1.3rem, 2.5vw, 2.35rem);
+  font-weight: 800;
+  line-height: 1.08;
+  text-transform: uppercase;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-edition-stage,
+  .home-allies[data-edition-transition] {
+    transition: none;
+  }
 }
 
 .home-tape {
@@ -3471,21 +3656,41 @@ html[data-home-overhaul] body {
 
   .home-edition-toolbar {
     top: 74px;
-    min-height: 176px;
+    min-height: 122px;
     padding: 12px 16px 0;
   }
 
   .home-edition-bar label,
-  .home-edition-meta,
-  .home-edition-detail {
+  .home-edition-meta {
     min-height: 48px;
     justify-content: space-between;
   }
 
-  .home-edition-meta,
-  .home-edition-detail {
+  .home-edition-meta {
     border-top: 1px solid rgba(255, 255, 255, 0.14);
     border-left: 0;
+  }
+
+  .home-event-heading,
+  .home-event-summary,
+  .home-event-details {
+    grid-template-columns: 1fr;
+  }
+
+  .home-event-heading {
+    align-items: start;
+  }
+
+  .home-event-heading .home-button {
+    width: 100%;
+  }
+
+  .home-event-summary {
+    gap: 30px;
+  }
+
+  .home-event-details {
+    gap: 48px;
   }
 
   .home-about {

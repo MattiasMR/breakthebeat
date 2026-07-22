@@ -50,7 +50,7 @@ const headerNavItems = isHomeOverhaul
     <summary aria-label="Abrir navegación">Menú</summary>
     <nav aria-label="Navegación móvil">
       {headerNavItems.map((item) => <a href={item.href}>{item.label}</a>)}
-      {!isHomeOverhaul && <a href={withBase("/evento/")}>Información del evento</a>}
+      {!isHomeOverhaul && <a href={withBase("/#ediciones")}>Información del evento</a>}
       <a href={withBase("/inscripcion/")} data-registration-open={isHomeOverhaul || undefined}>Inscribirme</a>
     </nav>
   </details>

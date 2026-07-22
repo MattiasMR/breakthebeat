@@ -2403,7 +2403,7 @@ html[data-home-overhaul] body {
 }
 
 .site-header-home {
-  position: absolute;
+  position: fixed;
   top: 0;
   right: auto;
   left: 50%;

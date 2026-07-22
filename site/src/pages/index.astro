@@ -9,134 +9,143 @@ import "../styles/global.css";
 
 const pageTitle = "Break The Beat | 3ra edición";
 const description =
-  "Sitio oficial de Break The Beat. Explora el impacto, highlights, sponsors e información de cada edición del torneo nacional de breaking en Guayaquil.";
+  "Sitio oficial de Break The Beat, competencia nacional de breaking y comunidad en Guayaquil.";
 const editionInfoUrl = (id: string) => `${withBase("/evento/")}?edicion=${id}`;
-const resolveEditionHref = (href: string) => (href.startsWith("/") ? withBase(href) : href);
+const galleryImages = Array.from({ length: 12 }, (_, index) =>
+  withBase(`/assets/home-2026/gallery-${String(index + 1).padStart(2, "0")}.webp`)
+);
+const historicalSponsors = editions.find((edition) => edition.id === "2")?.sponsors.items.slice(0, 5) ?? [];
 ---
 
 <!doctype html>
-<html lang="es" data-edition="3">
+<html lang="es" data-edition="3" data-home-overhaul>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
-    <meta name="theme-color" content="#050505" />
+    <meta name="theme-color" content="#000000" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={withBase("/assets/guayaquil-venue.webp")} />
+    <meta property="og:image" content={withBase("/assets/home-2026/hero-breaker.webp")} />
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" type="image/png" href={withBase("/assets/favicon.png")} />
-    <link rel="preload" as="image" href={withBase("/assets/guayaquil-venue.webp")} fetchpriority="high" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style
+      is:inline
+      set:html={`
+        @font-face {
+          font-family: "Aurochs Heavy";
+          src: url("${withBase("/assets/home-2026/aurochs-heavy.woff")}") format("woff");
+          font-style: normal;
+          font-weight: 800;
+          font-display: swap;
+        }
+        @font-face {
+          font-family: "Aurochs Regular";
+          src: url("${withBase("/assets/home-2026/aurochs-regular.woff")}") format("woff");
+          font-style: normal;
+          font-weight: 500;
+          font-display: swap;
+        }
+        @font-face {
+          font-family: "Aurochs Light";
+          src: url("${withBase("/assets/home-2026/aurochs-light.woff")}") format("woff");
+          font-style: normal;
+          font-weight: 300;
+          font-display: swap;
+        }
+      `}
+    ></style>
+    <link rel="preload" as="image" href={withBase("/assets/home-2026/hero-breaker.webp")} fetchpriority="high" />
     <title>{pageTitle}</title>
   </head>
   <body>
-    <SiteHeader isHome />
+    <SiteHeader isHome variant="home" />
 
-    <main id="inicio">
-      <section class="edition-hero section-dark" aria-label="Ediciones de Break The Beat">
+    <main id="inicio" class="home-page">
+      <section class="home-hero" aria-label="Próxima edición de Break The Beat">
         {editions.map((edition) => (
           <article
-            class="edition-hero-panel"
+            class="home-hero-panel"
             data-edition-panel={edition.id}
             data-page-title={`Break The Beat | ${edition.label}`}
             hidden={!edition.isCurrent}
           >
-            <div class="edition-hero-media" aria-hidden="true">
+            <img
+              class="home-hero-image"
+              src={withBase(edition.isCurrent ? "/assets/home-2026/hero-breaker.webp" : edition.hero.image)}
+              width={edition.isCurrent ? 2200 : 1600}
+              height={edition.isCurrent ? 1467 : 900}
+              alt={edition.hero.alt}
+              fetchpriority={edition.isCurrent ? "high" : undefined}
+              loading={edition.isCurrent ? "eager" : "lazy"}
+              decoding="async"
+            />
+            <div class="home-hero-shade" aria-hidden="true"></div>
+            {edition.isCurrent && (
               <img
-                src={withBase(edition.hero.image)}
-                width="1600"
-                height="900"
+                class="home-graffiti-star"
+                src={withBase("/assets/home-2026/graffiti-star.webp")}
+                width="506"
+                height="760"
                 alt=""
-                fetchpriority={edition.isCurrent ? "high" : undefined}
-                loading={edition.isCurrent ? "eager" : "lazy"}
-                decoding="async"
+                aria-hidden="true"
               />
-            </div>
-            <div class="edition-hero-overlay"></div>
-            <div class="edition-hero-inner">
-              <div class="edition-hero-copy">
-                <p class="eyebrow">{edition.hero.eyebrow}</p>
-                <img
-                  class="hero-logo"
-                  src={withBase("/assets/break-the-beat-logo.webp")}
-                  width="900"
-                  height="569"
-                  alt={event.title}
-                />
-                <h1>{edition.hero.title}</h1>
-                <p class="hero-copy">{edition.hero.summary}</p>
-                <div class="event-meta" aria-label="Información resumida del evento">
-                  <span>
-                    <Icon name="calendar-days" size={18} />
-                    {edition.date}
-                  </span>
-                  <span>
-                    <Icon name="map-pin" size={18} />
-                    {edition.location}, {edition.city}
-                  </span>
-                </div>
-                <div class="hero-actions">
-                  <a class="button button-primary" href={editionInfoUrl(edition.id)}>
-                    Ver información del evento
-                    <Icon name="arrow-right" size={19} />
-                  </a>
-                  {edition.isCurrent ? (
-                    <a class="button button-secondary" href={withBase("/inscripcion/")}>
-                      Inscribirme para competir
-                      <Icon name="ticket-check" size={18} />
-                    </a>
-                  ) : (
-                    <a class="button button-secondary" href="#highlights">
-                      Ver archivo de la edición
-                      <Icon name="arrow-right" size={18} />
-                    </a>
-                  )}
-                </div>
-              </div>
-
-              <aside class="stream-card" aria-label={edition.stream.title}>
-                <div class="stream-card-heading">
-                  <span>{edition.stream.eyebrow}</span>
-                  <Icon name="camera" size={20} />
-                </div>
-                {edition.stream.embedUrl ? (
-                  <iframe
-                    src={edition.stream.embedUrl}
-                    title={edition.stream.title}
-                    allow="autoplay; encrypted-media; picture-in-picture"
-                    allowfullscreen
-                    loading="lazy"
-                  ></iframe>
+            )}
+            <div class="home-hero-content">
+              <p class="home-date-pill">{edition.date}</p>
+              <h1>
+                {edition.isCurrent ? (
+                  <>
+                    <span>Un movimiento</span>
+                    <strong>con impacto</strong>
+                  </>
                 ) : (
-                  <div class="stream-placeholder">
-                    <Icon name="camera" size={42} />
-                    <div>
-                      <h2>{edition.stream.title}</h2>
-                      <p>{edition.stream.description}</p>
-                    </div>
-                  </div>
+                  <>
+                    <span>{edition.shortLabel}</span>
+                    <strong>{edition.hero.title}</strong>
+                  </>
                 )}
-                <a
-                  class="stream-link"
-                  href={resolveEditionHref(edition.stream.href)}
-                  target={edition.stream.href.startsWith("http") ? "_blank" : undefined}
-                  rel={edition.stream.href.startsWith("http") ? "noreferrer" : undefined}
+              </h1>
+
+              {edition.isCurrent ? (
+                <div
+                  class="home-countdown"
+                  data-countdown="2026-09-27T00:00:00-05:00"
+                  aria-label="Cuenta regresiva para Break The Beat 2026"
                 >
-                  {edition.stream.cta}
-                  <Icon name="arrow-up-right" size={17} />
+                  <div><strong data-countdown-days>00</strong><span>Días</span></div>
+                  <div><strong data-countdown-hours>00</strong><span>Horas</span></div>
+                  <div><strong data-countdown-minutes>00</strong><span>Min</span></div>
+                  <div><strong data-countdown-seconds>00</strong><span>Seg</span></div>
+                  <p class="sr-only" data-countdown-live aria-live="polite"></p>
+                </div>
+              ) : (
+                <p class="home-hero-summary">{edition.hero.summary}</p>
+              )}
+
+              <div class="home-hero-actions">
+                {edition.isCurrent && (
+                  <a class="home-button home-button-pink" href={withBase("/inscripcion/")}>¡Quiero unirme!</a>
+                )}
+                <a class="home-text-link" href={editionInfoUrl(edition.id)}>
+                  Información de la edición
+                  <Icon name="arrow-up-right" size={18} />
                 </a>
-              </aside>
+              </div>
             </div>
           </article>
         ))}
 
-        <div class="edition-series">
-          <label class="edition-picker">
-            <span>
-              <small>Event series</small>
-              Elegir edición
-            </span>
+        <div class="home-edition-bar" id="ediciones">
+          <label>
+            <span>Ediciones</span>
             <select data-edition-select aria-label="Elegir edición de Break The Beat">
               {editions.map((edition) => (
                 <option value={edition.id} selected={edition.isCurrent}>
@@ -146,9 +155,7 @@ const resolveEditionHref = (href: string) => (href.startsWith("/") ? withBase(hr
             </select>
           </label>
           {editions.map((edition) => (
-            <div class="edition-series-meta" data-edition-panel={edition.id} hidden={!edition.isCurrent} aria-live="polite">
-              <span>{edition.label}</span>
-              <span>{edition.date}</span>
+            <div class="home-edition-meta" data-edition-panel={edition.id} hidden={!edition.isCurrent} aria-live="polite">
               <span>{edition.location}</span>
               <strong>{edition.status}</strong>
             </div>
@@ -156,197 +163,115 @@ const resolveEditionHref = (href: string) => (href.startsWith("/") ? withBase(hr
         </div>
       </section>
 
-      <section class="edition-content section-light" id="impacto" aria-label="Impacto de la edición">
-        {editions.map((edition) => (
-          <div data-edition-panel={edition.id} hidden={!edition.isCurrent}>
-            <div class="section-heading">
-              <div class="section-label">
-                <Icon name="megaphone" size={18} />
-                {edition.impact.eyebrow}
-              </div>
-              <h2>{edition.impact.title}</h2>
-              <p>{edition.impact.summary}</p>
-            </div>
-            <div class="story-card-grid">
-              {edition.impact.cards.map((card) => (
-                <article class="story-card">
-                  <img src={withBase(card.image)} width="800" height="540" alt={card.alt} loading="lazy" decoding="async" />
-                  <div>
-                    <span>{card.eyebrow}</span>
-                    <h3>{card.title}</h3>
-                    <p>{card.text}</p>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </div>
-        ))}
-      </section>
-
-      <section class="edition-content section-dark" id="highlights" aria-label="Highlights de la edición">
-        {editions.map((edition) => (
-          <div data-edition-panel={edition.id} hidden={!edition.isCurrent}>
-            <div class="section-heading">
-              <div class="section-label">
-                <Icon name="sparkles" size={18} />
-                {edition.highlights.eyebrow}
-              </div>
-              <h2>{edition.highlights.title}</h2>
-              <p>{edition.highlights.summary}</p>
-            </div>
-            <div class="story-card-grid">
-              {edition.highlights.cards.map((card) => (
-                <article class="story-card story-card-dark">
-                  <img src={withBase(card.image)} width="800" height="540" alt={card.alt} loading="lazy" decoding="async" />
-                  <div>
-                    <span>{card.eyebrow}</span>
-                    <h3>{card.title}</h3>
-                    <p>{card.text}</p>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </div>
-        ))}
-      </section>
-
-      <section class="edition-content about-edition section-light" id="quienes-somos" aria-label="Quiénes somos">
-        {editions.map((edition) => (
-          <div class="about-edition-grid" data-edition-panel={edition.id} hidden={!edition.isCurrent}>
-            <div>
-              <div class="section-label">
-                <Icon name="users-round" size={18} />
-                {edition.about.eyebrow}
-              </div>
-              <h2>{edition.about.title}</h2>
-            </div>
-            <div class="about-edition-copy">
-              {edition.about.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
-              <a class="text-link text-link-dark" href={editionInfoUrl(edition.id)}>
-                Conocer esta edición
-                <Icon name="arrow-right" size={18} />
-              </a>
-            </div>
-          </div>
-        ))}
-      </section>
-
-      <section class="edition-content section-dark" id="historia" aria-label="Historia de la edición">
-        {editions.map((edition) => (
-          <div data-edition-panel={edition.id} hidden={!edition.isCurrent}>
-            <div class="section-heading compact">
-              <div class="section-label">
-                <Icon name="music-2" size={18} />
-                Rewind · {edition.label}
-              </div>
-              <h2>La historia de esta edición.</h2>
-            </div>
-            <div class="milestone-grid">
-              {edition.milestones.map((milestone) => (
-                <article>
-                  <span>{milestone.eyebrow}</span>
-                  <h3>{milestone.title}</h3>
-                  <p>{milestone.text}</p>
-                </article>
-              ))}
-            </div>
-          </div>
-        ))}
-      </section>
-
-      <section class="edition-content sponsors-edition section-light" id="sponsors" aria-label="Sponsors de la edición">
-        {editions.map((edition) => (
-          <div data-edition-panel={edition.id} hidden={!edition.isCurrent}>
-            <div class="section-heading">
-              <div class="section-label">
-                <Icon name="hand-heart" size={18} />
-                {edition.sponsors.eyebrow}
-              </div>
-              <h2>{edition.sponsors.title}</h2>
-              <p>{edition.sponsors.note}</p>
-            </div>
-            {edition.sponsors.items.length > 0 ? (
-              <div class="sponsor-logo-grid">
-                {edition.sponsors.items.map((sponsor) => (
-                  <article class="sponsor-logo-card">
-                    {sponsor.logo ? (
-                      <img src={withBase(sponsor.logo)} width="360" height="200" alt={sponsor.name} loading="lazy" decoding="async" />
-                    ) : (
-                      <strong>{sponsor.name}</strong>
-                    )}
-                  </article>
-                ))}
-              </div>
-            ) : (
-              <div class="sponsor-empty">
-                <span>Convocatoria 2026</span>
-                <h3>Los sponsors se publicarán cuando estén confirmados.</h3>
-                <p>Si tu marca quiere apoyar la tercera edición, contacta al equipo oficial de Break The Beat.</p>
-                <a class="button button-secondary dark" href={`mailto:${event.email}`}>
-                  Contactar al equipo
-                  <Icon name="mail" size={18} />
-                </a>
-              </div>
-            )}
-          </div>
-        ))}
-      </section>
-
-      <section class="edition-content edition-actions section-dark" aria-label="Acciones de la edición">
-        {editions.map((edition) => (
-          <div class="edition-actions-grid" data-edition-panel={edition.id} hidden={!edition.isCurrent}>
-            <div>
-              <p class="eyebrow">{edition.label} · {edition.year}</p>
-              <h2>{edition.isCurrent ? "La pista te espera." : "Esta edición forma parte del archivo."}</h2>
-            </div>
-            <div class="edition-actions-buttons">
-              <a class="button button-secondary" href={editionInfoUrl(edition.id)}>
-                Información del evento
-                <Icon name="arrow-right" size={18} />
-              </a>
-              {edition.isCurrent ? (
-                <>
-                  <a class="button button-primary" href={withBase("/inscripcion/")}>
-                    Inscribirme
-                    <Icon name="ticket-check" size={18} />
-                  </a>
-                  <a class="button button-secondary" href={withBase("/apoyar/")}>
-                    Donar ahora
-                    <Icon name="arrow-up-right" size={18} />
-                  </a>
-                </>
-              ) : (
-                <a class="button button-primary" href="#highlights">
-                  Ver highlights
-                  <Icon name="sparkles" size={18} />
-                </a>
-              )}
-            </div>
-          </div>
-        ))}
-      </section>
-
-      <section class="contact section-light" id="contacto">
+      <div class="home-tape" aria-hidden="true">
         <div>
-          <div class="section-label">
-            <Icon name="mail" size={18} />
-            Contacto
-          </div>
-          <h2>Hablemos del movimiento.</h2>
+          {Array.from({ length: 8 }, () => (
+            <span>Break your limits <b>★</b></span>
+          ))}
         </div>
-        <div class="contact-actions">
-          <a class="button button-secondary dark" href={`mailto:${event.email}`}>{event.email}</a>
-          <a class="button button-secondary dark" href={event.instagramUrl} target="_blank" rel="noreferrer">
-            {event.instagram}
-            <Icon name="arrow-up-right" size={18} />
-          </a>
+      </div>
+
+      <section class="home-about" id="evento">
+        <img
+          class="home-about-image"
+          src={withBase("/assets/home-2026/community-breaker.webp")}
+          width="2200"
+          height="1467"
+          alt="Breaker bailando en un espacio urbano de Guayaquil"
+          loading="lazy"
+          decoding="async"
+        />
+        <div class="home-about-shade" aria-hidden="true"></div>
+        <div class="home-about-title">
+          <h2>
+            <span>Más que</span>
+            <strong>un torneo,</strong>
+            <span>una comunidad</span>
+          </h2>
+        </div>
+        <div class="home-about-copy">
+          <p>
+            El breakdance ha sido históricamente un refugio. Desde inicios de los años 90 se comenzaron a reunir
+            jóvenes alrededor del breaking como herramienta de resistencia y orgullo barrial.
+          </p>
+          <p>
+            Break The Beat es una competencia nacional de breakdance creada para visibilizar el talento, la
+            disciplina y las historias de sus bailarines.
+          </p>
+          <img src={withBase("/assets/home-2026/ucg-white.webp")} width="900" height="381" alt="Universidad Casa Grande" />
+        </div>
+      </section>
+
+      <section class="home-impact" id="impacto">
+        <div class="home-impact-heading">
+          <h2>Lo que <strong>ya logramos</strong></h2>
+        </div>
+        <div class="home-stat-grid" aria-label="Cifras acumuladas de Break The Beat">
+          <article><b>↗</b><strong>+500 asistentes</strong><span>En nuestras anteriores dos ediciones</span></article>
+          <article><b>↗</b><strong>+50 breakers</strong><span>Inscritos en diferentes categorías</span></article>
+          <article><b>↗</b><strong>+40K en medios</strong><span>Vistas e interacciones en medios</span></article>
+          <article><b>↗</b><strong>1 documental</strong><span>Con reconocimientos internacionales</span></article>
+        </div>
+        <div class="home-gallery" aria-label="Galería de ediciones anteriores">
+          {galleryImages.map((src) => <img src={src} width="1100" height="734" alt="" loading="lazy" decoding="async" />)}
+        </div>
+      </section>
+
+      <section class="home-allies" aria-label="Aliados de ediciones anteriores">
+        <p>Aliados de ediciones anteriores</p>
+        <div class="home-allies-logos">
+          {historicalSponsors.map((sponsor) =>
+            sponsor.logo ? (
+              <img src={withBase(sponsor.logo)} width="360" height="200" alt={sponsor.name} loading="lazy" decoding="async" />
+            ) : (
+              <strong>{sponsor.name}</strong>
+            )
+          )}
+        </div>
+        <a href={`mailto:${event.email}`}>Sponsors 2026 por confirmar <Icon name="arrow-up-right" size={17} /></a>
+      </section>
+
+      <section class="home-final-cta">
+        <img src={withBase("/assets/home-2026/dancer.svg")} width="115" height="184" alt="" aria-hidden="true" />
+        <h2>La pista te espera</h2>
+        <div>
+          <a class="home-button home-button-pink" href={withBase("/inscripcion/")}>Inscribirme</a>
+          <a class="home-button home-button-paper" href={withBase("/evento/")}>Información del evento</a>
         </div>
       </section>
     </main>
 
-    <SiteFooter />
+    <SiteFooter variant="home" />
+
     <script>
       import "../scripts/edition-switcher";
+
+      const countdown = document.querySelector<HTMLElement>("[data-countdown]");
+      if (countdown) {
+        const target = new Date(countdown.dataset.countdown ?? "").getTime();
+        const days = countdown.querySelector<HTMLElement>("[data-countdown-days]");
+        const hours = countdown.querySelector<HTMLElement>("[data-countdown-hours]");
+        const minutes = countdown.querySelector<HTMLElement>("[data-countdown-minutes]");
+        const seconds = countdown.querySelector<HTMLElement>("[data-countdown-seconds]");
+        const live = countdown.querySelector<HTMLElement>("[data-countdown-live]");
+
+        const updateCountdown = () => {
+          const remaining = Math.max(0, target - Date.now());
+          const dayValue = Math.floor(remaining / 86_400_000);
+          const hourValue = Math.floor((remaining % 86_400_000) / 3_600_000);
+          const minuteValue = Math.floor((remaining % 3_600_000) / 60_000);
+          const secondValue = Math.floor((remaining % 60_000) / 1_000);
+
+          if (days) days.textContent = String(dayValue).padStart(2, "0");
+          if (hours) hours.textContent = String(hourValue).padStart(2, "0");
+          if (minutes) minutes.textContent = String(minuteValue).padStart(2, "0");
+          if (seconds) seconds.textContent = String(secondValue).padStart(2, "0");
+          if (live) live.textContent = `${dayValue} días, ${hourValue} horas y ${minuteValue} minutos para el evento.`;
+        };
+
+        updateCountdown();
+        window.setInterval(updateCountdown, 1_000);
+      }
     </script>
   </body>
 </html>

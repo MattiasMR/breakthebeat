@@ -5,35 +5,47 @@ import { withBase } from "../utils/paths";
 
 interface Props {
   isHome?: boolean;
+  variant?: "default" | "home";
 }
 
-const { isHome = false } = Astro.props;
+const { isHome = false, variant = "default" } = Astro.props;
+const isHomeOverhaul = variant === "home";
 const resolveHref = (href: string) =>
   isHome && href.startsWith("#") ? href : withBase(href.startsWith("#") ? `/${href}` : href);
+const headerNavItems = isHomeOverhaul
+  ? [
+      { label: "Inicio", href: "#inicio" },
+      { label: "Evento", href: "#evento" },
+      { label: "Ediciones", href: "#ediciones" },
+      { label: "Donaciones", href: withBase("/apoyar/") }
+    ]
+  : navItems.map((item) => ({ ...item, href: resolveHref(item.href) }));
 ---
 
-<header class="site-header" aria-label="Navegación principal">
+<header class:list={["site-header", { "site-header-home": isHomeOverhaul }]} aria-label="Navegación principal">
   <a class="brand-mark" href={isHome ? "#inicio" : withBase("/")} aria-label="Break The Beat inicio">
     <img src={withBase("/assets/break-the-beat-logo.webp")} width="900" height="569" alt="Break The Beat" />
   </a>
   <nav class="desktop-nav">
-    {navItems.map((item) => <a href={resolveHref(item.href)}>{item.label}</a>)}
+    {headerNavItems.map((item) => <a href={item.href}>{item.label}</a>)}
   </nav>
   <div class="header-actions">
     <a class="header-register" href={withBase("/inscripcion/")}>
       <span>Inscribirme</span>
       <Icon name="ticket-check" size={18} />
     </a>
-    <a class="header-cta" href={withBase("/apoyar/")}>
-      <span>Donar<span class="header-optional-label"> ahora</span></span>
-      <Icon name="arrow-up-right" size={18} />
-    </a>
+    {!isHomeOverhaul && (
+      <a class="header-cta" href={withBase("/apoyar/")}>
+        <span>Donar<span class="header-optional-label"> ahora</span></span>
+        <Icon name="arrow-up-right" size={18} />
+      </a>
+    )}
   </div>
   <details class="mobile-nav">
     <summary aria-label="Abrir navegación">Menú</summary>
     <nav aria-label="Navegación móvil">
-      {navItems.map((item) => <a href={resolveHref(item.href)}>{item.label}</a>)}
-      <a href={withBase("/evento/")}>Información del evento</a>
+      {headerNavItems.map((item) => <a href={item.href}>{item.label}</a>)}
+      {!isHomeOverhaul && <a href={withBase("/evento/")}>Información del evento</a>}
       <a href={withBase("/inscripcion/")}>Inscribirme</a>
     </nav>
   </details>

@@ -2,37 +2,49 @@
 import Icon from "./Icon.astro";
 import { event, footerGroups } from "../data/site";
 import { withBase } from "../utils/paths";
+
+interface Props {
+  variant?: "default" | "home";
+}
+
+const { variant = "default" } = Astro.props;
+const isHomeOverhaul = variant === "home";
 ---
 
-<footer class="site-footer">
-  <div class="footer-top">
-    <a class="footer-logo" href={withBase("/")} aria-label="Break The Beat inicio">
-      <img src={withBase("/assets/break-the-beat-logo.webp")} width="900" height="569" alt="Break The Beat" />
-    </a>
-    <a class="footer-more" href="#inicio">
-      Ver más
-      <Icon name="arrow-up-right" size={17} />
-    </a>
-  </div>
-  <div class="footer-grid">
-    {footerGroups.map((group) => (
-      <nav class="footer-group" aria-label={group.title}>
-        <h2>{group.title}</h2>
-        {group.links.map((link) => (
-          <a
-            href={withBase(link.href)}
-            target={link.href.startsWith("http") ? "_blank" : undefined}
-            rel={link.href.startsWith("http") ? "noreferrer" : undefined}
-          >
-            {link.label}
-          </a>
-        ))}
+{isHomeOverhaul ? (
+  <footer class="site-footer site-footer-home">
+    <div class="home-footer-grid">
+      <nav aria-label="Menú del sitio">
+        <h2>Menú</h2>
+        <a href="#inicio">Inicio</a>
+        <a href={withBase("/inscripcion/")}>Inscripciones</a>
+        <a href={withBase("/evento/")}>Más del evento</a>
+        <a href={withBase("/apoyar/")}>Quiero donar</a>
       </nav>
-    ))}
-    <div class="footer-meta">
+      <nav aria-label="Redes sociales">
+        <h2>Redes</h2>
+        <a href={event.instagramUrl} target="_blank" rel="noreferrer">
+          Instagram
+          <Icon name="arrow-up-right" size={15} />
+        </a>
+      </nav>
+      <div class="home-footer-contact">
+        <h2>Contáctanos</h2>
+        <a href={`mailto:${event.email}`}>{event.email}</a>
+        <p>{event.city}</p>
+      </div>
+    </div>
+    <img
+      class="home-footer-wordmark"
+      src={withBase("/assets/home-2026/footer-wordmark.webp")}
+      width="1800"
+      height="261"
+      alt=""
+      loading="lazy"
+      decoding="async"
+    />
+    <div class="home-footer-bottom">
       <p>© 2026 {event.title}</p>
-      <p>{event.city}</p>
-      <p>{event.instagram}</p>
       <p class="footer-credit">
         Página hecha por{" "}
         <a href="https://www.linkedin.com/in/mattiasmorales" target="_blank" rel="noreferrer">
@@ -40,5 +52,44 @@ import { withBase } from "../utils/paths";
         </a>
       </p>
     </div>
-  </div>
-</footer>
+  </footer>
+) : (
+  <footer class="site-footer">
+    <div class="footer-top">
+      <a class="footer-logo" href={withBase("/")} aria-label="Break The Beat inicio">
+        <img src={withBase("/assets/break-the-beat-logo.webp")} width="900" height="569" alt="Break The Beat" />
+      </a>
+      <a class="footer-more" href="#inicio">
+        Ver más
+        <Icon name="arrow-up-right" size={17} />
+      </a>
+    </div>
+    <div class="footer-grid">
+      {footerGroups.map((group) => (
+        <nav class="footer-group" aria-label={group.title}>
+          <h2>{group.title}</h2>
+          {group.links.map((link) => (
+            <a
+              href={withBase(link.href)}
+              target={link.href.startsWith("http") ? "_blank" : undefined}
+              rel={link.href.startsWith("http") ? "noreferrer" : undefined}
+            >
+              {link.label}
+            </a>
+          ))}
+        </nav>
+      ))}
+      <div class="footer-meta">
+        <p>© 2026 {event.title}</p>
+        <p>{event.city}</p>
+        <p>{event.instagram}</p>
+        <p class="footer-credit">
+          Página hecha por{" "}
+          <a href="https://www.linkedin.com/in/mattiasmorales" target="_blank" rel="noreferrer">
+            Mattias Morales
+          </a>
+        </p>
+      </div>
+    </div>
+  </footer>
+)}

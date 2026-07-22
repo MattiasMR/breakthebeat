@@ -74,7 +74,12 @@ const showStep = (name: string) => {
     heading.tabIndex = -1;
     heading.focus({ preventScroll: true });
   }
-  window.scrollTo({ top: Math.max(0, form.getBoundingClientRect().top + window.scrollY - 120), behavior: "smooth" });
+  const dialogScroller = form.closest<HTMLDialogElement>("dialog")?.querySelector<HTMLElement>(".home-registration-dialog-scroll");
+  if (dialogScroller) {
+    dialogScroller.scrollTo({ top: 0, behavior: "smooth" });
+  } else {
+    window.scrollTo({ top: Math.max(0, form.getBoundingClientRect().top + window.scrollY - 120), behavior: "smooth" });
+  }
 };
 
 const setPartnerEnabled = (enabled: boolean) => {
@@ -335,7 +340,7 @@ const loadRegistrationState = async () => {
     restoreDraft();
     syncDuo();
     syncConditionalFields();
-    setBanner("Inscripciones abiertas · Domingo 27 de septiembre de 2026", "ready");
+    setBanner("Inscripciones abiertas · Domingo 27 Sept, 2026 · 10 AM", "ready");
   } catch {
     setBanner("No pudimos conectar con el sistema de inscripciones.", "error");
   }

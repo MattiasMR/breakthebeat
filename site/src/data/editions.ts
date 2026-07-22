@@ -410,7 +410,7 @@ export const editions: Edition[] = [
     year: "2026",
     status: "Próxima edición",
     isCurrent: true,
-    date: "Domingo 27 de septiembre de 2026",
+    date: "Domingo 27 Sept, 2026 · 10 AM",
     location: "Plaza de los Teatros, calle Panamá",
     city: "Guayaquil, Ecuador",
     hero: {
@@ -551,7 +551,7 @@ export const editions: Edition[] = [
         "La tercera edición será una competencia nacional de breaking con música en vivo, shows, freestyle abierto y participación de bailarines de todo Ecuador.",
       categories: ["1 vs 1", "2 vs 2", "BGirls"],
       prize: "USD 600 para la persona ganadora, según el media kit 2026.",
-      schedule: "Domingo 27 de septiembre de 2026 · horario operativo por confirmar."
+      schedule: "Domingo 27 Sept, 2026 · 10 AM."
     }
   }
 ];

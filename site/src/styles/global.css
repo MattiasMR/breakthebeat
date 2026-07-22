@@ -2466,7 +2466,7 @@ html[data-home-overhaul] body {
 .home-edition-bar {
   position: absolute;
   z-index: 7;
-  right: clamp(20px, 4vw, 64px);
+  right: clamp(12px, 2.5vw, 48px);
   bottom: 72px;
   display: flex;
   align-items: stretch;
@@ -2773,6 +2773,21 @@ html[data-home-overhaul] body {
   gap: clamp(36px, 4.2vw, 68px);
 }
 
+.home-allies-panel {
+  width: 100%;
+}
+
+.home-allies-panel:not([data-edition-panel="3"]) .home-allies-logos {
+  flex-wrap: wrap;
+  gap: 18px clamp(24px, 3vw, 48px);
+}
+
+.home-allies-panel:not([data-edition-panel="3"]) .home-allies-logos img {
+  max-width: 104px;
+  height: 38px;
+  filter: brightness(0) invert(1);
+}
+
 .home-allies-logos img {
   width: auto;
   height: 56px;
@@ -2781,11 +2796,11 @@ html[data-home-overhaul] body {
   mix-blend-mode: normal;
 }
 
-.home-allies-logos img:nth-child(1) {
+.home-allies-panel[data-edition-panel="3"] .home-allies-logos img:nth-child(1) {
   height: 48px;
 }
 
-.home-allies-logos img:nth-child(5) {
+.home-allies-panel[data-edition-panel="3"] .home-allies-logos img:nth-child(5) {
   height: 64px;
 }
 
@@ -2899,19 +2914,17 @@ html[data-home-overhaul] body {
   width: calc(100% + var(--home-footer-pad-x) + var(--home-footer-pad-x));
   max-width: none;
   height: auto;
-  margin: 48px 0 -8px;
+  margin: 48px 0 0;
 }
 
 .home-footer-bottom {
-  position: absolute;
+  position: relative;
   z-index: 3;
-  right: var(--home-footer-pad-x);
-  bottom: 18px;
-  left: var(--home-footer-pad-x);
   display: flex;
   justify-content: space-between;
   gap: 24px;
-  padding-top: 14px;
+  margin-top: 10px;
+  padding-top: 18px;
   border-top: 1px solid rgba(0, 0, 0, 0.14);
 }
 
@@ -2923,6 +2936,196 @@ html[data-home-overhaul] body {
 
 .site-footer-home .footer-credit a {
   color: #000;
+}
+
+.has-registration-dialog {
+  overflow: hidden;
+}
+
+.home-registration-dialog {
+  width: min(760px, calc(100% - 32px));
+  max-width: none;
+  max-height: min(900px, calc(100svh - 32px));
+  margin: auto;
+  padding: 0;
+  overflow: visible;
+  border: 0;
+  border-radius: 34px;
+  background: transparent;
+  color: #000;
+}
+
+.home-registration-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.78);
+  backdrop-filter: blur(10px);
+}
+
+.home-registration-dialog-scroll {
+  position: relative;
+  max-height: min(900px, calc(100svh - 32px));
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: clamp(28px, 5vw, 48px);
+  border-radius: 34px;
+  background: #ede6d8;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.48);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
+}
+
+.home-registration-close {
+  position: absolute;
+  z-index: 4;
+  top: 20px;
+  right: 24px;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: rgba(0, 0, 0, 0.56);
+  font: 300 2.2rem/1 "Poppins", sans-serif;
+  cursor: pointer;
+}
+
+.home-registration-close:hover,
+.home-registration-close:focus-visible {
+  color: #ff0076;
+}
+
+.home-registration-close:focus-visible {
+  outline: 2px solid #ff0076;
+  outline-offset: 2px;
+}
+
+.home-registration-heading {
+  padding-right: 52px;
+}
+
+.home-registration-heading h2 {
+  margin: 0;
+  font: 500 clamp(3.2rem, 8vw, 5rem)/0.82 "Aurochs Heavy", Impact, sans-serif;
+  text-transform: uppercase;
+}
+
+.home-registration-heading p {
+  margin: 14px 0 30px;
+  color: rgba(0, 0, 0, 0.5);
+  font-size: 0.9rem;
+}
+
+.home-registration-dialog .registration-progress {
+  display: none;
+}
+
+.home-registration-dialog .system-banner {
+  margin-bottom: 20px;
+  border: 0;
+  border-radius: 14px;
+  font-size: 0.78rem;
+}
+
+.home-registration-dialog .form-step {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.home-registration-dialog .form-step-heading {
+  margin-bottom: 24px;
+}
+
+.home-registration-dialog .form-step-heading h2 {
+  margin-bottom: 10px;
+  font-family: "Poppins", sans-serif;
+  font-size: clamp(1.45rem, 4vw, 2rem);
+  line-height: 1.05;
+  text-transform: none;
+}
+
+.home-registration-dialog .form-step-heading h2:focus {
+  outline: 0;
+}
+
+.home-registration-dialog .form-step-heading > p:last-child {
+  font-size: 0.86rem;
+}
+
+.home-registration-dialog .choice-card > span,
+.home-registration-dialog .medical-panel,
+.home-registration-dialog .review-card,
+.home-registration-dialog .legal-document,
+.home-registration-dialog .consent-list > label {
+  border-width: 1px;
+  background: rgba(255, 255, 255, 0.58);
+}
+
+.home-registration-dialog .choice-card > span {
+  min-height: 104px;
+  border-radius: 18px;
+}
+
+.home-registration-dialog .field input,
+.home-registration-dialog .field select,
+.home-registration-dialog .field textarea {
+  min-height: 56px;
+  padding-inline: 22px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.home-registration-dialog .field textarea {
+  padding-block: 16px;
+  border-radius: 22px;
+}
+
+.home-registration-dialog .field input:focus,
+.home-registration-dialog .field select:focus,
+.home-registration-dialog .field textarea:focus {
+  border-color: #ff0076;
+  outline: 2px solid rgba(255, 0, 118, 0.18);
+}
+
+.home-registration-dialog .medical-panel {
+  padding: 20px;
+  border-radius: 20px;
+}
+
+.home-registration-dialog .conditional-field,
+.home-registration-dialog .conditional-grid,
+.home-registration-dialog .emergency-block {
+  border-left-color: #ff0076;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.home-registration-dialog .form-actions {
+  border-top-color: rgba(0, 0, 0, 0.12);
+}
+
+.home-registration-dialog .button-primary,
+.home-registration-dialog .button-ghost {
+  min-height: 56px;
+  border-radius: 999px;
+}
+
+.home-registration-dialog .button-primary {
+  flex: 1;
+  border-color: #ff0076;
+  background: #ff0076;
+  color: #ede6d8;
+  box-shadow: none;
+}
+
+.home-registration-dialog .button-ghost {
+  border-width: 1px;
+}
+
+.home-registration-dialog .turnstile-block {
+  background: rgba(0, 0, 0, 0.88);
 }
 
 @media (max-width: 1060px) {
@@ -3033,7 +3236,7 @@ html[data-home-overhaul] body {
 
   .home-edition-bar {
     right: 16px;
-    bottom: 18px;
+    bottom: 58px;
     left: 16px;
     display: grid;
     grid-template-columns: 1fr;
@@ -3113,12 +3316,47 @@ html[data-home-overhaul] body {
     height: 46px;
   }
 
-  .home-allies-logos img:nth-child(1) {
+  .home-allies-panel[data-edition-panel="3"] .home-allies-logos img:nth-child(1) {
     height: 40px;
   }
 
-  .home-allies-logos img:nth-child(5) {
+  .home-allies-panel[data-edition-panel="3"] .home-allies-logos img:nth-child(5) {
     height: 52px;
+  }
+
+  .home-registration-dialog {
+    width: calc(100% - 20px);
+    max-height: calc(100svh - 20px);
+    border-radius: 26px;
+  }
+
+  .home-registration-dialog-scroll {
+    max-height: calc(100svh - 20px);
+    padding: 28px 20px;
+    border-radius: 26px;
+  }
+
+  .home-registration-close {
+    top: 12px;
+    right: 14px;
+  }
+
+  .home-registration-heading {
+    padding-right: 38px;
+  }
+
+  .home-registration-heading p {
+    margin-bottom: 24px;
+    font-size: 0.78rem;
+  }
+
+  .home-registration-dialog .form-actions {
+    flex-direction: column-reverse;
+  }
+
+  .home-registration-dialog .button-primary,
+  .home-registration-dialog .button-ghost {
+    width: 100%;
   }
 
   .home-final-cta {

@@ -2,7 +2,7 @@ export const event = {
   title: "Break The Beat",
   edition: "3ra edición",
   eyebrow: "Torneo nacional de breakdance",
-  date: "Domingo 27 de septiembre 2026",
+  date: "Domingo 27 Sept, 2026 · 10 AM",
   location: "Plaza de los Teatros, calle Panamá",
   city: "Guayaquil, Ecuador",
   instagram: "@breakthebeat.ucg",
@@ -303,4 +303,3 @@ export const footerGroups = [
     ]
   }
 ];
-

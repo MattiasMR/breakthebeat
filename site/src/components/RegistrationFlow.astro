@@ -1,0 +1,142 @@
+---
+import Icon from "./Icon.astro";
+import CategoryFields from "./CategoryFields.astro";
+import MedicalFields from "./MedicalFields.astro";
+import ProfileFields from "./ProfileFields.astro";
+
+interface Props {
+  turnstileSiteKey: string;
+  variant?: "page" | "modal";
+}
+
+const { turnstileSiteKey, variant = "page" } = Astro.props;
+---
+
+<div class:list={["registration-flow", { "registration-flow-modal": variant === "modal" }]}>
+  <aside class="step-sidebar registration-progress" aria-label="Progreso de la inscripción">
+    <p class="step-sidebar-label">Tu progreso</p>
+    <ol data-progress-list>
+      <li class="is-active" data-progress-step="categories"><span>1</span><div><strong>Categorías</strong><small>Cómo competirás</small></div></li>
+      <li data-progress-step="captain"><span>2</span><div><strong>Tus datos</strong><small>Perfil principal</small></div></li>
+      <li data-progress-step="partner"><span>3</span><div><strong>Compañero</strong><small>Solo para 2 vs 2</small></div></li>
+      <li data-progress-step="medical"><span>4</span><div><strong>Emergencia</strong><small>Salud y contacto</small></div></li>
+      <li data-progress-step="review"><span>5</span><div><strong>Revisión</strong><small>Confirma los datos</small></div></li>
+      <li data-progress-step="consents"><span>6</span><div><strong>Autorización</strong><small>Documentos y envío</small></div></li>
+    </ol>
+    <div class="secure-note"><Icon name="lock-keyhole" size={18} /><span>Conexión cifrada. No guardamos datos en este dispositivo después del envío.</span></div>
+  </aside>
+
+  <div class="registration-panel">
+    <div class="system-banner is-loading" data-registration-status role="status">
+      Verificando si las inscripciones están abiertas…
+    </div>
+    <form id="registration-form" novalidate>
+      <fieldset id="registration-fields" class="form-shell" disabled>
+        <legend class="sr-only">Formulario de inscripción</legend>
+
+        <section class="form-step is-active" data-form-step="categories">
+          <div class="form-step-heading">
+            <p class="step-kicker">Paso 1 de 6</p>
+            <h2>¿En qué categorías participarás?</h2>
+            <p>Puedes seleccionar más de una. Elegir 2 vs 2 activará el perfil completo del compañero.</p>
+          </div>
+          <CategoryFields prefix="captain" />
+          <p class="field-error" data-category-error hidden>Selecciona al menos una categoría.</p>
+          <div class="form-actions align-end">
+            <button class="button button-primary" type="button" data-next>
+              Continuar <Icon name="arrow-right" size={18} />
+            </button>
+          </div>
+        </section>
+
+        <section class="form-step" data-form-step="captain" hidden>
+          <div class="form-step-heading">
+            <p class="step-kicker">Paso 2 de 6</p>
+            <h2>Cuéntanos quién eres.</h2>
+            <p>Usaremos estos datos para tu acreditación, comunicación y merch.</p>
+          </div>
+          <ProfileFields prefix="captain" />
+          <div class="form-actions">
+            <button class="button button-ghost" type="button" data-back><Icon name="arrow-left" size={18} /> Atrás</button>
+            <button class="button button-primary" type="button" data-next>Continuar <Icon name="arrow-right" size={18} /></button>
+          </div>
+        </section>
+
+        <section class="form-step" data-form-step="partner" hidden data-partner-step>
+          <div class="form-step-heading">
+            <p class="step-kicker">Paso 3 de 6</p>
+            <h2>Registra a tu compañero.</h2>
+            <p>Completa su perfil y marca cualquier categoría individual adicional en la que participará.</p>
+          </div>
+          <CategoryFields prefix="partner" partner />
+          <ProfileFields prefix="partner" />
+          <div class="form-actions">
+            <button class="button button-ghost" type="button" data-back><Icon name="arrow-left" size={18} /> Atrás</button>
+            <button class="button button-primary" type="button" data-next>Continuar <Icon name="arrow-right" size={18} /></button>
+          </div>
+        </section>
+
+        <section class="form-step" data-form-step="medical" hidden>
+          <div class="form-step-heading">
+            <p class="step-kicker">Paso 4 de 6</p>
+            <h2>Información médica y de emergencia.</h2>
+            <p>Será confidencial y se utilizará únicamente durante la organización y atención de emergencias del evento.</p>
+          </div>
+          <div class="medical-stack">
+            <MedicalFields prefix="captain" title="Participante principal" />
+            <div data-partner-medical hidden>
+              <MedicalFields prefix="partner" title="Compañero de dupla" />
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="button button-ghost" type="button" data-back><Icon name="arrow-left" size={18} /> Atrás</button>
+            <button class="button button-primary" type="button" data-next>Revisar <Icon name="arrow-right" size={18} /></button>
+          </div>
+        </section>
+
+        <section class="form-step" data-form-step="review" hidden>
+          <div class="form-step-heading">
+            <p class="step-kicker">Paso 5 de 6</p>
+            <h2>Revisa antes de autorizar.</h2>
+            <p>Los datos médicos se resumen como alertas, sin repetir sus detalles en esta pantalla.</p>
+          </div>
+          <div class="review-grid" data-review></div>
+          <div class="form-actions">
+            <button class="button button-ghost" type="button" data-back><Icon name="arrow-left" size={18} /> Corregir</button>
+            <button class="button button-primary" type="button" data-next>Autorizar <Icon name="arrow-right" size={18} /></button>
+          </div>
+        </section>
+
+        <section class="form-step" data-form-step="consents" hidden>
+          <div class="form-step-heading">
+            <p class="step-kicker">Paso 6 de 6</p>
+            <h2>Documentos y autorizaciones.</h2>
+            <p>Abre y revisa los documentos vigentes antes de marcar cada aceptación.</p>
+          </div>
+          <div class="legal-documents" data-legal-documents></div>
+          <div class="consent-list">
+            <label><input type="checkbox" name="consent.terms" required /><span><strong>Acepto los términos y reglas del evento.</strong></span></label>
+            <label><input type="checkbox" name="consent.privacy" required /><span><strong>Acepto el aviso de privacidad.</strong></span></label>
+            <label><input type="checkbox" name="consent.health" required /><span><strong>Autorizo explícitamente el tratamiento de información médica.</strong></span></label>
+            <label><input type="checkbox" name="consent.image" required /><span><strong>Acepto el permiso de imagen y voz.</strong></span></label>
+            <label data-captain-authority hidden><input type="checkbox" name="consent.captainAuthority" /><span><strong>Declaro que tengo autorización de mi compañero para proporcionar sus datos y aceptar estos documentos en su representación.</strong></span></label>
+          </div>
+          <div class="turnstile-block">
+            {turnstileSiteKey ? (
+              <div class="cf-turnstile" data-sitekey={turnstileSiteKey} data-theme={variant === "modal" ? "light" : "dark"} data-action="registration"></div>
+            ) : (
+              <p>Turnstile todavía no está configurado. El envío permanecerá bloqueado.</p>
+            )}
+          </div>
+          <div class="submit-alert" data-submit-alert role="alert" hidden></div>
+          <div class="form-actions">
+            <button class="button button-ghost" type="button" data-back><Icon name="arrow-left" size={18} /> Atrás</button>
+            <button class="button button-primary" type="submit" data-submit>
+              <Icon name="check-circle-2" size={18} /> Confirmar inscripción
+            </button>
+          </div>
+        </section>
+      </fieldset>
+    </form>
+  </div>
+</div>

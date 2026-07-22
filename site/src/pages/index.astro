@@ -1,10 +1,12 @@
 ---
 import Icon from "../components/Icon.astro";
+import RegistrationFlow from "../components/RegistrationFlow.astro";
 import SiteFooter from "../components/SiteFooter.astro";
 import SiteHeader from "../components/SiteHeader.astro";
 import { editions } from "../data/editions";
 import { withBase } from "../utils/paths";
 import "../styles/global.css";
+import "../styles/portal.css";
 
 const pageTitle = "Break The Beat | 3ra edición";
 const description =
@@ -13,7 +15,7 @@ const editionInfoUrl = (id: string) => `${withBase("/evento/")}?edicion=${id}`;
 const galleryImages = Array.from({ length: 12 }, (_, index) =>
   withBase(`/assets/home-2026/gallery-${String(index + 1).padStart(2, "0")}.webp`)
 );
-const currentSponsors = editions.find((edition) => edition.isCurrent)?.sponsors.items ?? [];
+const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
 ---
 
 <!doctype html>
@@ -69,12 +71,9 @@ const currentSponsors = editions.find((edition) => edition.isCurrent)?.sponsors.
 
     <main id="inicio" class="home-page">
       <section class="home-hero" aria-label="Próxima edición de Break The Beat">
-        {editions.map((edition) => (
+        {editions.filter((edition) => edition.isCurrent).map((edition) => (
           <article
             class="home-hero-panel"
-            data-edition-panel={edition.id}
-            data-page-title={`Break The Beat | ${edition.label}`}
-            hidden={!edition.isCurrent}
           >
             <img
               class="home-hero-image"
@@ -116,7 +115,7 @@ const currentSponsors = editions.find((edition) => edition.isCurrent)?.sponsors.
               {edition.isCurrent ? (
                 <div
                   class="home-countdown"
-                  data-countdown="2026-09-27T00:00:00-05:00"
+                  data-countdown="2026-09-27T10:00:00-05:00"
                   aria-label="Cuenta regresiva para Break The Beat 2026"
                 >
                   <div><div><strong data-countdown-days>00</strong></div><span>Días</span></div>
@@ -131,7 +130,7 @@ const currentSponsors = editions.find((edition) => edition.isCurrent)?.sponsors.
 
               <div class="home-hero-actions">
                 {edition.isCurrent && (
-                  <a class="home-button home-button-pink" href={withBase("/inscripcion/")}>¡Quiero unirme!</a>
+                  <a class="home-button home-button-pink" href={withBase("/inscripcion/")} data-registration-open>¡Quiero unirme!</a>
                 )}
                 {!edition.isCurrent && (
                   <a class="home-text-link" href={editionInfoUrl(edition.id)}>
@@ -225,33 +224,57 @@ const currentSponsors = editions.find((edition) => edition.isCurrent)?.sponsors.
         </div>
       </section>
 
-      <section class="home-allies" aria-label="Sponsors de Break The Beat 2026">
-        <h2 class="sr-only">Sponsors de Break The Beat 2026</h2>
-        <div class="home-allies-logos">
-          {currentSponsors.map((sponsor) =>
-            sponsor.logo ? (
-              <img src={withBase(sponsor.logo)} width="480" height="320" alt={sponsor.name} loading="lazy" decoding="async" />
-            ) : (
-              <strong>{sponsor.name}</strong>
-            )
-          )}
-        </div>
+      <section class="home-allies" aria-label="Sponsors por edición" data-edition-sponsors>
+        {editions.map((edition) => (
+          <div
+            class="home-allies-panel"
+            data-edition-panel={edition.id}
+            hidden={!edition.isCurrent}
+            aria-label={`Sponsors de ${edition.shortLabel}`}
+          >
+            <h2 class="sr-only">{edition.sponsors.eyebrow}</h2>
+            <div class="home-allies-logos">
+              {edition.sponsors.items.map((sponsor) =>
+                sponsor.logo ? (
+                  <img src={withBase(sponsor.logo)} width="480" height="320" alt={sponsor.name} loading="lazy" decoding="async" />
+                ) : (
+                  <strong>{sponsor.name}</strong>
+                )
+              )}
+            </div>
+          </div>
+        ))}
       </section>
 
       <section class="home-final-cta">
         <img src={withBase("/assets/home-2026/dancer.svg")} width="115" height="184" alt="" aria-hidden="true" />
         <h2>La pista te espera</h2>
         <div>
-          <a class="home-button home-button-pink" href={withBase("/inscripcion/")}>Inscribirme</a>
+          <a class="home-button home-button-pink" href={withBase("/inscripcion/")} data-registration-open>Inscribirme</a>
           <a class="home-button home-button-paper" href={withBase("/evento/")}>Información del evento</a>
         </div>
       </section>
     </main>
 
+    <dialog class="home-registration-dialog" data-registration-dialog aria-labelledby="home-registration-title">
+      <div class="home-registration-dialog-scroll">
+        <button class="home-registration-close" type="button" data-registration-close aria-label="Cerrar inscripción">×</button>
+        <header class="home-registration-heading">
+          <h2 id="home-registration-title">Inscríbete</h2>
+          <p>Break The Beat · Domingo 27 Sept, 2026 · 10 AM</p>
+        </header>
+        <RegistrationFlow turnstileSiteKey={turnstileSiteKey} variant="modal" />
+      </div>
+    </dialog>
+
     <SiteFooter variant="home" />
+
+    {turnstileSiteKey && <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>}
 
     <script>
       import "../scripts/edition-switcher";
+      import "../scripts/home-registration";
+      import "../scripts/registration";
 
       const countdown = document.querySelector<HTMLElement>("[data-countdown]");
       if (countdown) {

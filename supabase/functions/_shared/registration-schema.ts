@@ -36,7 +36,6 @@ const participant = z.object({
   role: z.enum(["captain", "partner"]),
   displayName: z.string().trim().min(2).max(120),
   socialUrl: socialProfile,
-  shirtSize: z.enum(["S", "M", "L"]),
   age: z.number().int().min(18).max(100),
   country: z.string().trim().min(2).max(80),
   city: z.string().trim().min(2).max(100),

@@ -66,7 +66,6 @@ export const participantSchema = z.object({
   role: z.enum(["captain", "partner"]),
   displayName: z.string().trim().min(2, "Ingresa el nombre completo o artístico").max(120),
   socialUrl: socialUrlSchema,
-  shirtSize: z.enum(["S", "M", "L"]),
   age: z.number().int().min(18, "Solo pueden inscribirse mayores de edad").max(100, "Revisa la edad"),
   country: z.string().trim().min(2, "Ingresa el país").max(80),
   city: z.string().trim().min(2, "Ingresa la ciudad").max(100),

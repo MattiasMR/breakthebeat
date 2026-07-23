@@ -3446,7 +3446,7 @@ html[data-home-overhaul] body {
   border-radius: 18px;
 }
 
-.home-registration-dialog .field input,
+.home-registration-dialog .field input:not([type="radio"]):not([type="checkbox"]),
 .home-registration-dialog .field select,
 .home-registration-dialog .field textarea {
   min-height: 48px;
@@ -3461,7 +3461,7 @@ html[data-home-overhaul] body {
   border-radius: 22px;
 }
 
-.home-registration-dialog .field input:focus,
+.home-registration-dialog .field input:not([type="radio"]):not([type="checkbox"]):focus,
 .home-registration-dialog .field select:focus,
 .home-registration-dialog .field textarea:focus {
   border-color: #ff0076;
@@ -3844,6 +3844,11 @@ html[data-home-overhaul] body {
 @media (max-width: 480px) {
   .site-header-home {
     grid-template-columns: auto auto auto;
+  }
+
+  .home-registration-dialog [data-form-step="captain"] .field-grid,
+  .home-registration-dialog [data-form-step="partner"] .field-grid {
+    grid-template-columns: 1fr;
   }
 
   .home-date-pill {

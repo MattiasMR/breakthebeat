@@ -82,7 +82,7 @@ const normalizeRows = (data: any[]): AdminParticipant[] => data.map((item) => {
     email: item.email,
     phone: item.phone,
     socialUrl: item.social_url,
-    shirtSize: item.shirt_size,
+    shirtSize: item.shirt_size ?? null,
     age: item.age,
     country: item.country,
     city: item.city,
@@ -182,7 +182,7 @@ const renderRows = () => {
 
     const originCell = document.createElement("td");
     const size = document.createElement("strong");
-    size.textContent = `Talla ${row.shirtSize}`;
+    size.textContent = row.shirtSize ? `Talla ${row.shirtSize}` : "Sin talla";
     const origin = document.createElement("small");
     origin.textContent = `${row.city}, ${row.country}`;
     originCell.append(size, origin);

@@ -15,14 +15,6 @@ const { prefix } = Astro.props;
     <span>Instagram o TikTok <b aria-hidden="true">*</b></span>
     <input name={`${prefix}.socialUrl`} type="text" required maxlength="200" placeholder="@usuario" />
   </label>
-  <fieldset class="field field-wide compact-fieldset">
-    <legend>Talla para merch <b aria-hidden="true">*</b></legend>
-    <div class="inline-choices">
-      {(["S", "M", "L"] as const).map((size) => (
-        <label><input type="radio" name={`${prefix}.shirtSize`} value={size} required /> <span>{size}</span></label>
-      ))}
-    </div>
-  </fieldset>
   <label class="field">
     <span>Edad <small>(solo mayores de 18)</small> <b aria-hidden="true">*</b></span>
     <input name={`${prefix}.age`} type="number" min="18" max="100" inputmode="numeric" required placeholder="18" />

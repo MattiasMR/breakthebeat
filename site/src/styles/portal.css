@@ -391,7 +391,13 @@
 
 .inline-choices input {
   position: absolute;
+  width: 1px;
+  height: 1px;
+  min-height: 0;
+  padding: 0;
+  border: 0;
   opacity: 0;
+  clip-path: inset(50%);
 }
 
 .inline-choices span {

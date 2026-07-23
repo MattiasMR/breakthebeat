@@ -169,7 +169,6 @@ const collectParticipant = (prefix: "captain" | "partner", data: FormData): Part
   role: prefix,
   displayName: getString(data, `${prefix}.displayName`),
   socialUrl: getString(data, `${prefix}.socialUrl`),
-  shirtSize: getString(data, `${prefix}.shirtSize`) as "S" | "M" | "L",
   age: Number(getString(data, `${prefix}.age`)),
   country: getString(data, `${prefix}.country`),
   city: getString(data, `${prefix}.city`),
@@ -266,7 +265,6 @@ const renderReview = () => {
       ["Categorías", participant.categories.map((category) => categoryLabels[category]).join(", ")],
       ["Contacto", `${participant.email} · ${participant.phone}`],
       ["Origen", `${participant.city}, ${participant.country}`],
-      ["Talla", participant.shirtSize],
       ["Emergencia", `${participant.medical.emergencyName} · ${participant.medical.emergencyPhone}`],
       ["Alerta médica", alert ? "Sí · revisar en panel privado" : "No declarada"]
     ];

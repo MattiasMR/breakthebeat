@@ -5,7 +5,6 @@ const participant = (overrides: Partial<ParticipantInput> = {}): ParticipantInpu
   role: "captain",
   displayName: "Bboy Test",
   socialUrl: "https://instagram.com/bboytest",
-  shirtSize: "M",
   age: 22,
   country: "Ecuador",
   city: "Guayaquil",

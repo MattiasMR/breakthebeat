@@ -10,7 +10,7 @@ export type AdminParticipant = {
   email: string;
   phone: string;
   socialUrl: string;
-  shirtSize: "S" | "M" | "L";
+  shirtSize: "S" | "M" | "L" | null;
   age: number;
   country: string;
   city: string;
@@ -102,4 +102,3 @@ export const downloadCsv = (filename: string, content: string) => {
   link.click();
   URL.revokeObjectURL(url);
 };
-

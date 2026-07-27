@@ -126,6 +126,33 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
                 <p class="home-hero-summary">{edition.hero.summary}</p>
               )}
 
+              {edition.isCurrent && edition.startsAt && (
+                <div
+                  class="home-countdown"
+                  data-countdown
+                  data-countdown-target={edition.startsAt}
+                  role="timer"
+                  aria-label={`Cuenta regresiva para ${edition.date}`}
+                >
+                  <div class="home-countdown-item">
+                    <strong class="home-countdown-value" data-countdown-days>00</strong>
+                    <span>Días</span>
+                  </div>
+                  <div class="home-countdown-item">
+                    <strong class="home-countdown-value" data-countdown-hours>00</strong>
+                    <span>Horas</span>
+                  </div>
+                  <div class="home-countdown-item">
+                    <strong class="home-countdown-value" data-countdown-minutes>00</strong>
+                    <span>Min</span>
+                  </div>
+                  <div class="home-countdown-item">
+                    <strong class="home-countdown-value" data-countdown-seconds>00</strong>
+                    <span>Seg</span>
+                  </div>
+                </div>
+              )}
+
               <div class="home-hero-actions">
                 {edition.isCurrent && (
                   <a class="home-button home-button-pink" href={withBase("/inscripcion/")} data-registration-open>¡Quiero unirme!</a>
@@ -252,6 +279,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
     {turnstileSiteKey && <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>}
 
     <script>
+      import "../scripts/home-countdown";
       import "../scripts/home-registration";
       import "../scripts/registration";
     </script>

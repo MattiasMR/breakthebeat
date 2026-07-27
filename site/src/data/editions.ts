@@ -21,6 +21,7 @@ export interface Edition {
   status: string;
   isCurrent: boolean;
   date: string;
+  startsAt?: string;
   location: string;
   city: string;
   hero: {
@@ -411,6 +412,7 @@ export const editions: Edition[] = [
     status: "Próxima edición",
     isCurrent: true,
     date: "Domingo 27 Sept, 2026 · 10 AM",
+    startsAt: "2026-09-27T10:00:00-05:00",
     location: "Plaza de los Teatros, calle Panamá",
     city: "Guayaquil, Ecuador",
     hero: {

@@ -1,8 +1,6 @@
 ---
-import Icon from "../components/Icon.astro";
 import RegistrationFlow from "../components/RegistrationFlow.astro";
 import SiteFooter from "../components/SiteFooter.astro";
-import SiteHeader from "../components/SiteHeader.astro";
 import { editions } from "../data/editions";
 import { withBase } from "../utils/paths";
 import "../styles/global.css";
@@ -71,8 +69,6 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
     <title>{pageTitle}</title>
   </head>
   <body>
-    <SiteHeader isHome variant="home" />
-
     <main id="inicio" class="home-page">
       <section class="home-hero" aria-label="Próxima edición de Break The Beat">
         {editions.filter((edition) => edition.isCurrent).map((edition) => (
@@ -91,14 +87,24 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
             />
             <div class="home-hero-shade" aria-hidden="true"></div>
             {edition.isCurrent && (
-              <img
-                class="home-graffiti-star"
-                src={withBase("/assets/home-2026/graffiti-star.webp")}
-                width="506"
-                height="760"
-                alt=""
-                aria-hidden="true"
-              />
+              <>
+                <img
+                  class="home-graffiti-star home-graffiti-star-left"
+                  src={withBase("/assets/home-2026/graffiti-star.webp")}
+                  width="506"
+                  height="760"
+                  alt=""
+                  aria-hidden="true"
+                />
+                <img
+                  class="home-graffiti-star home-graffiti-star-right"
+                  src={withBase("/assets/home-2026/graffiti-star.webp")}
+                  width="506"
+                  height="760"
+                  alt=""
+                  aria-hidden="true"
+                />
+              </>
             )}
             <div class="home-hero-content">
               <p class="home-date-pill">{edition.date}</p>
@@ -116,19 +122,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
                 )}
               </h1>
 
-              {edition.isCurrent ? (
-                <div
-                  class="home-countdown"
-                  data-countdown="2026-09-27T10:00:00-05:00"
-                  aria-label="Cuenta regresiva para Break The Beat 2026"
-                >
-                  <div><div><strong data-countdown-days>00</strong></div><span>Días</span></div>
-                  <div><div><strong data-countdown-hours>00</strong></div><span>Horas</span></div>
-                  <div><div><strong data-countdown-minutes>00</strong></div><span>Min</span></div>
-                  <div><div><strong data-countdown-seconds>00</strong></div><span>Seg</span></div>
-                  <p class="sr-only" data-countdown-live aria-live="polite"></p>
-                </div>
-              ) : (
+              {!edition.isCurrent && (
                 <p class="home-hero-summary">{edition.hero.summary}</p>
               )}
 
@@ -189,102 +183,16 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
         </div>
       </section>
 
-      <section class="home-editions" id="ediciones" aria-label="Ediciones de Break The Beat">
-        <div class="home-edition-toolbar">
-          <div class="home-edition-bar">
-            <label>
-              <span>Ediciones</span>
-              <select data-edition-select aria-label="Elegir edición de Break The Beat">
-                {editions.map((edition) => (
-                  <option value={edition.id} selected={edition.isCurrent}>
-                    {edition.shortLabel} · {edition.year}
-                  </option>
-                ))}
-              </select>
-            </label>
-            {editions.map((edition) => (
-              <div class="home-edition-meta" data-edition-panel={edition.id} hidden={!edition.isCurrent} aria-live="polite">
-                <span>{edition.location}</span>
-                <strong>{edition.status}</strong>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div class="home-edition-stage" data-edition-transition aria-live="polite">
-          {editions.map((edition) => (
-            <article
-              class="home-event-edition"
-              data-edition-panel={edition.id}
-              data-page-title={`${edition.label} | Break The Beat`}
-              hidden={!edition.isCurrent}
-              aria-labelledby={`home-event-title-${edition.id}`}
-            >
-              <header class="home-event-heading">
-                <div>
-                  <span class="event-status">{edition.status}</span>
-                  <p class="kicker">{edition.label} · {edition.year}</p>
-                  <h2 id={`home-event-title-${edition.id}`}>{edition.hero.title}</h2>
-                </div>
-                {edition.isCurrent && (
-                  <a class="home-button home-button-pink" href={withBase("/inscripcion/")} data-registration-open>
-                    Inscribirme para competir
-                    <Icon name="ticket-check" size={18} />
-                  </a>
-                )}
-              </header>
-
-              <div class="home-event-summary">
-                <div class="home-event-copy">
-                  <p class="kicker">Sobre esta edición</p>
-                  <p>{edition.eventInfo.description}</p>
-                </div>
-                <dl class="home-event-facts">
-                  <div>
-                    <dt><Icon name="calendar-days" size={18} /> Fecha</dt>
-                    <dd>{edition.date}</dd>
-                  </div>
-                  <div>
-                    <dt><Icon name="map-pin" size={18} /> Lugar</dt>
-                    <dd>{edition.location}, {edition.city}</dd>
-                  </div>
-                  <div>
-                    <dt><Icon name="music-2" size={18} /> Horario</dt>
-                    <dd>{edition.eventInfo.schedule}</dd>
-                  </div>
-                </dl>
-              </div>
-
-              <div class="home-event-details">
-                <section>
-                  <p class="kicker">Competencia</p>
-                  <h3>Categorías</h3>
-                  {edition.eventInfo.categoriesNote && <p>{edition.eventInfo.categoriesNote}</p>}
-                  <div class="home-event-categories">
-                    {edition.eventInfo.categories.map((category) => (
-                      <span><Icon name="trophy" size={20} /> {category}</span>
-                    ))}
-                  </div>
-                </section>
-                <section class="home-event-prize">
-                  <p class="kicker">Premiación</p>
-                  <h3>Premios</h3>
-                  <strong>{edition.eventInfo.prize}</strong>
-                </section>
-              </div>
-            </article>
-          ))}
-        </div>
-
+      <section class="home-editions" aria-label="Impacto y sponsors de Break The Beat">
         <section class="home-impact" id="impacto">
           <div class="home-impact-heading">
             <h2>Lo que <strong>ya logramos</strong></h2>
           </div>
           <div class="home-stat-grid" aria-label="Cifras acumuladas de Break The Beat">
-            <article><b>↗</b><strong>+500 asistentes</strong><span>En nuestras anteriores dos ediciones</span></article>
-            <article><b>↗</b><strong>+50 breakers</strong><span>Inscritos en diferentes categorías</span></article>
-            <article><b>↗</b><strong>+40K en medios</strong><span>Vistas e interacciones en medios</span></article>
-            <article><b>↗</b><strong>1 documental</strong><span>Con reconocimientos internacionales</span></article>
+            <article><b>↗</b><strong><span>+500</span> asistentes</strong><small>En nuestras anteriores dos ediciones</small></article>
+            <article><b>↗</b><strong><span>+50</span> breakers</strong><small>Inscritos en diferentes categorías</small></article>
+            <article><b>↗</b><strong><span>+40K</span> en medios</strong><small>Vistas e interacciones en medios</small></article>
+            <article><b>↗</b><strong><span>1</span> documental</strong><small>Con reconocimientos internacionales</small></article>
           </div>
           <div class="home-gallery" aria-label="Galería de ediciones anteriores">
             {galleryImages.map((src) => <img src={src} width="1100" height="734" alt="" loading="lazy" decoding="async" />)}
@@ -296,13 +204,11 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
           id="sponsors"
           aria-label="Sponsors por edición"
           data-edition-sponsors
-          data-edition-transition
         >
-          {editions.map((edition) => (
+          {editions.filter((edition) => edition.isCurrent).map((edition) => (
             <div
               class="home-allies-panel"
               data-edition-panel={edition.id}
-              hidden={!edition.isCurrent}
               aria-label={`Sponsors de ${edition.shortLabel}`}
             >
               <h2 class="sr-only">{edition.sponsors.eyebrow}</h2>
@@ -325,7 +231,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
         <h2>La pista te espera</h2>
         <div>
           <a class="home-button home-button-pink" href={withBase("/inscripcion/")} data-registration-open>Inscribirme</a>
-          <a class="home-button home-button-paper" href="#ediciones">Información del evento</a>
+          <a class="home-button home-button-paper" href="#evento">Información del evento</a>
         </div>
       </section>
     </main>
@@ -346,36 +252,8 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
     {turnstileSiteKey && <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>}
 
     <script>
-      import "../scripts/edition-switcher";
       import "../scripts/home-registration";
       import "../scripts/registration";
-
-      const countdown = document.querySelector<HTMLElement>("[data-countdown]");
-      if (countdown) {
-        const target = new Date(countdown.dataset.countdown ?? "").getTime();
-        const days = countdown.querySelector<HTMLElement>("[data-countdown-days]");
-        const hours = countdown.querySelector<HTMLElement>("[data-countdown-hours]");
-        const minutes = countdown.querySelector<HTMLElement>("[data-countdown-minutes]");
-        const seconds = countdown.querySelector<HTMLElement>("[data-countdown-seconds]");
-        const live = countdown.querySelector<HTMLElement>("[data-countdown-live]");
-
-        const updateCountdown = () => {
-          const remaining = Math.max(0, target - Date.now());
-          const dayValue = Math.floor(remaining / 86_400_000);
-          const hourValue = Math.floor((remaining % 86_400_000) / 3_600_000);
-          const minuteValue = Math.floor((remaining % 3_600_000) / 60_000);
-          const secondValue = Math.floor((remaining % 60_000) / 1_000);
-
-          if (days) days.textContent = String(dayValue).padStart(2, "0");
-          if (hours) hours.textContent = String(hourValue).padStart(2, "0");
-          if (minutes) minutes.textContent = String(minuteValue).padStart(2, "0");
-          if (seconds) seconds.textContent = String(secondValue).padStart(2, "0");
-          if (live) live.textContent = `${dayValue} días, ${hourValue} horas y ${minuteValue} minutos para el evento.`;
-        };
-
-        updateCountdown();
-        window.setInterval(updateCountdown, 1_000);
-      }
     </script>
   </body>
 </html>

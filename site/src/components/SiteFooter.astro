@@ -21,14 +21,12 @@ const homeSocials = [
   <footer class="site-footer site-footer-home">
     <div class="home-footer-grid">
       <nav aria-label="Menú del sitio">
-        <h2>Menú</h2>
         <a href="#inicio">Inicio</a>
         <a href={withBase("/inscripcion/")} data-registration-open>Inscripciones</a>
-        <a href="#ediciones">Más del evento</a>
+        <a href="#evento">Más del evento</a>
         <a href={withBase("/apoyar/")}>Quiero donar</a>
       </nav>
       <nav aria-label="Redes sociales">
-        <h2>Redes</h2>
         {homeSocials.map((social) =>
           social.href ? (
             <a href={social.href} target="_blank" rel="noreferrer">{social.label}</a>
@@ -38,7 +36,7 @@ const homeSocials = [
         )}
       </nav>
       <div class="home-footer-contact">
-        <h2>Contáctanos</h2>
+        <h2>Contáctanos:</h2>
         <a href={`mailto:${event.email}`}>{event.email}</a>
       </div>
     </div>
@@ -58,6 +56,7 @@ const homeSocials = [
         <a href="https://www.linkedin.com/in/mattiasmorales" target="_blank" rel="noreferrer">
           Mattias Morales
         </a>
+        {" & Fiorella Galarza"}
       </p>
     </div>
   </footer>

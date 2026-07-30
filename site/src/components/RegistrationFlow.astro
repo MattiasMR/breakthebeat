@@ -50,23 +50,14 @@ const { turnstileSiteKey, variant = "page" } = Astro.props;
           </div>
           <CategoryFields prefix="captain" />
           <p class="field-error" data-category-error hidden>Selecciona al menos una categoría.</p>
+          <div class="registration-profile-section">
+            <h3>Tus datos</h3>
+            <ProfileFields prefix="captain" />
+          </div>
           <div class="form-actions align-end">
             <button class="button button-primary" type="button" data-next>
               Continuar <Icon name="arrow-right" size={18} />
             </button>
-          </div>
-        </section>
-
-        <section class="form-step" data-form-step="captain" hidden>
-          <div class="form-step-heading">
-            <p class="step-kicker" data-step-kicker>Paso 2 de 6</p>
-            <h2>Cuéntanos quién eres.</h2>
-            <p>Usaremos estos datos para tu acreditación, comunicación y merch.</p>
-          </div>
-          <ProfileFields prefix="captain" />
-          <div class="form-actions">
-            <button class="button button-ghost" type="button" data-back><Icon name="arrow-left" size={18} /> Atrás</button>
-            <button class="button button-primary" type="button" data-next>Continuar <Icon name="arrow-right" size={18} /></button>
           </div>
         </section>
 

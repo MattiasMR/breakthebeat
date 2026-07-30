@@ -16,7 +16,8 @@ const headerNavItems = isHomeOverhaul
   ? [
       { label: "Inicio", href: "#inicio" },
       { label: "Evento", href: "#evento" },
-      { label: "Ediciones", href: "#ediciones" },
+      { label: "Impacto", href: "#impacto" },
+      { label: "Sponsors", href: "#sponsors" },
       { label: "Donaciones", href: withBase("/apoyar/") }
     ]
   : navItems.map((item) => ({ ...item, href: resolveHref(item.href) }));
@@ -35,7 +36,7 @@ const headerNavItems = isHomeOverhaul
     {headerNavItems.map((item) => <a href={item.href}>{item.label}</a>)}
   </nav>
   <div class="header-actions">
-    <a class="header-register" href={withBase("/inscripcion/")} data-registration-open={isHomeOverhaul || undefined}>
+    <a class="header-register" href={withBase("/inscripcion/")}>
       <span>{isHomeOverhaul ? "Inscríbete" : "Inscribirme"}</span>
       <Icon name="ticket-check" size={18} />
     </a>
@@ -51,7 +52,7 @@ const headerNavItems = isHomeOverhaul
     <nav aria-label="Navegación móvil">
       {headerNavItems.map((item) => <a href={item.href}>{item.label}</a>)}
       {!isHomeOverhaul && <a href={withBase("/#ediciones")}>Información del evento</a>}
-      <a href={withBase("/inscripcion/")} data-registration-open={isHomeOverhaul || undefined}>Inscribirme</a>
+      <a href={withBase("/inscripcion/")}>Inscribirme</a>
     </nav>
   </details>
 </header>

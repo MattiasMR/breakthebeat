@@ -1,6 +1,6 @@
 ---
-import RegistrationFlow from "../components/RegistrationFlow.astro";
 import SiteFooter from "../components/SiteFooter.astro";
+import SiteHeader from "../components/SiteHeader.astro";
 import { editions } from "../data/editions";
 import { withBase } from "../utils/paths";
 import "../styles/global.css";
@@ -17,7 +17,6 @@ const homeSponsorLogo = (logo: string, editionId: string) => {
   const filename = logo.split("/").at(-1)?.replace(/\.png$/i, ".webp") ?? "";
   return withBase(`/assets/sponsors/home/${filename}`);
 };
-const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
 ---
 
 <!doctype html>
@@ -69,6 +68,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
     <title>{pageTitle}</title>
   </head>
   <body>
+    <SiteHeader isHome variant="home" />
     <main id="inicio" class="home-page">
       <section class="home-hero" aria-label="Próxima edición de Break The Beat">
         {editions.filter((edition) => edition.isCurrent).map((edition) => (
@@ -155,7 +155,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
 
               <div class="home-hero-actions">
                 {edition.isCurrent && (
-                  <a class="home-button home-button-pink" href={withBase("/inscripcion/")} data-registration-open>¡Quiero unirme!</a>
+                  <a class="home-button home-button-pink" href={withBase("/inscripcion/")}>¡Quiero unirme!</a>
                 )}
               </div>
             </div>
@@ -257,31 +257,16 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
         <img src={withBase("/assets/home-2026/dancer.svg")} width="115" height="184" alt="" aria-hidden="true" />
         <h2>La pista te espera</h2>
         <div>
-          <a class="home-button home-button-pink" href={withBase("/inscripcion/")} data-registration-open>Inscribirme</a>
+          <a class="home-button home-button-pink" href={withBase("/inscripcion/")}>Inscribirme</a>
           <a class="home-button home-button-paper" href="#evento">Información del evento</a>
         </div>
       </section>
     </main>
 
-    <dialog class="home-registration-dialog" data-registration-dialog aria-labelledby="home-registration-title">
-      <div class="home-registration-dialog-scroll">
-        <button class="home-registration-close" type="button" data-registration-close aria-label="Cerrar inscripción">×</button>
-        <header class="home-registration-heading">
-          <h2 id="home-registration-title">Inscríbete</h2>
-          <p>Break The Beat · Domingo 27 Sept, 2026 · 10 AM</p>
-        </header>
-        <RegistrationFlow turnstileSiteKey={turnstileSiteKey} variant="modal" />
-      </div>
-    </dialog>
-
     <SiteFooter variant="home" />
-
-    {turnstileSiteKey && <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>}
 
     <script>
       import "../scripts/home-countdown";
-      import "../scripts/home-registration";
-      import "../scripts/registration";
     </script>
   </body>
 </html>

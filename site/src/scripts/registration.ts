@@ -38,12 +38,11 @@ let registrationEnabled = false;
 const isDuo = () => Boolean(form.querySelector<HTMLInputElement>('input[name="captain.categories"][value="2v2"]')?.checked);
 
 const activeStepNames = () => isDuo()
-  ? ["categories", "captain", "partner", "health", "emergency", "review", "consents"]
-  : ["categories", "captain", "health", "emergency", "review", "consents"];
+  ? ["categories", "partner", "health", "emergency", "review", "consents"]
+  : ["categories", "health", "emergency", "review", "consents"];
 
 const visualPhaseByStep: Record<string, number> = {
   categories: 1,
-  captain: 1,
   partner: 1,
   health: 2,
   emergency: 2,

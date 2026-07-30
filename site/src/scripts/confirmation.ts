@@ -5,7 +5,7 @@ const shell = document.querySelector<HTMLElement>("[data-confirmation-shell]");
 const empty = document.querySelector<HTMLElement>("[data-confirmation-empty]");
 const grid = document.querySelector<HTMLElement>("[data-qr-grid]");
 const registrationCode = document.querySelector<HTMLElement>("[data-registration-code]");
-const emailStatus = document.querySelector<HTMLElement>("[data-email-status]");
+const downloadWarning = document.querySelector<HTMLElement>("[data-download-warning]");
 const downloadAll = document.querySelector<HTMLButtonElement>("[data-download-all]");
 
 downloadAll?.addEventListener("click", async () => {
@@ -72,15 +72,8 @@ if (!confirmation || !shell || !grid) {
 } else {
   shell.hidden = false;
   if (registrationCode) registrationCode.textContent = confirmation.registrationCode;
-  if (emailStatus) {
-    const messages = {
-      pending: "La inscripción ya se guardó. El correo se procesará en segundo plano; guarda los QR que aparecen aquí.",
-      sent: "Enviamos cada QR a su correo correspondiente.",
-      partial: "La inscripción se guardó, pero uno de los correos no pudo entregarse. El equipo puede reenviarlo desde el panel.",
-      failed: "La inscripción se guardó, pero el correo no pudo enviarse. Descarga los QR ahora o solicita un reenvío al equipo."
-    };
-    emailStatus.textContent = messages[confirmation.emailStatus];
-    emailStatus.classList.add(`is-${confirmation.emailStatus}`);
+  if (downloadWarning) {
+    downloadWarning.textContent = "Importante: descarga y guarda tus QR ahora. No se enviarán por correo y los necesitarás para ingresar al evento. No los pierdas.";
   }
 
   void Promise.all(confirmation.participants.map(async (participant) => {

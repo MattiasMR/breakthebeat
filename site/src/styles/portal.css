@@ -674,22 +674,13 @@ a.legal-document::after {
   border-radius: 999px;
 }
 
-.confirmation-email-status {
+.confirmation-download-warning {
   margin: 28px 0;
   padding: 14px;
   border-radius: 10px;
   background: rgba(255, 255, 255, 0.08);
   text-align: center;
-}
-
-.confirmation-email-status.is-partial,
-.confirmation-email-status.is-failed {
-  background: #4b1523;
-}
-
-.confirmation-email-status.is-pending {
-  border-color: rgba(52, 211, 153, 0.35);
-  background: rgba(52, 211, 153, 0.1);
+  font-weight: 600;
 }
 
 .qr-grid {
@@ -2226,20 +2217,14 @@ a.legal-document::after {
   line-height: 1.45;
 }
 
-.confirmation-standalone-body .confirmation-email-status {
+.confirmation-standalone-body .confirmation-download-warning {
   margin: 14px 0;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: rgba(8, 8, 8, 0.62);
-  font-size: 0.68rem;
-}
-
-.confirmation-standalone-body .confirmation-email-status.is-partial,
-.confirmation-standalone-body .confirmation-email-status.is-failed,
-.confirmation-standalone-body .confirmation-email-status.is-pending {
-  background: transparent;
+  padding: 10px 12px;
+  border: 1px solid rgba(127, 14, 44, 0.28);
+  background: rgba(255, 0, 98, 0.08);
   color: #7f0e2c;
+  font-size: 0.72rem;
+  line-height: 1.45;
 }
 
 .confirmation-standalone-body .qr-grid {

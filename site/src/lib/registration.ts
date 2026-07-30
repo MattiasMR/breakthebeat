@@ -20,22 +20,11 @@ const phoneSchema = z
   .max(24, "Ingresa un teléfono válido")
   .regex(/^\+[1-9][0-9 ()-]{7,22}$/, "Incluye el código internacional, por ejemplo +593");
 
-const socialHandlePattern = /^@[A-Za-z0-9._]{1,30}$/;
-
 const socialUrlSchema = z
   .string()
   .trim()
-  .min(2, "Ingresa tu @usuario o enlace de Instagram o TikTok")
-  .max(200, "Revisa tu usuario o enlace")
-  .refine((value) => {
-    if (socialHandlePattern.test(value)) return true;
-    try {
-      const host = new URL(value).hostname.replace(/^www\./, "").toLowerCase();
-      return host === "instagram.com" || host.endsWith(".instagram.com") || host === "tiktok.com" || host.endsWith(".tiktok.com");
-    } catch {
-      return false;
-    }
-  }, "Ingresa @usuario o un enlace de Instagram o TikTok");
+  .min(1, "Ingresa tu usuario de Instagram o TikTok")
+  .max(200, "El usuario es demasiado largo");
 
 export const medicalSchema = z
   .object({

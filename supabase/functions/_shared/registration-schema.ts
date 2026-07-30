@@ -2,16 +2,7 @@ import { z } from "npm:zod@4";
 
 const category = z.enum(["1v1", "2v2", "bgirls"]);
 const phone = z.string().trim().min(8).max(24).regex(/^\+[1-9][0-9 ()-]{7,22}$/);
-const socialHandlePattern = /^@[A-Za-z0-9._]{1,30}$/;
-const socialProfile = z.string().trim().min(2).max(200).refine((value) => {
-  if (socialHandlePattern.test(value)) return true;
-  try {
-    const hostname = new URL(value).hostname.replace(/^www\./, "").toLowerCase();
-    return hostname === "instagram.com" || hostname.endsWith(".instagram.com") || hostname === "tiktok.com" || hostname.endsWith(".tiktok.com");
-  } catch {
-    return false;
-  }
-});
+const socialProfile = z.string().trim().min(1).max(200);
 
 const medical = z.object({
   hasCondition: z.boolean(),

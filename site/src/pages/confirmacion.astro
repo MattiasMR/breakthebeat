@@ -1,7 +1,5 @@
 ---
 import Icon from "../components/Icon.astro";
-import SiteFooter from "../components/SiteFooter.astro";
-import SiteHeader from "../components/SiteHeader.astro";
 import { event } from "../data/site";
 import { withBase } from "../utils/paths";
 import "../styles/global.css";
@@ -19,15 +17,19 @@ import "../styles/portal.css";
     <link rel="icon" type="image/png" href={withBase("/assets/favicon.png")} />
     <title>Inscripción confirmada | Break The Beat</title>
   </head>
-  <body class="portal-body">
-    <SiteHeader />
-    <main class="portal-main confirmation-main">
+  <body class="portal-body confirmation-standalone-body">
+    <header class="registration-page-topline">
+      <div>
+        <a class="text-link portal-back" href={withBase("/")}><Icon name="arrow-left" size={18} /> Volver al inicio</a>
+      </div>
+    </header>
+    <main class="confirmation-main">
       <section class="confirmation-shell" data-confirmation-shell hidden>
         <div class="confirmation-heading">
           <span class="success-icon"><Icon name="check-circle-2" size={38} /></span>
           <p class="eyebrow">Todo está listo</p>
-          <h1>Inscripción confirmada.</h1>
-          <p>Guarda los códigos y preséntalos en el ingreso. Cada participante de una dupla tiene su propio QR.</p>
+          <h1>¡Ya estás inscrito!</h1>
+          <p>Descarga los códigos y preséntalos en el ingreso el día del evento. Cada participante tiene su propio QR.</p>
           <div class="confirmation-reference">Inscripción <strong data-registration-code></strong></div>
         </div>
         <div class="confirmation-email-status" data-email-status></div>
@@ -36,7 +38,7 @@ import "../styles/portal.css";
           <Icon name="shield-check" size={24} />
           <span>Los QR contienen únicamente un token aleatorio. No incluyen datos personales ni médicos.</span>
         </div>
-        <a class="button button-secondary" href={withBase("/")}><Icon name="arrow-left" size={18} /> Volver al sitio</a>
+        <button class="button button-primary confirmation-download-all" type="button" data-download-all disabled>Descargar QRS</button>
       </section>
 
       <section class="confirmation-shell confirmation-empty" data-confirmation-empty hidden>
@@ -49,7 +51,6 @@ import "../styles/portal.css";
         </div>
       </section>
     </main>
-    <SiteFooter />
     <script>
       import "../scripts/confirmation";
     </script>

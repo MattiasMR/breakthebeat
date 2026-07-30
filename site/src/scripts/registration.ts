@@ -25,7 +25,8 @@ const systemBanner = document.querySelector<HTMLElement>("[data-registration-sta
 if (!form || !formFields || !systemBanner) throw new Error("Registration form markup is incomplete");
 
 const steps = Array.from(form.querySelectorAll<HTMLElement>("[data-form-step]"));
-const progressItems = Array.from(document.querySelectorAll<HTMLElement>("[data-progress-step]"));
+const progressItems = Array.from(document.querySelectorAll<HTMLElement>("[data-progress-phase]"));
+const progressCopy = document.querySelector<HTMLElement>("[data-progress-copy]");
 const submitAlert = form.querySelector<HTMLElement>("[data-submit-alert]");
 const medicalAlert = form.querySelector<HTMLElement>("[data-medical-alert]");
 const review = form.querySelector<HTMLElement>("[data-review]");
@@ -39,6 +40,16 @@ const isDuo = () => Boolean(form.querySelector<HTMLInputElement>('input[name="ca
 const activeStepNames = () => isDuo()
   ? ["categories", "captain", "partner", "health", "emergency", "review", "consents"]
   : ["categories", "captain", "health", "emergency", "review", "consents"];
+
+const visualPhaseByStep: Record<string, number> = {
+  categories: 1,
+  captain: 1,
+  partner: 1,
+  health: 2,
+  emergency: 2,
+  review: 3,
+  consents: 3
+};
 
 const setBanner = (message: string, state: "loading" | "ready" | "closed" | "error") => {
   systemBanner.textContent = message;
@@ -59,17 +70,14 @@ const setMedicalAlert = (message = "") => {
 
 const updateProgress = (name = currentStepName) => {
   const activeNames = activeStepNames();
-  const activeIndex = activeNames.indexOf(name);
+  const activePhase = visualPhaseByStep[name] ?? 1;
 
   progressItems.forEach((item) => {
-    const stepName = item.dataset.progressStep ?? "";
-    const index = activeNames.indexOf(stepName);
-    item.hidden = index === -1;
-    item.classList.toggle("is-active", index === activeIndex);
-    item.classList.toggle("is-complete", index !== -1 && index < activeIndex);
-    const number = item.querySelector<HTMLElement>(":scope > span");
-    if (number && index !== -1) number.textContent = String(index + 1);
+    const phase = Number(item.dataset.progressPhase);
+    item.classList.toggle("is-active", phase === activePhase);
+    item.classList.toggle("is-complete", phase < activePhase);
   });
+  if (progressCopy) progressCopy.textContent = `Paso ${activePhase} de 3`;
 
   steps.forEach((step) => {
     const index = activeNames.indexOf(step.dataset.formStep ?? "");

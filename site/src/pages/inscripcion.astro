@@ -1,8 +1,6 @@
 ---
 import Icon from "../components/Icon.astro";
 import RegistrationFlow from "../components/RegistrationFlow.astro";
-import SiteFooter from "../components/SiteFooter.astro";
-import SiteHeader from "../components/SiteHeader.astro";
 import { event } from "../data/site";
 import { withBase } from "../utils/paths";
 import "../styles/global.css";
@@ -23,64 +21,20 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
     <link rel="icon" type="image/png" href={withBase("/assets/favicon.png")} />
     <title>{pageTitle}</title>
   </head>
-  <body class="portal-body">
-    <SiteHeader />
-    <main class="portal-main registration-page-main">
-      <div class="registration-page-topline">
+  <body class="portal-body registration-standalone-body">
+    <header class="registration-page-topline">
+      <div>
         <a class="text-link portal-back" href={withBase("/")}><Icon name="arrow-left" size={18} /> Volver al inicio</a>
       </div>
+    </header>
 
-      <section class="registration-layout" aria-labelledby="registration-title">
-        <aside class="registration-event-card" aria-labelledby="event-card-title">
-          <img class="registration-event-image" src={withBase("/assets/guayaquil-venue.webp")} width="1600" height="1067" alt="Plaza de los Teatros en Guayaquil" />
-          <div class="registration-event-shade"></div>
-          <div class="registration-event-content">
-            <p class="eyebrow">3ra edición · 2026</p>
-            <img class="registration-event-logo" src={withBase("/assets/break-the-beat-logo.webp")} width="900" height="569" alt="" />
-            <h2 id="event-card-title">Break The Beat 2026</h2>
-            <p class="registration-event-summary">Un torneo nacional donde el breaking se vive como deporte, cultura y comunidad.</p>
-
-            <dl class="registration-event-details">
-              <div><dt><Icon name="calendar-days" size={19} /> Fecha</dt><dd>{event.date}</dd></div>
-              <div><dt><Icon name="map-pin" size={19} /> Lugar</dt><dd>{event.location}<span>{event.city}</span></dd></div>
-            </dl>
-
-            <div class="registration-event-categories" aria-label="Categorías disponibles">
-              <span>1 vs 1</span><span>2 vs 2</span><span>BGirls</span>
-            </div>
-
-            <div class="registration-event-footer">
-              <span>Organiza Universidad Casa Grande</span>
-              <a class="button button-secondary" href={withBase("/?edicion=3#ediciones")}>Ver información del evento <Icon name="arrow-up-right" size={17} /></a>
-            </div>
-          </div>
-        </aside>
-
+    <main class="registration-page-main">
+      <section class="registration-workspace" aria-label="Formulario de inscripción">
         <div class="registration-form-column">
-          <header class="registration-form-intro">
-            <p class="eyebrow">Inscripción oficial</p>
-            <h1 id="registration-title">Tu lugar en la pista empieza aquí.</h1>
-            <p>Completa el formulario dentro de la web. Si participas en 2 vs 2, necesitarás la información completa de tu compañero.</p>
-          </header>
-
-          <div class="privacy-callout registration-privacy-callout">
-            <Icon name="shield-check" size={28} />
-            <div>
-              <strong>Información protegida</strong>
-              <span>Los datos médicos solo serán visibles para el equipo autorizado y nunca aparecerán en tu QR.</span>
-            </div>
-          </div>
-
           <RegistrationFlow turnstileSiteKey={turnstileSiteKey} />
         </div>
       </section>
-
-      <section class="portal-help">
-        <Icon name="users-round" size={28} />
-        <div><strong>¿Necesitas ayuda?</strong><span>Escríbenos a <a href={`mailto:${event.email}`}>{event.email}</a>.</span></div>
-      </section>
     </main>
-    <SiteFooter />
 
     {turnstileSiteKey && <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>}
     <script>

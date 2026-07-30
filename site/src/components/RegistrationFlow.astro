@@ -3,6 +3,7 @@ import Icon from "./Icon.astro";
 import CategoryFields from "./CategoryFields.astro";
 import MedicalFields from "./MedicalFields.astro";
 import ProfileFields from "./ProfileFields.astro";
+import { event } from "../data/site";
 
 interface Props {
   turnstileSiteKey: string;
@@ -14,17 +15,23 @@ const { turnstileSiteKey, variant = "page" } = Astro.props;
 
 <div class:list={["registration-flow", { "registration-flow-modal": variant === "modal" }]}>
   <aside class="step-sidebar registration-progress" aria-label="Progreso de la inscripción">
-    <p class="step-sidebar-label">Tu progreso</p>
-    <ol data-progress-list>
-      <li class="is-active" data-progress-step="categories"><span>1</span><div><strong>Categorías</strong><small>Cómo competirás</small></div></li>
-      <li data-progress-step="captain"><span>2</span><div><strong>Tus datos</strong><small>Perfil principal</small></div></li>
-      <li data-progress-step="partner" hidden><span>3</span><div><strong>Compañero</strong><small>Solo para 2 vs 2</small></div></li>
-      <li data-progress-step="health"><span>3</span><div><strong>Salud</strong><small>Información confidencial</small></div></li>
-      <li data-progress-step="emergency"><span>4</span><div><strong>Emergencia</strong><small>Persona de contacto</small></div></li>
-      <li data-progress-step="review"><span>5</span><div><strong>Revisión</strong><small>Confirma los datos</small></div></li>
-      <li data-progress-step="consents"><span>6</span><div><strong>Autorización</strong><small>Documentos y envío</small></div></li>
-    </ol>
-    <div class="secure-note"><Icon name="lock-keyhole" size={18} /><span>Conexión cifrada. No guardamos datos en este dispositivo después del envío.</span></div>
+    <div class="registration-summary-intro">
+      <p class="step-sidebar-label">Inscripciones</p>
+      <h1>Asegura tu cupo</h1>
+      <p class="registration-event-copy">
+        <span>{event.date}</span>
+        <span>{event.location}</span>
+      </p>
+    </div>
+    <div class="registration-progress-status">
+      <ol data-progress-list>
+        <li class="is-active" data-progress-phase="1"><span></span><strong class="sr-only">Datos de participantes</strong></li>
+        <li data-progress-phase="2"><span></span><strong class="sr-only">Salud y emergencia</strong></li>
+        <li data-progress-phase="3"><span></span><strong class="sr-only">Revisión y autorización</strong></li>
+      </ol>
+      <strong data-progress-copy>Paso 1 de 3</strong>
+    </div>
+    <div class="secure-note"><Icon name="lock-keyhole" size={18} /><span>Conexión cifrada. Tus datos se envían de forma segura.</span></div>
   </aside>
 
   <div class="registration-panel">

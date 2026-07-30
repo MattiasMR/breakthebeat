@@ -35,7 +35,7 @@ import "../styles/portal.css";
           <p>Descarga los códigos y preséntalos en el ingreso el día del evento. Cada participante tiene su propio QR.</p>
           <div class="confirmation-reference">Inscripción <strong data-registration-code></strong></div>
         </div>
-        <div class="confirmation-email-status" data-email-status></div>
+        <div class="confirmation-download-warning" data-download-warning></div>
         <div class="qr-grid" data-qr-grid></div>
         <div class="confirmation-security">
           <Icon name="shield-check" size={24} />
@@ -45,9 +45,9 @@ import "../styles/portal.css";
       </section>
 
       <section class="confirmation-shell confirmation-empty" data-confirmation-empty hidden>
-        <Icon name="mail-check" size={42} />
+        <Icon name="qr-code" size={42} />
         <h1>No hay una confirmación reciente en esta pestaña.</h1>
-        <p>Si ya te inscribiste, revisa el correo enviado a cada participante. También puedes contactar al equipo.</p>
+        <p>Los QR no se envían por correo y solo aparecen al finalizar la inscripción. Si no los descargaste, contacta al equipo.</p>
         <div class="confirmation-empty-actions">
           <a class="button button-primary" href={withBase("/inscripcion/")}>Ir a inscripción</a>
           <a class="button button-secondary" href={`mailto:${event.email}`}>Contactar</a>

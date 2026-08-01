@@ -1,7 +1,8 @@
 ---
+import Icon from "../components/Icon.astro";
 import SiteFooter from "../components/SiteFooter.astro";
 import SiteHeader from "../components/SiteHeader.astro";
-import { editions } from "../data/editions";
+import { currentEdition, editions } from "../data/editions";
 import { withBase } from "../utils/paths";
 import "../styles/global.css";
 import "../styles/portal.css";
@@ -12,6 +13,14 @@ const description =
 const galleryImages = Array.from({ length: 12 }, (_, index) =>
   withBase(`/assets/home-2026/gallery-${String(index + 1).padStart(2, "0")}.webp`)
 );
+const pastEditions = editions.filter((edition) => !edition.isCurrent);
+const participationRules = [
+  "Solo pueden inscribirse personas mayores de 18 años.",
+  "Cada participante puede elegir una o más categorías: 1 vs 1, 2 vs 2 y BGirls.",
+  "La inscripción 2 vs 2 requiere completar los datos de ambos integrantes de la dupla.",
+  "Para completar el registro se solicitan datos de contacto y de emergencia válidos.",
+  "Al finalizar se aceptan los términos, la privacidad, el tratamiento de datos de salud y la autorización de imagen y voz."
+];
 const homeSponsorLogo = (logo: string, editionId: string) => {
   if (editionId === "3") return withBase(logo);
   const filename = logo.split("/").at(-1)?.replace(/\.png$/i, ".webp") ?? "";
@@ -179,6 +188,101 @@ const homeSponsorLogo = (logo: string, editionId: string) => {
         </div>
       </div>
 
+      <section class="home-info" id="informacion" aria-labelledby="home-info-title">
+        <nav class="home-info-tabs" aria-label="Información de Break The Beat">
+          <a href="#informacion" aria-current="page">Información del evento</a>
+          <a href="#reglas">Reglas</a>
+        </nav>
+
+        <div class="home-info-overview">
+          <aside class="home-info-series" aria-label="Serie del evento">
+            <p>Parte de la serie</p>
+            <div>
+              <img
+                src={withBase("/assets/favicon.png")}
+                width="96"
+                height="96"
+                alt=""
+                aria-hidden="true"
+              />
+              <span>
+                <strong>Break The Beat</strong>
+                <small>{editions.length} ediciones</small>
+              </span>
+            </div>
+          </aside>
+
+          <article class="home-info-copy">
+            <p class="kicker">{currentEdition.label} · {currentEdition.year}</p>
+            <h2 id="home-info-title">Todo lo que necesitas saber antes de entrar a la pista.</h2>
+            <p class="home-info-lead">{currentEdition.eventInfo.description}</p>
+            <p>{currentEdition.about.paragraphs[1]}</p>
+
+            <dl class="home-info-facts">
+              <div>
+                <dt><Icon name="calendar-days" size={18} /> Fecha</dt>
+                <dd>{currentEdition.date}</dd>
+              </div>
+              <div>
+                <dt><Icon name="map-pin" size={18} /> Lugar</dt>
+                <dd>{currentEdition.location}, {currentEdition.city}</dd>
+              </div>
+              <div>
+                <dt><Icon name="trophy" size={18} /> Categorías</dt>
+                <dd>{currentEdition.eventInfo.categories.join(" · ")}</dd>
+              </div>
+            </dl>
+          </article>
+        </div>
+
+        <section class="home-rules" id="reglas" aria-labelledby="home-rules-title">
+          <header>
+            <p class="kicker">Antes de competir</p>
+            <h2 id="home-rules-title">Reglas de participación</h2>
+            <p>Estas condiciones reflejan lo que actualmente valida el formulario oficial de inscripción.</p>
+            <a class="home-button home-button-pink" href={withBase("/inscripcion/")}>
+              Revisar e inscribirme
+              <Icon name="arrow-up-right" size={18} />
+            </a>
+          </header>
+          <ol>
+            {participationRules.map((rule, index) => (
+              <li>
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                <p>{rule}</p>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        <section class="home-past-editions" id="ediciones" aria-labelledby="past-editions-title">
+          <header>
+            <p class="kicker">El movimiento continúa</p>
+            <h2 id="past-editions-title">Ediciones pasadas</h2>
+          </header>
+          <div class="home-past-grid">
+            {pastEditions.map((edition) => (
+              <article class="home-past-card">
+                <img
+                  src={withBase(edition.hero.image)}
+                  width="1600"
+                  height="900"
+                  alt={edition.hero.alt}
+                  loading="lazy"
+                  decoding="async"
+                />
+                <div class="home-past-card-shade" aria-hidden="true"></div>
+                <div class="home-past-card-copy">
+                  <p>{edition.label} · {edition.year}</p>
+                  <h3>{edition.hero.title}</h3>
+                  <span>{edition.location}</span>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      </section>
+
       <section class="home-about" id="evento">
         <img
           class="home-about-image"
@@ -240,13 +344,9 @@ const homeSponsorLogo = (logo: string, editionId: string) => {
             >
               <h2 class="sr-only">{edition.sponsors.eyebrow}</h2>
               <div class="home-allies-logos">
-                {edition.sponsors.items.map((sponsor) =>
-                  sponsor.logo ? (
-                    <img src={homeSponsorLogo(sponsor.logo, edition.id)} width="480" height="120" alt={sponsor.name} loading="lazy" decoding="async" />
-                  ) : (
-                    <strong>{sponsor.name}</strong>
-                  )
-                )}
+                {edition.sponsors.items.map((sponsor) => (
+                  <img src={homeSponsorLogo(sponsor.logo, edition.id)} width="480" height="120" alt={sponsor.name} loading="lazy" decoding="async" />
+                ))}
               </div>
             </div>
           ))}
@@ -258,7 +358,7 @@ const homeSponsorLogo = (logo: string, editionId: string) => {
         <h2>La pista te espera</h2>
         <div>
           <a class="home-button home-button-pink" href={withBase("/inscripcion/")}>Inscribirme</a>
-          <a class="home-button home-button-paper" href="#evento">Información del evento</a>
+          <a class="home-button home-button-paper" href="#informacion">Información del evento</a>
         </div>
       </section>
     </main>

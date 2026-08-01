@@ -10,7 +10,7 @@ export interface StoryCard {
 
 export interface Sponsor {
   name: string;
-  logo?: string;
+  logo: string;
 }
 
 export interface Edition {
@@ -95,6 +95,20 @@ const commonSponsors = {
   ponyMalta: { name: "Pony Malta", logo: "/assets/sponsors/pony-malta.png" },
   colorExpress: { name: "Color Express", logo: "/assets/sponsors/color-express.png" },
   cabala: { name: "Cábala Estudio Creativo", logo: "/assets/sponsors/cabala.png" }
+} satisfies Record<string, Sponsor>;
+
+const sponsors2026 = {
+  abad: { name: "ABAD Lounge", logo: "/assets/sponsors/2026/abad.webp" },
+  pocoLoco: { name: "Poco Loco", logo: "/assets/sponsors/2026/poco-loco.webp" },
+  makai: { name: "Makai Hotel", logo: "/assets/sponsors/2026/makai.webp" },
+  compuExtrema: { name: "Compu Extrema", logo: "/assets/sponsors/2026/compu-extrema.webp" },
+  cafeOro: { name: "Café Oro", logo: "/assets/sponsors/2026/cafe-oro.webp" },
+  losAndes: { name: "Los Andes", logo: "/assets/sponsors/2026/los-andes.webp" },
+  rexona: { name: "Rexona", logo: "/assets/sponsors/2026/rexona.webp" },
+  axe: { name: "Axe", logo: "/assets/sponsors/2026/axe.webp" },
+  pepsi: { name: "Pepsi", logo: "/assets/sponsors/2026/pepsi.webp" },
+  manicho: { name: "Manicho", logo: "/assets/sponsors/2026/manicho.webp" },
+  crisSal: { name: "Cris-Sal", logo: "/assets/sponsors/2026/cris-sal.webp" }
 } satisfies Record<string, Sponsor>;
 
 export const editions: Edition[] = [
@@ -539,13 +553,19 @@ export const editions: Edition[] = [
     sponsors: {
       eyebrow: "Sponsors · Edición 3",
       title: "Marcas que impulsan la tercera edición.",
-      note: "Axe, Los Andes, Rexona, Café Oro y Makai Hotel acompañan Break The Beat 2026.",
+      note: "Once marcas aliadas acompañan Break The Beat 2026.",
       items: [
-        commonSponsors.axe,
-        commonSponsors.losAndes,
-        commonSponsors.rexona,
-        commonSponsors.cafeOro,
-        commonSponsors.makai
+        sponsors2026.abad,
+        sponsors2026.pocoLoco,
+        sponsors2026.makai,
+        sponsors2026.compuExtrema,
+        sponsors2026.cafeOro,
+        sponsors2026.losAndes,
+        sponsors2026.rexona,
+        sponsors2026.axe,
+        sponsors2026.pepsi,
+        sponsors2026.manicho,
+        sponsors2026.crisSal
       ]
     },
     eventInfo: {

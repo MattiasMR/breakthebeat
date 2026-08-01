@@ -33,10 +33,12 @@ const handleRequest = async (request: Request) => {
       "REGISTRATION_CLOSED",
       "LEGAL_DOCUMENTS_NOT_READY",
       "DUPLICATE_PARTICIPANT",
+      "CATEGORY_FULL",
       "INVALID_DUO",
       "CAPTAIN_AUTHORITY_REQUIRED"
     ].find((code) => message.includes(code));
-    return errorResponse(request, known ?? "REGISTRATION_FAILED", known === "DUPLICATE_PARTICIPANT" ? 409 : 400);
+    const status = known === "DUPLICATE_PARTICIPANT" || known === "CATEGORY_FULL" ? 409 : 400;
+    return errorResponse(request, known ?? "REGISTRATION_FAILED", status);
   }
 
   const registration = data as {

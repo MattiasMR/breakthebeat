@@ -11,9 +11,9 @@ const { variant = "default" } = Astro.props;
 const isHomeOverhaul = variant === "home";
 const homeSocials = [
   { label: "Instagram", href: event.instagramUrl },
-  { label: "Tiktok" },
-  { label: "Youtube" },
-  { label: "Whatsapp" }
+  { label: "TikTok", href: event.tiktokUrl },
+  { label: "YouTube", href: event.youtubeUrl },
+  { label: "WhatsApp", href: event.whatsappUrl }
 ];
 ---
 
@@ -23,7 +23,7 @@ const homeSocials = [
       <nav aria-label="Menú del sitio">
         <a href="#inicio">Inicio</a>
         <a href={withBase("/inscripcion/")} data-registration-open>Inscripciones</a>
-        <a href="#evento">Más del evento</a>
+        <a href="#informacion">Más del evento</a>
         <a href={withBase("/apoyar/")}>Quiero donar</a>
       </nav>
       <nav aria-label="Redes sociales">
@@ -56,7 +56,6 @@ const homeSocials = [
         <a href="https://www.linkedin.com/in/mattiasmorales" target="_blank" rel="noreferrer">
           Mattias Morales
         </a>
-        {" & Fiorella Galarza"}
       </p>
     </div>
   </footer>

@@ -7,6 +7,9 @@ export const event = {
   city: "Guayaquil, Ecuador",
   instagram: "@breakthebeat.ucg",
   instagramUrl: "https://www.instagram.com/breakthebeat.ucg/",
+  tiktokUrl: "https://www.tiktok.com/@breakthebeat.ucg?_r=1&_t=ZS-98WkkVF0evN",
+  youtubeUrl: "https://www.youtube.com/@BreakTheBeat_UCG",
+  whatsappUrl: "https://chat.whatsapp.com/EPfWkeV0HgfJK55B5gEWW3",
   email: "breakthebeat@casagrande.edu.ec",
   summary:
     "Una competencia nacional de breakdance creada por estudiantes de Universidad Casa Grande para visibilizar la cultura urbana, abrir espacios seguros y reunir a bailarines de todo el país."
@@ -280,7 +283,7 @@ export const footerGroups = [
       { label: "Impacto", href: "/#impacto" },
       { label: "Ediciones", href: "/#ediciones" },
       { label: "Sponsors", href: "/#sponsors" },
-      { label: "Información del evento", href: "/#ediciones" }
+      { label: "Información del evento", href: "/#informacion" }
     ]
   },
   {
@@ -289,6 +292,9 @@ export const footerGroups = [
       { label: "Donar ahora", href: "/apoyar/" },
       { label: "Contacto oficial", href: `mailto:${event.email}` },
       { label: "Instagram", href: event.instagramUrl },
+      { label: "TikTok", href: event.tiktokUrl },
+      { label: "YouTube", href: event.youtubeUrl },
+      { label: "WhatsApp", href: event.whatsappUrl },
       { label: "Email del proyecto", href: `mailto:${event.email}` },
       { label: "Demo de donaciones", href: "/apoyar/" }
     ]

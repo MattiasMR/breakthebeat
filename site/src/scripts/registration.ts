@@ -2,7 +2,6 @@ import {
   CONFIRMATION_STORAGE_KEY,
   DRAFT_STORAGE_KEY,
   EVENT_SLUG,
-  categoryLabels,
   participantSchema,
   registrationPayloadSchema,
   type Category,
@@ -29,8 +28,8 @@ const progressItems = Array.from(document.querySelectorAll<HTMLElement>("[data-p
 const progressCopy = document.querySelector<HTMLElement>("[data-progress-copy]");
 const submitAlert = form.querySelector<HTMLElement>("[data-submit-alert]");
 const medicalAlert = form.querySelector<HTMLElement>("[data-medical-alert]");
-const review = form.querySelector<HTMLElement>("[data-review]");
 const legalDocuments = form.querySelector<HTMLElement>("[data-legal-documents]");
+const legalAcceptance = form.querySelector<HTMLElement>("[data-legal-acceptance]");
 const categoryError = form.querySelector<HTMLElement>("[data-category-error]");
 let currentStepName = "categories";
 let registrationEnabled = false;
@@ -38,15 +37,13 @@ let registrationEnabled = false;
 const isDuo = () => Boolean(form.querySelector<HTMLInputElement>('input[name="captain.categories"][value="2v2"]')?.checked);
 
 const activeStepNames = () => isDuo()
-  ? ["categories", "partner", "health", "emergency", "review", "consents"]
-  : ["categories", "health", "emergency", "review", "consents"];
+  ? ["categories", "partner", "emergency", "consents"]
+  : ["categories", "emergency", "consents"];
 
 const visualPhaseByStep: Record<string, number> = {
   categories: 1,
   partner: 1,
-  health: 2,
   emergency: 2,
-  review: 3,
   consents: 3
 };
 
@@ -111,8 +108,8 @@ const showStep = (name: string) => {
 
 const setPartnerEnabled = (enabled: boolean) => {
   form.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>('[name^="partner."]').forEach((control) => {
-    if (control.matches('input[type="checkbox"][data-forced-category]')) {
-      control.disabled = true;
+    if (control.matches("[data-forced-category]")) {
+      control.disabled = !enabled;
       return;
     }
     control.disabled = !enabled;
@@ -120,102 +117,66 @@ const setPartnerEnabled = (enabled: boolean) => {
   form.querySelectorAll<HTMLElement>("[data-partner-medical]").forEach((partnerMedical) => {
     partnerMedical.hidden = !enabled;
   });
-  const authority = form.querySelector<HTMLElement>("[data-captain-authority]");
-  if (authority) authority.hidden = !enabled;
-  const authorityInput = authority?.querySelector<HTMLInputElement>("input");
-  if (authorityInput) {
-    authorityInput.disabled = !enabled;
-    authorityInput.required = enabled;
-    if (!enabled) authorityInput.checked = false;
-  }
 };
 
 const syncDuo = () => {
   setPartnerEnabled(isDuo());
   if (!isDuo() && currentStepName === "partner") {
-    showStep("health");
+    showStep("categories");
     return;
   }
   updateProgress();
 };
 
-const syncConditionalFields = () => {
-  const groups = new Set(Array.from(form.querySelectorAll<HTMLInputElement>("[data-detail-toggle]")).map((input) => input.dataset.detailToggle));
-  groups.forEach((group) => {
-    if (!group) return;
-    const checked = form.querySelector<HTMLInputElement>(`[data-detail-toggle="${group}"]:checked`);
-    const visible = checked?.value === "true";
-    const container = form.querySelector<HTMLElement>(`[data-detail="${group}"]`);
-    if (!container) return;
-    container.hidden = !visible;
-    const fields = Array.from(container.querySelectorAll<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>("input, textarea, select"));
-    fields.forEach((field) => {
-      field.disabled = !visible || (field.name.startsWith("partner.") && !isDuo());
-      if (!visible) field.setCustomValidity("");
-    });
-
-    const condition = fields.find((field) => field.name.endsWith("conditionDetail"));
-    const medication = fields.find((field) => field.name.endsWith("medicationDetail") && !field.name.endsWith("AllergyDetail"));
-    if (condition) condition.required = visible;
-    if (medication) medication.required = visible;
-
-    if (group.endsWith("-allergy") && visible) {
-      const medicationAllergy = fields.find((field) => field.name.endsWith("medicationAllergyDetail"));
-      const foodAllergy = fields.find((field) => field.name.endsWith("foodAllergyDetail"));
-      if (medicationAllergy && foodAllergy) {
-        medicationAllergy.required = !medicationAllergy.value.trim() && !foodAllergy.value.trim();
-      }
-    }
-  });
-};
-
 const getString = (data: FormData, key: string) => String(data.get(key) ?? "").trim();
-const getBoolean = (data: FormData, key: string) => getString(data, key) === "true";
-
-const collectParticipant = (prefix: "captain" | "partner", data: FormData): ParticipantInput => ({
-  role: prefix,
-  displayName: getString(data, `${prefix}.displayName`),
-  socialUrl: getString(data, `${prefix}.socialUrl`),
-  age: Number(getString(data, `${prefix}.age`)),
-  country: getString(data, `${prefix}.country`),
-  city: getString(data, `${prefix}.city`),
-  phone: getString(data, `${prefix}.phone`),
-  email: getString(data, `${prefix}.email`).toLowerCase(),
-  categories: data.getAll(`${prefix}.categories`).map(String) as Category[],
-  medical: {
-    hasCondition: getBoolean(data, `${prefix}.medical.hasCondition`),
-    conditionDetail: getString(data, `${prefix}.medical.conditionDetail`),
-    hasAllergies: getBoolean(data, `${prefix}.medical.hasAllergies`),
-    medicationAllergyDetail: getString(data, `${prefix}.medical.medicationAllergyDetail`),
-    foodAllergyDetail: getString(data, `${prefix}.medical.foodAllergyDetail`),
-    takesMedication: getBoolean(data, `${prefix}.medical.takesMedication`),
-    medicationDetail: getString(data, `${prefix}.medical.medicationDetail`),
-    emergencyRelationship: getString(data, `${prefix}.medical.emergencyRelationship`),
-    emergencyName: getString(data, `${prefix}.medical.emergencyName`),
-    emergencyPhone: getString(data, `${prefix}.medical.emergencyPhone`)
-  }
-});
+const collectParticipant = (prefix: "captain" | "partner", data: FormData): ParticipantInput => {
+  const legalName = getString(data, `${prefix}.legalName`);
+  const artisticName = getString(data, `${prefix}.artisticName`);
+  return {
+    role: prefix,
+    displayName: `${legalName} · ${artisticName}`,
+    socialUrl: "",
+    age: Number(getString(data, `${prefix}.age`)),
+    country: "",
+    city: "",
+    phone: getString(data, `${prefix}.phone`),
+    email: getString(data, `${prefix}.email`).toLowerCase(),
+    categories: data.getAll(`${prefix}.categories`).map(String) as Category[],
+    medical: {
+      hasCondition: false,
+      conditionDetail: "",
+      hasAllergies: false,
+      medicationAllergyDetail: "",
+      foodAllergyDetail: "",
+      takesMedication: false,
+      medicationDetail: "",
+      emergencyRelationship: getString(data, `${prefix}.medical.emergencyRelationship`),
+      emergencyName: getString(data, `${prefix}.medical.emergencyName`),
+      emergencyPhone: getString(data, `${prefix}.medical.emergencyPhone`)
+    }
+  };
+};
 
 const collectPayload = (turnstileToken: string): RegistrationPayload => {
   const data = new FormData(form);
+  const accepted = data.has("consent.responsibility");
   const participants = [collectParticipant("captain", data)];
   if (isDuo()) participants.push(collectParticipant("partner", data));
   return {
     eventSlug: EVENT_SLUG,
     participants,
     consents: {
-      terms: data.has("consent.terms") as true,
-      privacy: data.has("consent.privacy") as true,
-      health: data.has("consent.health") as true,
-      image: data.has("consent.image") as true,
-      captainAuthority: data.has("consent.captainAuthority")
+      terms: accepted as true,
+      privacy: accepted as true,
+      health: accepted as true,
+      image: accepted as true,
+      captainAuthority: isDuo() && accepted
     },
     turnstileToken
   };
 };
 
 const validateVisibleControls = (step: HTMLElement) => {
-  syncConditionalFields();
   const invalid = Array.from(step.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>("input, select, textarea"))
     .find((control) => !control.disabled && !control.checkValidity());
   if (invalid) {
@@ -251,40 +212,6 @@ const validateCurrentStep = () => {
   setMedicalAlert();
   setSubmitAlert();
   return true;
-};
-
-const renderReview = () => {
-  if (!review) return;
-  const data = new FormData(form);
-  const participants = [collectParticipant("captain", data)];
-  if (isDuo()) participants.push(collectParticipant("partner", data));
-  review.replaceChildren(...participants.map((participant) => {
-    const card = document.createElement("article");
-    card.className = "review-card";
-    const alert = participant.medical.hasCondition || participant.medical.hasAllergies || participant.medical.takesMedication;
-    const title = document.createElement("h3");
-    title.textContent = participant.displayName;
-    const role = document.createElement("span");
-    role.className = "review-role";
-    role.textContent = participant.role === "captain" ? "Participante principal" : "Compañero";
-    const list = document.createElement("dl");
-    const items: Array<[string, string]> = [
-      ["Categorías", participant.categories.map((category) => categoryLabels[category]).join(", ")],
-      ["Contacto", `${participant.email} · ${participant.phone}`],
-      ["Origen", `${participant.city}, ${participant.country}`],
-      ["Emergencia", `${participant.medical.emergencyName} · ${participant.medical.emergencyPhone}`],
-      ["Alerta médica", alert ? "Sí · revisar en panel privado" : "No declarada"]
-    ];
-    items.forEach(([term, value]) => {
-      const dt = document.createElement("dt");
-      dt.textContent = term;
-      const dd = document.createElement("dd");
-      dd.textContent = value;
-      list.append(dt, dd);
-    });
-    card.append(role, title, list);
-    return card;
-  }));
 };
 
 const saveDraft = () => {
@@ -323,7 +250,8 @@ const restoreDraft = () => {
 
 const renderLegalDocuments = (documents: Array<{ kind: string; title: string; version: string; public_url: string | null }>) => {
   if (!legalDocuments) return;
-  legalDocuments.replaceChildren(...documents.map((document) => {
+  const visibleDocuments = documents.filter((document) => document.kind !== "health");
+  legalDocuments.replaceChildren(...visibleDocuments.map((document) => {
     const item = document.public_url ? window.document.createElement("a") : window.document.createElement("div");
     item.className = "legal-document";
     if (item instanceof HTMLAnchorElement && document.public_url) {
@@ -334,12 +262,35 @@ const renderLegalDocuments = (documents: Array<{ kind: string; title: string; ve
     const copy = window.document.createElement("span");
     const title = window.document.createElement("strong");
     title.textContent = document.title;
-    const version = window.document.createElement("small");
-    version.textContent = `Versión ${document.version}`;
-    copy.append(title, version);
+    copy.append(title);
     item.append(copy);
     return item;
   }));
+
+  if (!legalAcceptance) return;
+  legalAcceptance.replaceChildren(window.document.createTextNode("Al dar en Finalizar inscripción aceptas "));
+  const references = [
+    { kind: "terms", prefix: "los ", fallback: "Términos y reglas del evento" },
+    { kind: "privacy", prefix: "el ", fallback: "Aviso de privacidad" },
+    { kind: "captain_authority", prefix: "la ", fallback: "Declaración de autorización del compañero" },
+    { kind: "image", prefix: "la ", fallback: "Autorización de imagen y voz" }
+  ];
+  references.forEach((reference, index) => {
+    const document = visibleDocuments.find((item) => item.kind === reference.kind);
+    legalAcceptance.append(window.document.createTextNode(reference.prefix));
+    const label = document?.title ?? reference.fallback;
+    if (document?.public_url) {
+      const link = window.document.createElement("a");
+      link.href = document.public_url;
+      link.target = "_blank";
+      link.rel = "noreferrer";
+      link.textContent = label;
+      legalAcceptance.append(link);
+    } else {
+      legalAcceptance.append(window.document.createTextNode(label));
+    }
+    legalAcceptance.append(window.document.createTextNode(index === references.length - 1 ? "." : index === references.length - 2 ? " y " : ", "));
+  });
 };
 
 const loadRegistrationState = async () => {
@@ -372,7 +323,6 @@ const loadRegistrationState = async () => {
     formFields.disabled = false;
     restoreDraft();
     syncDuo();
-    syncConditionalFields();
     setBanner("Inscripciones abiertas · Domingo 27 Sept, 2026 · 10 AM", "ready");
   } catch {
     setBanner("No pudimos conectar con el sistema de inscripciones.", "error");
@@ -382,19 +332,16 @@ const loadRegistrationState = async () => {
 form.addEventListener("change", (event) => {
   const target = event.target as HTMLInputElement;
   if (target.name === "captain.categories") syncDuo();
-  syncConditionalFields();
   setMedicalAlert();
   saveDraft();
 });
 form.addEventListener("input", () => {
-  syncConditionalFields();
   setMedicalAlert();
   saveDraft();
 });
 
 form.querySelectorAll<HTMLButtonElement>("[data-next]").forEach((button) => button.addEventListener("click", () => {
   if (!validateCurrentStep()) return;
-  if (currentStepName === "emergency") renderReview();
   const names = activeStepNames();
   const next = names[names.indexOf(currentStepName) + 1];
   if (next) showStep(next);
@@ -431,11 +378,11 @@ form.addEventListener("submit", async (event) => {
         try { code = ((await context.clone().json()) as { error?: string }).error ?? code; } catch { /* response without JSON */ }
       }
       const messages: Record<string, string> = {
-        DUPLICATE_PARTICIPANT: "Uno de los correos ya está inscrito. Contacta al equipo para corregir o unir el registro.",
+        DUPLICATE_PARTICIPANT: "El correo ingresado ya se encuentra registrado.",
         REGISTRATION_CLOSED: "Las inscripciones se cerraron antes de completar el envío.",
         LEGAL_DOCUMENTS_NOT_READY: "Los documentos legales aún no están listos para recibir inscripciones.",
         TURNSTILE_FAILED: "La verificación humana expiró. Inténtalo nuevamente.",
-        INVALID_REGISTRATION: "Hay un dato con formato inválido. Vuelve a la revisión y comprueba tus perfiles.",
+        INVALID_REGISTRATION: "Hay un dato con formato inválido. Vuelve y comprueba los datos ingresados.",
         INTERNAL_ERROR: "El servidor no pudo completar la inscripción. Tus datos siguen en el formulario; inténtalo nuevamente."
       };
       throw new Error(messages[code] ?? "No pudimos guardar la inscripción. Revisa tu conexión e intenta nuevamente.");
@@ -449,7 +396,7 @@ form.addEventListener("submit", async (event) => {
     window.turnstile?.reset();
   } finally {
     submitButton?.removeAttribute("disabled");
-    if (submitButton) submitButton.textContent = "Confirmar inscripción";
+    if (submitButton) submitButton.textContent = "Finalizar inscripción";
   }
 });
 

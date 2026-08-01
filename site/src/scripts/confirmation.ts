@@ -7,6 +7,7 @@ const grid = document.querySelector<HTMLElement>("[data-qr-grid]");
 const registrationCode = document.querySelector<HTMLElement>("[data-registration-code]");
 const downloadWarning = document.querySelector<HTMLElement>("[data-download-warning]");
 const downloadAll = document.querySelector<HTMLButtonElement>("[data-download-all]");
+const confirmationCopy = document.querySelector<HTMLElement>("[data-confirmation-copy]");
 
 downloadAll?.addEventListener("click", async () => {
   const cards = Array.from(document.querySelectorAll<HTMLElement>(".qr-card"));
@@ -41,9 +42,9 @@ downloadAll?.addEventListener("click", async () => {
     cards.forEach((card, index) => {
       const left = index * (cardWidth + gap);
       const center = left + (cardWidth / 2);
-      context.font = "700 38px Inter, sans-serif";
+      context.font = "700 38px Poppins, sans-serif";
       context.fillText(card.querySelector("h2")?.textContent?.trim() ?? "Participante", center, 48);
-      context.font = "24px Inter, sans-serif";
+      context.font = "24px Poppins, sans-serif";
       context.fillText(card.querySelector("p")?.textContent?.trim() ?? "", center, 84);
       context.drawImage(images[index], left + 30, headerHeight, qrSize, qrSize);
       context.font = "22px ui-monospace, monospace";
@@ -71,10 +72,19 @@ if (!confirmation || !shell || !grid) {
   if (empty) empty.hidden = false;
 } else {
   shell.hidden = false;
+  const isSingleParticipant = confirmation.participants.length === 1;
   if (registrationCode) registrationCode.textContent = confirmation.registrationCode;
-  if (downloadWarning) {
-    downloadWarning.textContent = "Importante: descarga y guarda tus QR ahora. No se enviarán por correo y los necesitarás para ingresar al evento. No los pierdas.";
+  if (confirmationCopy) {
+    confirmationCopy.textContent = isSingleParticipant
+      ? "Descarga el código y preséntalo en el ingreso el día del evento. Este QR es personal."
+      : "Descarga los códigos y preséntalos en el ingreso el día del evento. Cada participante tiene su propio QR.";
   }
+  if (downloadWarning) {
+    downloadWarning.textContent = isSingleParticipant
+      ? "Importante: descarga y guarda tu QR ahora. No se enviará por correo y lo necesitarás para ingresar al evento. No lo pierdas."
+      : "Importante: descarga y guarda tus QR ahora. No se enviarán por correo y los necesitarás para ingresar al evento. No los pierdas.";
+  }
+  if (downloadAll) downloadAll.textContent = isSingleParticipant ? "Descargar QR" : "Descargar QRS";
 
   void Promise.all(confirmation.participants.map(async (participant) => {
     const card = document.createElement("article");

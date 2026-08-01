@@ -7,32 +7,24 @@ const { prefix } = Astro.props;
 ---
 
 <div class="field-grid">
-  <label class="field field-wide">
-    <span>Nombre completo o artístico <b aria-hidden="true">*</b></span>
-    <input name={`${prefix}.displayName`} autocomplete="name" minlength="2" maxlength="120" required placeholder="Ej. Carlos Pérez / bboy break" />
-  </label>
-  <label class="field field-wide">
-    <span>Usuario de Instagram o TikTok <b aria-hidden="true">*</b></span>
-    <input name={`${prefix}.socialUrl`} type="text" required maxlength="200" placeholder="Escribe tu usuario" />
+  <label class="field">
+    <span>Nombre y apellido <b aria-hidden="true">*</b></span>
+    <input name={`${prefix}.legalName`} autocomplete="name" minlength="2" maxlength="70" required placeholder="José Eduardo" />
   </label>
   <label class="field">
-    <span>Edad <small>(solo mayores de 18)</small> <b aria-hidden="true">*</b></span>
-    <input name={`${prefix}.age`} type="number" min="18" max="100" inputmode="numeric" required placeholder="18" />
+    <span>Nombre artístico <b aria-hidden="true">*</b></span>
+    <input name={`${prefix}.artisticName`} minlength="2" maxlength="45" required placeholder="Ríos" />
   </label>
   <label class="field">
-    <span>País <b aria-hidden="true">*</b></span>
-    <input name={`${prefix}.country`} autocomplete="country-name" required maxlength="80" placeholder="Ecuador" />
+    <span>Edad <span class="field-help" title="Solo pueden inscribirse mayores de edad" aria-label="Solo pueden inscribirse mayores de edad">ⓘ</span> <b aria-hidden="true">*</b></span>
+    <input name={`${prefix}.age`} type="number" min="18" max="100" inputmode="numeric" required placeholder="+18" />
   </label>
   <label class="field">
-    <span>Ciudad <b aria-hidden="true">*</b></span>
-    <input name={`${prefix}.city`} autocomplete="address-level2" required maxlength="100" placeholder="Guayaquil" />
+    <span>Teléfono <b aria-hidden="true">*</b></span>
+    <input name={`${prefix}.phone`} type="tel" autocomplete="tel" required minlength="8" maxlength="24" title="Ingresa un número de teléfono válido" placeholder="0999999999" />
   </label>
   <label class="field">
-    <span>Número de celular <b aria-hidden="true">*</b></span>
-    <input name={`${prefix}.phone`} type="tel" autocomplete="tel" required minlength="8" maxlength="24" title="Incluye el código internacional, por ejemplo +593" placeholder="+593 99 123 4567" />
-  </label>
-  <label class="field field-wide">
     <span>Correo electrónico <b aria-hidden="true">*</b></span>
-    <input name={`${prefix}.email`} type="email" autocomplete="email" required maxlength="254" placeholder="nombre@correo.com" />
+    <input name={`${prefix}.email`} type="email" autocomplete="email" required maxlength="254" placeholder="jose@correo.com" />
   </label>
 </div>

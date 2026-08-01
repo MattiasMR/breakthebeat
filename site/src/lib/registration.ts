@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const EVENT_SLUG = "break-the-beat-2026";
-export const DRAFT_STORAGE_KEY = "btb-registration-draft-v1";
+export const DRAFT_STORAGE_KEY = "btb-registration-draft-v2";
 export const CONFIRMATION_STORAGE_KEY = "btb-registration-confirmation-v1";
 
 export const categorySchema = z.enum(["1v1", "2v2", "bgirls"]);
@@ -18,12 +18,11 @@ const phoneSchema = z
   .trim()
   .min(8, "Ingresa un teléfono válido")
   .max(24, "Ingresa un teléfono válido")
-  .regex(/^\+[1-9][0-9 ()-]{7,22}$/, "Incluye el código internacional, por ejemplo +593");
+  .regex(/^[+0-9][0-9 ()-]{7,22}$/, "Ingresa un teléfono válido");
 
 const socialUrlSchema = z
   .string()
   .trim()
-  .min(1, "Ingresa tu usuario de Instagram o TikTok")
   .max(200, "El usuario es demasiado largo");
 
 export const medicalSchema = z
@@ -56,11 +55,11 @@ export const participantSchema = z.object({
   displayName: z.string().trim().min(2, "Ingresa el nombre completo o artístico").max(120),
   socialUrl: socialUrlSchema,
   age: z.number().int().min(18, "Solo pueden inscribirse mayores de edad").max(100, "Revisa la edad"),
-  country: z.string().trim().min(2, "Ingresa el país").max(80),
-  city: z.string().trim().min(2, "Ingresa la ciudad").max(100),
+  country: z.string().trim().max(80),
+  city: z.string().trim().max(100),
   phone: phoneSchema,
   email: z.string().trim().toLowerCase().max(254).pipe(z.email("Ingresa un correo válido")),
-  categories: z.array(categorySchema).min(1, "Selecciona al menos una categoría"),
+  categories: z.array(categorySchema).length(1, "Selecciona una categoría"),
   medical: medicalSchema
 });
 

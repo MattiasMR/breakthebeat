@@ -32,7 +32,7 @@ import "../styles/portal.css";
           <span class="success-icon"><Icon name="check-circle-2" size={38} /></span>
           <p class="eyebrow">Todo está listo</p>
           <h1>¡Ya estás inscrito!</h1>
-          <p>Descarga los códigos y preséntalos en el ingreso el día del evento. Cada participante tiene su propio QR.</p>
+          <p data-confirmation-copy>Descarga los códigos y preséntalos en el ingreso el día del evento. Cada participante tiene su propio QR.</p>
           <div class="confirmation-reference">Inscripción <strong data-registration-code></strong></div>
         </div>
         <div class="confirmation-download-warning" data-download-warning></div>
@@ -41,7 +41,7 @@ import "../styles/portal.css";
           <Icon name="shield-check" size={24} />
           <span>Los QR contienen únicamente un token aleatorio. No incluyen datos personales ni médicos.</span>
         </div>
-        <button class="button button-primary confirmation-download-all" type="button" data-download-all disabled>Descargar QRS</button>
+        <button class="button button-primary confirmation-download-all" type="button" data-download-all disabled>Descargar QR</button>
       </section>
 
       <section class="confirmation-shell confirmation-empty" data-confirmation-empty hidden>

@@ -1,8 +1,8 @@
 import { z } from "npm:zod@4";
 
 const category = z.enum(["1v1", "2v2", "bgirls"]);
-const phone = z.string().trim().min(8).max(24).regex(/^\+[1-9][0-9 ()-]{7,22}$/);
-const socialProfile = z.string().trim().min(1).max(200);
+const phone = z.string().trim().min(8).max(24).regex(/^[+0-9][0-9 ()-]{7,22}$/);
+const socialProfile = z.string().trim().max(200);
 
 const medical = z.object({
   hasCondition: z.boolean(),
@@ -28,11 +28,11 @@ const participant = z.object({
   displayName: z.string().trim().min(2).max(120),
   socialUrl: socialProfile,
   age: z.number().int().min(18).max(100),
-  country: z.string().trim().min(2).max(80),
-  city: z.string().trim().min(2).max(100),
+  country: z.string().trim().max(80),
+  city: z.string().trim().max(100),
   phone,
   email: z.string().trim().toLowerCase().max(254).pipe(z.email()),
-  categories: z.array(category).min(1).max(3),
+  categories: z.array(category).length(1),
   medical
 });
 

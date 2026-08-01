@@ -262,7 +262,8 @@
   cursor: pointer;
 }
 
-.choice-card > input[type="checkbox"] {
+.choice-card > input[type="checkbox"],
+.choice-card > input[type="radio"] {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -1758,15 +1759,15 @@ a.legal-document::after {
 .registration-workspace {
   width: min(1120px, calc(100% - 48px));
   margin-inline: auto;
-  padding: clamp(44px, 7vh, 76px) 0 72px;
+  padding: clamp(46px, 7vh, 76px) 0 72px;
 }
 
 .registration-standalone-body .registration-flow {
   display: grid;
-  grid-template-columns: minmax(220px, 270px) minmax(0, 500px);
+  grid-template-columns: minmax(240px, 294px) minmax(0, 600px);
   justify-content: center;
   align-items: start;
-  gap: clamp(34px, 6vw, 70px);
+  gap: clamp(46px, 7vw, 80px);
 }
 
 .registration-standalone-body .registration-progress {
@@ -1795,13 +1796,14 @@ a.legal-document::after {
 }
 
 .registration-standalone-body .registration-summary-intro h1 {
-  max-width: 260px;
-  margin: 0 0 20px;
+  max-width: 294px;
+  margin: 0 0 18px;
   color: #080808;
-  font-size: clamp(2.5rem, 4.4vw, 3.9rem);
-  font-weight: 900;
-  letter-spacing: -0.045em;
-  line-height: 0.92;
+  font-family: "Poppins", Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size: 46px;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1.06;
   text-transform: none;
 }
 
@@ -1809,8 +1811,8 @@ a.legal-document::after {
   display: grid;
   gap: 0;
   margin: 0;
-  font-size: 0.84rem;
-  line-height: 1.12;
+  font-size: 0.76rem;
+  line-height: 1.2;
 }
 
 .registration-progress-status {
@@ -1897,7 +1899,7 @@ a.legal-document::after {
 }
 
 .registration-standalone-body .form-step-heading {
-  margin-bottom: 24px;
+  margin-bottom: 22px;
 }
 
 .registration-standalone-body .form-step-heading .step-kicker {
@@ -1908,9 +1910,9 @@ a.legal-document::after {
   max-width: none;
   margin: 0 0 6px;
   color: #080808;
-  font-size: 0.82rem;
-  font-weight: 850;
-  letter-spacing: 0.055em;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
   line-height: 1.2;
   text-transform: uppercase;
 }
@@ -1935,7 +1937,7 @@ a.legal-document::after {
 .registration-standalone-body .choice-card > span {
   min-height: 116px;
   align-content: start;
-  gap: 8px;
+  gap: 7px;
   padding: 16px 14px;
   border: 1px solid #bcbcbc;
   border-radius: 10px;
@@ -1945,7 +1947,8 @@ a.legal-document::after {
 
 .registration-standalone-body .choice-card strong {
   color: #080808;
-  font-size: 1.14rem;
+  font-size: 1.18rem;
+  font-weight: 700;
   line-height: 1;
   text-transform: none;
 }
@@ -1955,6 +1958,19 @@ a.legal-document::after {
   color: #080808;
   font-size: 0.78rem;
   line-height: 1.12;
+}
+
+.registration-standalone-body .choice-card em {
+  width: fit-content;
+  margin-top: auto;
+  padding: 3px 7px;
+  border-radius: 999px;
+  background: #dfeffc;
+  color: #1670b8;
+  font-size: 0.56rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 1;
 }
 
 .registration-standalone-body .choice-card > input:checked + input + span,
@@ -1972,8 +1988,8 @@ a.legal-document::after {
   margin: 0 0 16px;
   color: #080808;
   font-size: 0.82rem;
-  font-weight: 850;
-  letter-spacing: 0.055em;
+  font-weight: 700;
+  letter-spacing: 0.1em;
   line-height: 1.2;
   text-transform: uppercase;
 }
@@ -1996,14 +2012,21 @@ a.legal-document::after {
 .registration-standalone-body .compact-fieldset legend {
   color: #080808;
   font-size: 0.67rem;
-  font-weight: 800;
-  letter-spacing: 0.055em;
+  font-weight: 600;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
 .registration-standalone-body .field small {
   color: rgba(8, 8, 8, 0.5);
   font-size: 0.6rem;
+}
+
+.registration-standalone-body .field-help {
+  color: #080808;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0;
 }
 
 .registration-standalone-body .field input,
@@ -2046,7 +2069,7 @@ a.legal-document::after {
 
 .registration-standalone-body .form-actions .button {
   min-height: 44px;
-  padding-inline: 20px;
+  padding-inline: 24px;
   border: 0;
   border-radius: 999px;
   font-size: 0.8rem;
@@ -2070,11 +2093,11 @@ a.legal-document::after {
 }
 
 .registration-standalone-body .medical-stack {
-  gap: 26px;
+  gap: 30px;
 }
 
 .registration-standalone-body .medical-stack > [data-partner-medical] {
-  padding-top: 26px;
+  padding-top: 30px;
   border-top: 1px solid rgba(8, 8, 8, 0.14);
 }
 
@@ -2090,8 +2113,8 @@ a.legal-document::after {
   margin: 0;
   color: #080808;
   font-size: 0.78rem;
-  font-weight: 850;
-  letter-spacing: 0.055em;
+  font-weight: 700;
+  letter-spacing: 0.1em;
   line-height: 1.2;
   text-transform: uppercase;
 }
@@ -2104,10 +2127,10 @@ a.legal-document::after {
 .registration-standalone-body .conditional-field,
 .registration-standalone-body .conditional-grid,
 .registration-standalone-body .emergency-block {
-  padding: 16px;
+  padding: 0;
   border: 0;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.42);
+  border-radius: 0;
+  background: transparent;
 }
 
 .registration-standalone-body .emergency-block .field-grid {
@@ -2153,7 +2176,7 @@ a.legal-document::after {
   border: 1px solid #bcbcbc;
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.38);
-  font-size: 0.72rem;
+  font-size: 0.68rem;
 }
 
 .registration-standalone-body .legal-document small {
@@ -2165,7 +2188,25 @@ a.legal-document::after {
 }
 
 .registration-standalone-body .consent-list {
-  margin-top: 22px;
+  margin-top: 24px;
+}
+
+.registration-standalone-body .consent-list > label {
+  align-items: flex-start;
+  line-height: 1.35;
+}
+
+.registration-standalone-body .legal-acceptance {
+  margin: 10px 0 0;
+  color: #080808;
+  font-size: 0.64rem;
+  line-height: 1.42;
+}
+
+.registration-standalone-body .legal-acceptance a {
+  color: #ff0076;
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
 .registration-standalone-body .turnstile-block {
@@ -2202,10 +2243,11 @@ a.legal-document::after {
   max-width: 360px;
   margin: 0 auto 20px;
   color: #080808;
-  font-size: clamp(2.6rem, 7vw, 4rem);
-  font-weight: 900;
-  letter-spacing: -0.045em;
-  line-height: 0.86;
+  font-family: "Poppins", Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size: clamp(2.5rem, 6vw, 3.25rem);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 0.94;
   text-transform: none;
 }
 
@@ -2230,6 +2272,11 @@ a.legal-document::after {
 .confirmation-standalone-body .qr-grid {
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 12px;
+}
+
+.confirmation-standalone-body .qr-grid:has(.qr-card:only-child) {
+  width: min(320px, 100%);
+  margin-inline: auto;
 }
 
 .confirmation-standalone-body .qr-card {
@@ -2320,7 +2367,7 @@ a.legal-document::after {
 
   .registration-standalone-body .registration-summary-intro h1 {
     max-width: none;
-    font-size: clamp(2.7rem, 10vw, 4rem);
+    font-size: clamp(2.7rem, 10vw, 3.4rem);
   }
 
   .registration-standalone-body .choice-grid {
@@ -2346,6 +2393,7 @@ a.legal-document::after {
 
   .registration-standalone-body .registration-summary-intro h1 {
     margin-bottom: 14px;
+    font-size: clamp(2.6rem, 13vw, 3.2rem);
   }
 
   .registration-standalone-body .choice-grid,

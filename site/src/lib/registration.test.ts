@@ -42,23 +42,23 @@ describe("registrationPayloadSchema", () => {
     expect(registrationPayloadSchema.safeParse(payload([participant({ age: 17 })])).success).toBe(false);
   });
 
-  it("exige teléfono internacional y acepta cualquier texto como usuario social", () => {
-    expect(registrationPayloadSchema.safeParse(payload([participant({ phone: "0991234567" })])).success).toBe(false);
+  it("acepta teléfonos nacionales o internacionales y permite omitir los campos retirados", () => {
+    expect(registrationPayloadSchema.safeParse(payload([participant({ phone: "0991234567" })])).success).toBe(true);
+    expect(registrationPayloadSchema.safeParse(payload([participant({ phone: "teléfono" })])).success).toBe(false);
     expect(registrationPayloadSchema.safeParse(payload([participant({ socialUrl: "@bboy.test" })])).success).toBe(true);
-    expect(registrationPayloadSchema.safeParse(payload([participant({ socialUrl: "bboy test sin arroba" })])).success).toBe(true);
-    expect(registrationPayloadSchema.safeParse(payload([participant({ socialUrl: "mi perfil está en TikTok" })])).success).toBe(true);
+    expect(registrationPayloadSchema.safeParse(payload([participant({ socialUrl: "", country: "", city: "" })])).success).toBe(true);
   });
 
-  it("acepta selección múltiple sin duplicar al participante", () => {
-    expect(registrationPayloadSchema.safeParse(payload([participant({ categories: ["1v1", "bgirls"] })])).success).toBe(true);
+  it("exige una sola categoría por participante", () => {
+    expect(registrationPayloadSchema.safeParse(payload([participant({ categories: ["1v1", "bgirls"] })])).success).toBe(false);
   });
 
   it("exige perfil y autorización para 2 vs 2", () => {
     expect(registrationPayloadSchema.safeParse(payload([participant({ categories: ["2v2"] })])).success).toBe(false);
 
     const duo = payload([
-      participant({ categories: ["1v1", "2v2"] }),
-      participant({ role: "partner", displayName: "Bgirl Partner", email: "partner@example.com", categories: ["2v2", "bgirls"] })
+      participant({ categories: ["2v2"] }),
+      participant({ role: "partner", displayName: "Bgirl Partner", email: "partner@example.com", categories: ["2v2"] })
     ]);
     duo.consents.captainAuthority = true;
     expect(registrationPayloadSchema.safeParse(duo).success).toBe(true);

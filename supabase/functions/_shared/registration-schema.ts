@@ -32,7 +32,10 @@ const participant = z.object({
   city: z.string().trim().max(100),
   phone,
   email: z.string().trim().toLowerCase().max(254).pipe(z.email()),
-  categories: z.array(category).length(1),
+  categories: z.array(category)
+    .min(1)
+    .max(3)
+    .refine((categories) => new Set(categories).size === categories.length),
   medical
 });
 

@@ -55,7 +55,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
             <p>Sesión de <strong data-admin-username></strong></p>
           </div>
           <div class="admin-heading-actions">
-            <a class="button button-primary" href={withBase("/admin/check-in/")}><Icon name="qr-code" size={18} /> Abrir check-in</a>
+            <a class="button button-primary" href={withBase("/check-in/")}><Icon name="qr-code" size={18} /> Abrir check-in</a>
             <button class="button button-secondary" type="button" data-logout><Icon name="log-out" size={18} /> Salir</button>
           </div>
         </div>
@@ -80,9 +80,6 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
 
         <section class="distribution-grid">
           <article class="distribution-card"><h2>Categorías</h2><div data-category-stats></div></article>
-          <article class="distribution-card"><h2>Tallas</h2><div data-size-stats></div></article>
-          <article class="distribution-card"><h2>Países</h2><div data-country-stats></div></article>
-          <article class="distribution-card"><h2>Ciudades</h2><div data-city-stats></div></article>
         </section>
 
         <section class="admin-table-section">
@@ -98,14 +95,13 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
           <div class="filter-grid">
             <label class="field filter-search"><span>Buscar</span><input type="search" data-filter="query" placeholder="Nombre, correo, código…" /></label>
             <label class="field"><span>Categoría</span><select data-filter="category"><option value="all">Todas</option><option value="1v1">1 vs 1</option><option value="2v2">2 vs 2</option><option value="bgirls">BGirls</option></select></label>
-            <label class="field"><span>Talla</span><select data-filter="shirtSize"><option value="all">Todas</option><option>S</option><option>M</option><option>L</option></select></label>
             <label class="field"><span>Estado</span><select data-filter="status"><option value="all">Todos</option><option value="confirmed">Confirmado</option><option value="cancelled">Cancelado</option></select></label>
             <label class="field"><span>Check-in</span><select data-filter="checkIn"><option value="all">Todos</option><option value="yes">Realizado</option><option value="no">Pendiente</option></select></label>
           </div>
 
           <div class="data-table-wrap">
             <table class="data-table">
-              <thead><tr><th><span class="sr-only">Seleccionar</span></th><th>Participante</th><th>Categorías</th><th>Talla / origen</th><th>Estado</th><th>Acciones</th></tr></thead>
+              <thead><tr><th><span class="sr-only">Seleccionar</span></th><th>Participante</th><th>Categorías</th><th>Estado</th><th>Acciones</th></tr></thead>
               <tbody data-participant-rows></tbody>
             </table>
           </div>

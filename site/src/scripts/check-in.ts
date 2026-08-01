@@ -1,31 +1,20 @@
 import { BrowserQRCodeReader, type IScannerControls } from "@zxing/browser";
 import { categoryLabels, type Category } from "../lib/registration";
-import { getSupabase, isBackendConfigured, withClientBase } from "../lib/supabase";
+import { getSupabase, isBackendConfigured } from "../lib/supabase";
 
 const video = document.querySelector<HTMLVideoElement>("[data-scanner-video]");
 const startButton = document.querySelector<HTMLButtonElement>("[data-start-scanner]");
 const stopButton = document.querySelector<HTMLButtonElement>("[data-stop-scanner]");
 const status = document.querySelector<HTMLElement>("[data-scanner-status]");
 const placeholder = document.querySelector<HTMLElement>("[data-scanner-placeholder]");
-const manualForm = document.querySelector<HTMLFormElement>("[data-manual-checkin]");
 const resultPanel = document.querySelector<HTMLElement>("[data-checkin-result]");
 
-if (!video || !startButton || !stopButton || !status || !manualForm || !resultPanel) throw new Error("Check-in markup is incomplete");
+if (!video || !startButton || !stopButton || !status || !resultPanel) throw new Error("Check-in markup is incomplete");
 
 const reader = new BrowserQRCodeReader(undefined, { delayBetweenScanAttempts: 250 });
+const qrPayloadPattern = /^BTB26:[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 let controls: IScannerControls | undefined;
 let processing = false;
-let inactivityTimer: number | undefined;
-let adminVerified = false;
-
-const resetInactivity = () => {
-  window.clearTimeout(inactivityTimer);
-  inactivityTimer = window.setTimeout(async () => {
-    stopScanner();
-    if (isBackendConfigured()) await getSupabase().auth.signOut();
-    window.location.replace(withClientBase("/admin/"));
-  }, 30 * 60 * 1000);
-};
 
 const setStatus = (message: string, error = false) => {
   status.textContent = message;
@@ -41,25 +30,10 @@ const stopScanner = () => {
   if (placeholder) placeholder.hidden = false;
 };
 
-const ensureSession = async () => {
+const ensureBackend = () => {
   if (!isBackendConfigured()) {
     setStatus("Supabase no está configurado.", true);
     return false;
-  }
-  const client = getSupabase();
-  const { data } = await client.auth.getSession();
-  if (!data.session) {
-    window.location.replace(withClientBase("/admin/"));
-    return false;
-  }
-  if (!adminVerified) {
-    const { data: admin } = await client.from("admin_users").select("auth_user_id").eq("auth_user_id", data.session.user.id).eq("active", true).maybeSingle();
-    if (!admin) {
-      await client.auth.signOut();
-      window.location.replace(withClientBase("/admin/"));
-      return false;
-    }
-    adminVerified = true;
   }
   return true;
 };
@@ -89,30 +63,33 @@ const errorCode = async (error: unknown) => {
 };
 
 const checkIn = async (tokenOrCode: string) => {
-  if (processing || !(await ensureSession())) return;
-  resetInactivity();
+  if (processing || !ensureBackend()) return;
+  const qrPayload = tokenOrCode.trim();
+  if (!qrPayloadPattern.test(qrPayload)) {
+    setStatus("Este código no es un QR válido de Break The Beat.", true);
+    return;
+  }
   processing = true;
+  stopScanner();
   setStatus("Validando participante…");
-  const { data, error } = await getSupabase().functions.invoke("check-in", { body: { tokenOrCode } });
+  const { data, error } = await getSupabase().functions.invoke("check-in", { body: { tokenOrCode: qrPayload } });
   processing = false;
   if (error || !data) {
     const code = await errorCode(error);
     const messages: Record<string, string> = {
       PARTICIPANT_NOT_FOUND: "No encontramos un participante con ese QR o código.",
       PARTICIPANT_CANCELLED: "La inscripción de este participante está cancelada.",
-      NOT_AUTHORIZED: "La sesión expiró. Vuelve a iniciar sesión."
+      QR_REQUIRED: "Esta pantalla solo acepta el QR personal de Break The Beat."
     };
     setStatus(messages[code] ?? "No se pudo completar el check-in.", true);
-    if (code === "NOT_AUTHORIZED") window.location.replace(withClientBase("/admin/"));
     return;
   }
-  stopScanner();
   setStatus(data.alreadyCheckedIn ? "QR válido, pero ya estaba registrado." : "Check-in guardado.");
   showResult(data);
 };
 
 const startScanner = async () => {
-  if (!(await ensureSession())) return;
+  if (!ensureBackend()) return;
   resultPanel.hidden = true;
   setStatus("Solicitando acceso a la cámara…");
   startButton.disabled = true;
@@ -129,23 +106,13 @@ const startScanner = async () => {
     setStatus("Cámara activa. Centra el QR dentro del marco.");
   } catch {
     startButton.disabled = false;
-    setStatus("No pudimos abrir la cámara. Revisa el permiso o usa el código manual.", true);
+    setStatus("No pudimos abrir la cámara. Revisa el permiso e inténtalo de nuevo.", true);
   }
 };
 
 startButton.addEventListener("click", () => void startScanner());
 stopButton.addEventListener("click", stopScanner);
-['pointerdown', 'keydown', 'touchstart'].forEach((name) => window.addEventListener(name, resetInactivity, { passive: true }));
 document.querySelector("[data-scan-next]")?.addEventListener("click", () => void startScanner());
-manualForm.addEventListener("submit", (event) => {
-  event.preventDefault();
-  const code = String(new FormData(manualForm).get("code") ?? "").trim();
-  if (code) void checkIn(code);
-});
-window.addEventListener("pagehide", () => {
-  window.clearTimeout(inactivityTimer);
-  stopScanner();
-});
+window.addEventListener("pagehide", stopScanner);
 
-resetInactivity();
-void ensureSession();
+ensureBackend();

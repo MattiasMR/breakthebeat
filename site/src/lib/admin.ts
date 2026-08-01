@@ -10,10 +10,7 @@ export type AdminParticipant = {
   email: string;
   phone: string;
   socialUrl: string;
-  shirtSize: "S" | "M" | "L" | null;
   age: number;
-  country: string;
-  city: string;
   categories: Category[];
   status: "confirmed" | "cancelled";
   emailStatus: "pending" | "sent" | "partial" | "failed";
@@ -25,7 +22,6 @@ export type AdminParticipant = {
 export type AdminFilters = {
   query: string;
   category: "all" | Category;
-  shirtSize: "all" | "S" | "M" | "L";
   status: "all" | "confirmed" | "cancelled";
   checkIn: "all" | "yes" | "no";
 };
@@ -33,13 +29,12 @@ export type AdminFilters = {
 export const filterParticipants = (rows: AdminParticipant[], filters: AdminFilters) => {
   const query = filters.query.trim().toLocaleLowerCase("es");
   return rows.filter((row) => {
-    const matchesQuery = !query || [row.displayName, row.email, row.phone, row.participantCode, row.registrationCode, row.city, row.country]
+    const matchesQuery = !query || [row.displayName, row.email, row.phone, row.participantCode, row.registrationCode]
       .some((value) => value.toLocaleLowerCase("es").includes(query));
     const matchesCategory = filters.category === "all" || row.categories.includes(filters.category);
-    const matchesSize = filters.shirtSize === "all" || row.shirtSize === filters.shirtSize;
     const matchesStatus = filters.status === "all" || row.status === filters.status;
     const matchesCheckIn = filters.checkIn === "all" || (filters.checkIn === "yes" ? Boolean(row.checkedInAt) : !row.checkedInAt);
-    return matchesQuery && matchesCategory && matchesSize && matchesStatus && matchesCheckIn;
+    return matchesQuery && matchesCategory && matchesStatus && matchesCheckIn;
   });
 };
 
@@ -57,11 +52,6 @@ export const calculateStats = (rows: AdminParticipant[]) => {
       "1v1": active.filter((row) => row.categories.includes("1v1")).length,
       "2v2": active.filter((row) => row.categories.includes("2v2")).length,
       bgirls: active.filter((row) => row.categories.includes("bgirls")).length
-    },
-    sizes: {
-      S: active.filter((row) => row.shirtSize === "S").length,
-      M: active.filter((row) => row.shirtSize === "M").length,
-      L: active.filter((row) => row.shirtSize === "L").length
     }
   };
 };
@@ -73,7 +63,7 @@ const csvCell = (value: unknown) => {
 };
 
 export const operationalCsv = (rows: AdminParticipant[]) => {
-  const header = ["Código", "Inscripción", "Nombre", "Rol", "Email", "Teléfono", "Red social", "Edad", "País", "Ciudad", "Talla", "Categorías", "Estado", "Check-in"];
+  const header = ["Código", "Inscripción", "Nombre", "Rol", "Email", "Teléfono", "Red social", "Edad", "Categorías", "Estado", "Check-in"];
   const data = rows.map((row) => [
     row.participantCode,
     row.registrationCode,
@@ -83,9 +73,6 @@ export const operationalCsv = (rows: AdminParticipant[]) => {
     row.phone,
     row.socialUrl,
     row.age,
-    row.country,
-    row.city,
-    row.shirtSize,
     row.categories.join(" | "),
     row.status,
     row.checkedInAt ?? ""

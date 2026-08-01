@@ -910,7 +910,7 @@ a.legal-document::after {
 
 .distribution-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr);
   gap: 12px;
   margin-top: 12px;
 }
@@ -965,7 +965,7 @@ a.legal-document::after {
 
 .filter-grid {
   display: grid;
-  grid-template-columns: minmax(220px, 2fr) repeat(4, minmax(120px, 1fr));
+  grid-template-columns: minmax(220px, 2fr) repeat(3, minmax(120px, 1fr));
   gap: 10px;
   margin: 22px 0;
 }
@@ -987,7 +987,7 @@ a.legal-document::after {
 
 .data-table {
   width: 100%;
-  min-width: 980px;
+  min-width: 860px;
   border-collapse: collapse;
   font-size: 0.84rem;
 }
@@ -1150,7 +1150,6 @@ a.legal-document::after {
 }
 
 .scanner-panel,
-.manual-checkin,
 .checkin-result {
   padding: clamp(20px, 4vw, 36px);
   border: 1px solid rgba(255, 255, 255, 0.18);
@@ -1215,27 +1214,6 @@ a.legal-document::after {
   min-height: 50px;
   margin: 12px 0 0;
   background: rgba(255, 255, 255, 0.08);
-}
-
-.manual-checkin > div:first-child {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.manual-checkin h2 {
-  margin: 0;
-  font-size: 1.5rem;
-}
-
-.manual-checkin form {
-  display: grid;
-  gap: 14px;
-  margin-top: 20px;
-}
-
-.manual-checkin .field > span {
-  color: var(--paper-strong);
 }
 
 .checkin-result {

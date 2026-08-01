@@ -1,8 +1,8 @@
 ---
-import Icon from "../../components/Icon.astro";
-import { withBase } from "../../utils/paths";
-import "../../styles/global.css";
-import "../../styles/portal.css";
+import Icon from "../components/Icon.astro";
+import { withBase } from "../utils/paths";
+import "../styles/global.css";
+import "../styles/portal.css";
 ---
 
 <!doctype html>
@@ -17,7 +17,7 @@ import "../../styles/portal.css";
   </head>
   <body class="checkin-body">
     <header class="checkin-topbar">
-      <a href={withBase("/admin/")}><Icon name="arrow-left" size={19} /> Volver al panel</a>
+      <a href={withBase("/")}><Icon name="arrow-left" size={19} /> Volver al inicio</a>
       <strong>Check-in 2026</strong>
     </header>
     <main class="checkin-main">
@@ -25,7 +25,7 @@ import "../../styles/portal.css";
         <div class="scanner-heading">
           <p class="eyebrow">Ingreso de participantes</p>
           <h1>Escanea el QR.</h1>
-          <p>La cámara solo lee el token de acceso. No muestra información médica.</p>
+          <p>Esta pantalla no requiere una cuenta. Por seguridad, solo acepta el QR personal y no códigos escritos manualmente.</p>
         </div>
         <div class="video-frame">
           <video data-scanner-video playsinline muted></video>
@@ -37,14 +37,6 @@ import "../../styles/portal.css";
           <button class="button button-secondary" type="button" data-stop-scanner disabled>Detener</button>
         </div>
         <p class="scanner-status" data-scanner-status role="status"></p>
-      </section>
-
-      <section class="manual-checkin">
-        <div><Icon name="keyboard" size={24} /><h2>Ingreso manual</h2></div>
-        <form data-manual-checkin>
-          <label class="field"><span>Código personal</span><input name="code" autocomplete="off" placeholder="BTB26-XXXXXXXX-A" required minlength="6" /></label>
-          <button class="button button-secondary dark" type="submit"><Icon name="qr-code" size={18} /> Validar código</button>
-        </form>
       </section>
 
       <section class="checkin-result" data-checkin-result hidden aria-live="polite">
@@ -60,7 +52,7 @@ import "../../styles/portal.css";
       </section>
     </main>
     <script>
-      import "../../scripts/check-in";
+      import "../scripts/check-in";
     </script>
   </body>
 </html>

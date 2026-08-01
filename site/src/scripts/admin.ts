@@ -34,7 +34,6 @@ let inactivityTimer: number | undefined;
 const filters: AdminFilters = {
   query: "",
   category: "all",
-  shirtSize: "all",
   status: "all",
   checkIn: "all"
 };
@@ -82,10 +81,7 @@ const normalizeRows = (data: any[]): AdminParticipant[] => data.map((item) => {
     email: item.email,
     phone: item.phone,
     socialUrl: item.social_url,
-    shirtSize: item.shirt_size ?? null,
     age: item.age,
-    country: item.country,
-    city: item.city,
     categories: (item.participant_categories ?? []).map((entry: any) => entry.category),
     status: registration?.status ?? "confirmed",
     emailStatus: registration?.email_status ?? "pending",
@@ -121,16 +117,6 @@ const renderStats = () => {
     ["2 vs 2", stats.categories["2v2"]],
     ["BGirls", stats.categories.bgirls]
   ]);
-  renderDistribution("[data-size-stats]", [["S", stats.sizes.S], ["M", stats.sizes.M], ["L", stats.sizes.L]]);
-
-  const countries = new Map<string, number>();
-  const cities = new Map<string, number>();
-  participants.filter((row) => row.status !== "cancelled").forEach((row) => {
-    countries.set(row.country, (countries.get(row.country) ?? 0) + 1);
-    cities.set(`${row.city}, ${row.country}`, (cities.get(`${row.city}, ${row.country}`) ?? 0) + 1);
-  });
-  renderDistribution("[data-country-stats]", [...countries.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5));
-  renderDistribution("[data-city-stats]", [...cities.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5));
 };
 
 const chip = (text: string, className = "") => {
@@ -180,13 +166,6 @@ const renderRows = () => {
     const categoryCell = document.createElement("td");
     row.categories.forEach((category) => categoryCell.append(chip(categoryLabels[category])));
 
-    const originCell = document.createElement("td");
-    const size = document.createElement("strong");
-    size.textContent = row.shirtSize ? `Talla ${row.shirtSize}` : "Sin talla";
-    const origin = document.createElement("small");
-    origin.textContent = `${row.city}, ${row.country}`;
-    originCell.append(size, origin);
-
     const statusCell = document.createElement("td");
     statusCell.append(chip(row.status === "cancelled" ? "Cancelado" : "Confirmado", row.status));
     statusCell.append(chip(row.checkedInAt ? "Ingresó" : "Sin check-in", row.checkedInAt ? "checked" : ""));
@@ -198,10 +177,14 @@ const renderRows = () => {
     detailsButton.type = "button";
     detailsButton.textContent = "Ver";
     detailsButton.dataset.viewParticipant = row.id;
-    const resendButton = document.createElement("button");
-    resendButton.type = "button";
-    resendButton.textContent = "Reenviar";
-    resendButton.dataset.resendRegistration = row.registrationId;
+    const checkInButton = document.createElement("button");
+    checkInButton.type = "button";
+    checkInButton.textContent = "Check-in";
+    checkInButton.dataset.manualCheckin = row.participantCode;
+    checkInButton.dataset.participantName = row.displayName;
+    checkInButton.disabled = Boolean(row.checkedInAt) || row.status === "cancelled";
+    if (row.checkedInAt) checkInButton.title = "Este participante ya hizo check-in";
+    if (row.status === "cancelled") checkInButton.title = "La inscripción está cancelada";
     const cancelButton = document.createElement("button");
     cancelButton.type = "button";
     cancelButton.textContent = row.status === "cancelled" ? "Reactivar" : "Cancelar";
@@ -212,9 +195,9 @@ const renderRows = () => {
     deleteButton.textContent = "Eliminar";
     deleteButton.dataset.deleteRegistration = row.registrationId;
     deleteButton.dataset.registrationCode = row.registrationCode;
-    actionCell.append(detailsButton, resendButton, cancelButton, deleteButton);
+    actionCell.append(detailsButton, checkInButton, cancelButton, deleteButton);
 
-    tr.append(selectCell, personCell, categoryCell, originCell, statusCell, actionCell);
+    tr.append(selectCell, personCell, categoryCell, statusCell, actionCell);
     return tr;
   }));
 
@@ -236,7 +219,7 @@ const loadRows = async () => {
     .from("participants")
     .select(`
       id, registration_id, participant_code, role, display_name, social_url,
-      shirt_size, age, country, city, phone, email, created_at,
+      age, phone, email, created_at,
       registrations!inner(id, public_code, status, email_status, created_at),
       participant_categories(category),
       check_ins(checked_in_at),
@@ -341,11 +324,16 @@ rowsContainer.addEventListener("change", (event) => {
 rowsContainer.addEventListener("click", async (event) => {
   const target = event.target as HTMLElement;
   const view = target.closest<HTMLButtonElement>("[data-view-participant]");
-  const resend = target.closest<HTMLButtonElement>("[data-resend-registration]");
+  const manualCheckInButton = target.closest<HTMLButtonElement>("[data-manual-checkin]");
   const toggle = target.closest<HTMLButtonElement>("[data-toggle-registration]");
   const remove = target.closest<HTMLButtonElement>("[data-delete-registration]");
   if (view) await openParticipantDetail(view.dataset.viewParticipant ?? "");
-  if (resend) await resendConfirmation(resend.dataset.resendRegistration ?? "");
+  if (manualCheckInButton) {
+    await manualCheckIn(
+      manualCheckInButton.dataset.manualCheckin ?? "",
+      manualCheckInButton.dataset.participantName ?? "este participante"
+    );
+  }
   if (toggle) await toggleRegistrationStatus(toggle.dataset.toggleRegistration ?? "", toggle.dataset.nextStatus as "confirmed" | "cancelled");
   if (remove) await deleteRegistrations([remove.dataset.deleteRegistration ?? ""], remove.dataset.registrationCode ?? "esta inscripción");
 });
@@ -368,7 +356,7 @@ const openParticipantDetail = async (participantId: string) => {
   const heading = document.createElement("h2");
   heading.textContent = row.displayName;
   const contact = document.createElement("p");
-  contact.textContent = `${row.email} · ${row.phone} · ${row.age} años · ${row.city}, ${row.country}`;
+  contact.textContent = `${row.email} · ${row.phone} · ${row.age} años`;
   const sensitive = document.createElement("div");
   sensitive.className = "sensitive-detail";
   const entries: Array<[string, string]> = [
@@ -390,11 +378,20 @@ const openParticipantDetail = async (participantId: string) => {
   detail.append(eyebrow, heading, contact, sensitive);
 };
 
-const resendConfirmation = async (registrationId: string) => {
-  setNotice("Reenviando confirmación…");
-  const { data, error } = await getSupabase().functions.invoke("resend-confirmation", { body: { registrationId } });
-  if (error) return setNotice("No se pudo reenviar la confirmación.", "error");
-  setNotice(data.emailStatus === "sent" ? "Confirmación reenviada." : "El proveedor de correo reportó una entrega incompleta.", data.emailStatus === "sent" ? "success" : "error");
+const manualCheckIn = async (participantCode: string, displayName: string) => {
+  if (!participantCode || !window.confirm(`¿Confirmar el check-in manual de ${displayName}?`)) return;
+  setNotice(`Registrando check-in de ${displayName}…`);
+  const { data, error } = await getSupabase().functions.invoke("check-in", { body: { tokenOrCode: participantCode } });
+  if (error || !data) {
+    const code = await invokeErrorCode(error);
+    const message = code === "PARTICIPANT_CANCELLED"
+      ? "La inscripción está cancelada. Reactívala antes del check-in."
+      : code === "PARTICIPANT_NOT_FOUND"
+        ? "No se encontró al participante."
+        : "No se pudo completar el check-in manual.";
+    return setNotice(message, "error");
+  }
+  setNotice(data.alreadyCheckedIn ? `${displayName} ya tenía check-in.` : `Check-in manual registrado para ${displayName}.`, "success");
   await loadRows();
 };
 

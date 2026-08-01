@@ -44,10 +44,10 @@ const { turnstileSiteKey, variant = "page" } = Astro.props;
         <section class="form-step is-active" data-form-step="categories">
           <div class="form-step-heading">
             <p class="step-kicker" data-step-kicker>Paso 1 de 3</p>
-            <h2>Elige la categoría</h2>
+            <h2>Elige las categorías</h2>
           </div>
           <CategoryFields prefix="captain" />
-          <p class="field-error" data-category-error hidden>Selecciona una categoría.</p>
+          <p class="field-error" data-category-error hidden>Selecciona al menos una categoría.</p>
           <div class="registration-profile-section">
             <h3>Tus datos</h3>
             <ProfileFields prefix="captain" />

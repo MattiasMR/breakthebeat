@@ -8,15 +8,15 @@ const { prefix } = Astro.props;
 
 <div class="choice-grid category-choice-grid" data-category-group={prefix}>
   <label class="choice-card">
-    <input type="radio" name={`${prefix}.categories`} value="1v1" />
+    <input type="checkbox" name={`${prefix}.categories`} value="1v1" />
     <span><strong>1 vs 1</strong><small>Competencia individual</small><em>Bgirls y Bboys</em></span>
   </label>
   <label class="choice-card">
-    <input type="radio" name={`${prefix}.categories`} value="2v2" />
+    <input type="checkbox" name={`${prefix}.categories`} value="2v2" />
     <span><strong>2 vs 2</strong><small>Competencia de duplas</small><em>Bgirls y Bboys</em></span>
   </label>
   <label class="choice-card">
-    <input type="radio" name={`${prefix}.categories`} value="bgirls" />
+    <input type="checkbox" name={`${prefix}.categories`} value="bgirls" />
     <span><strong>B-GIRLS</strong><small>Categoría femenina</small><em>Bgirls</em></span>
   </label>
 </div>

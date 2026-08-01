@@ -49,8 +49,9 @@ describe("registrationPayloadSchema", () => {
     expect(registrationPayloadSchema.safeParse(payload([participant({ socialUrl: "", country: "", city: "" })])).success).toBe(true);
   });
 
-  it("exige una sola categoría por participante", () => {
-    expect(registrationPayloadSchema.safeParse(payload([participant({ categories: ["1v1", "bgirls"] })])).success).toBe(false);
+  it("acepta varias categorías sin duplicados", () => {
+    expect(registrationPayloadSchema.safeParse(payload([participant({ categories: ["1v1", "bgirls"] })])).success).toBe(true);
+    expect(registrationPayloadSchema.safeParse(payload([participant({ categories: ["1v1", "1v1"] })])).success).toBe(false);
   });
 
   it("exige perfil y autorización para 2 vs 2", () => {

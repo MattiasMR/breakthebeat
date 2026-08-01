@@ -59,7 +59,10 @@ export const participantSchema = z.object({
   city: z.string().trim().max(100),
   phone: phoneSchema,
   email: z.string().trim().toLowerCase().max(254).pipe(z.email("Ingresa un correo válido")),
-  categories: z.array(categorySchema).length(1, "Selecciona una categoría"),
+  categories: z.array(categorySchema)
+    .min(1, "Selecciona al menos una categoría")
+    .max(3, "Puedes seleccionar hasta tres categorías")
+    .refine((categories) => new Set(categories).size === categories.length, "No repitas categorías"),
   medical: medicalSchema
 });
 

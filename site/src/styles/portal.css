@@ -369,6 +369,19 @@
   border-color: #bd1744;
 }
 
+.field input.is-invalid {
+  border-color: #bd1744;
+  outline-color: rgba(189, 23, 68, 0.22);
+}
+
+.field-validation-error {
+  margin: 0;
+  color: #9b1037;
+  font-size: 0.72rem;
+  font-weight: 750;
+  line-height: 1.25;
+}
+
 .field-wide {
   grid-column: 1 / -1;
 }

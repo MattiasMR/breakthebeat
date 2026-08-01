@@ -13,12 +13,14 @@ export const categoryLabels: Record<Category, string> = {
   bgirls: "BGirls"
 };
 
-const phoneSchema = z
+export const phoneSchema = z
   .string()
   .trim()
   .min(8, "Ingresa un teléfono válido")
   .max(24, "Ingresa un teléfono válido")
   .regex(/^[+0-9][0-9 ()-]{7,22}$/, "Ingresa un teléfono válido");
+
+export const emailSchema = z.string().trim().toLowerCase().max(254).pipe(z.email("Ingresa un correo válido"));
 
 const socialUrlSchema = z
   .string()
@@ -58,7 +60,7 @@ export const participantSchema = z.object({
   country: z.string().trim().max(80),
   city: z.string().trim().max(100),
   phone: phoneSchema,
-  email: z.string().trim().toLowerCase().max(254).pipe(z.email("Ingresa un correo válido")),
+  email: emailSchema,
   categories: z.array(categorySchema)
     .min(1, "Selecciona al menos una categoría")
     .max(3, "Puedes seleccionar hasta tres categorías")

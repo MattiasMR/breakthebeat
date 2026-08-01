@@ -21,10 +21,12 @@ const { prefix } = Astro.props;
   </label>
   <label class="field">
     <span>Teléfono <b aria-hidden="true">*</b></span>
-    <input name={`${prefix}.phone`} type="tel" autocomplete="tel" required minlength="8" maxlength="24" title="Ingresa un número de teléfono válido" placeholder="0999999999" />
+    <input name={`${prefix}.phone`} type="tel" autocomplete="tel" required minlength="8" maxlength="24" pattern="[+0-9][0-9 ()-]{7,22}" aria-describedby={`${prefix}-phone-error`} title="Usa entre 8 y 23 caracteres: números, espacios, paréntesis o guiones" placeholder="0999999999" />
+    <small id={`${prefix}-phone-error`} class="field-validation-error" data-field-validation-error hidden></small>
   </label>
   <label class="field">
     <span>Correo electrónico <b aria-hidden="true">*</b></span>
-    <input name={`${prefix}.email`} type="email" autocomplete="email" required maxlength="254" placeholder="jose@correo.com" />
+    <input name={`${prefix}.email`} type="email" autocomplete="email" required maxlength="254" pattern="[^\s@]+@[^\s@]+\.[A-Za-z]{2,}" aria-describedby={`${prefix}-email-error`} placeholder="jose@correo.com" />
+    <small id={`${prefix}-email-error`} class="field-validation-error" data-field-validation-error hidden></small>
   </label>
 </div>

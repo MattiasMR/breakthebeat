@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { EVENT_SLUG, registrationPayloadSchema, type ParticipantInput } from "./registration";
+import { emailSchema, EVENT_SLUG, phoneSchema, registrationPayloadSchema, type ParticipantInput } from "./registration";
 
 const participant = (overrides: Partial<ParticipantInput> = {}): ParticipantInput => ({
   role: "captain",
@@ -34,6 +34,13 @@ const payload = (participants: ParticipantInput[]) => ({
 });
 
 describe("registrationPayloadSchema", () => {
+  it("usa reglas estrictas para correo y teléfono desde el mismo campo", () => {
+    expect(emailSchema.safeParse("persona@dominio").success).toBe(false);
+    expect(emailSchema.safeParse("persona@dominio.com").success).toBe(true);
+    expect(phoneSchema.safeParse("abcdefgh").success).toBe(false);
+    expect(phoneSchema.safeParse("0991234567").success).toBe(true);
+  });
+
   it("acepta una inscripción individual válida", () => {
     expect(registrationPayloadSchema.safeParse(payload([participant()])).success).toBe(true);
   });

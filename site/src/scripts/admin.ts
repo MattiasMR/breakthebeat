@@ -343,11 +343,12 @@ const openParticipantDetail = async (participantId: string) => {
   if (!row || !dialog || !detail) return;
   detail.textContent = "Cargando información protegida…";
   dialog.showModal();
-  const [{ data: medical }, { data: emergency }] = await Promise.all([
-    getSupabase().from("medical_profiles").select("has_condition, condition_detail, has_allergies, medication_allergy_detail, food_allergy_detail, takes_medication, medication_detail").eq("participant_id", participantId).maybeSingle(),
-    getSupabase().from("emergency_contacts").select("relationship, full_name, phone").eq("participant_id", participantId).maybeSingle()
-  ]);
-  await getSupabase().rpc("log_admin_action", { p_action: "view_sensitive_details", p_target_type: "participant", p_target_id: participantId, p_metadata: {} });
+  const { data: emergency } = await getSupabase()
+    .from("emergency_contacts")
+    .select("relationship, full_name, phone")
+    .eq("participant_id", participantId)
+    .maybeSingle();
+  await getSupabase().rpc("log_admin_action", { p_action: "view_emergency_contact", p_target_type: "participant", p_target_id: participantId, p_metadata: {} });
 
   detail.replaceChildren();
   const eyebrow = document.createElement("p");
@@ -355,17 +356,15 @@ const openParticipantDetail = async (participantId: string) => {
   eyebrow.textContent = row.participantCode;
   const heading = document.createElement("h2");
   heading.textContent = row.displayName;
-  const contact = document.createElement("p");
-  contact.textContent = `${row.email} · ${row.phone} · ${row.age} años`;
   const sensitive = document.createElement("div");
   sensitive.className = "sensitive-detail";
   const entries: Array<[string, string]> = [
-    ["Condición médica", medical?.has_condition ? medical.condition_detail : "No declarada"],
-    ["Alergia a medicamento", medical?.has_allergies ? (medical.medication_allergy_detail || "No indicada") : "No declarada"],
-    ["Alergia alimentaria", medical?.has_allergies ? (medical.food_allergy_detail || "No indicada") : "No declarada"],
-    ["Medicación permanente", medical?.takes_medication ? medical.medication_detail : "No declarada"],
     ["Contacto de emergencia", emergency ? `${emergency.full_name} (${emergency.relationship}) · ${emergency.phone}` : "Sin información"]
   ];
+  const partner = row.role === "captain"
+    ? participants.find((participant) => participant.registrationId === row.registrationId && participant.role === "partner")
+    : null;
+  if (partner) entries.push(["Compañero registrado", `${partner.displayName} · ${partner.participantCode}`]);
   entries.forEach(([label, value]) => {
     const item = document.createElement("div");
     const strong = document.createElement("strong");
@@ -375,7 +374,7 @@ const openParticipantDetail = async (participantId: string) => {
     item.append(strong, span);
     sensitive.append(item);
   });
-  detail.append(eyebrow, heading, contact, sensitive);
+  detail.append(eyebrow, heading, sensitive);
 };
 
 const manualCheckIn = async (participantCode: string, displayName: string) => {

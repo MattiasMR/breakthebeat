@@ -1,8 +1,10 @@
 import {
   CONFIRMATION_STORAGE_KEY,
   DRAFT_STORAGE_KEY,
+  emailSchema,
   EVENT_SLUG,
   participantSchema,
+  phoneSchema,
   registrationPayloadSchema,
   type Category,
   type ParticipantInput,
@@ -64,6 +66,42 @@ const setMedicalAlert = (message = "") => {
   medicalAlert.hidden = !message;
 };
 
+const instantSchemaFor = (input: HTMLInputElement) => {
+  if (input.name.endsWith(".email")) return emailSchema;
+  if (input.name.endsWith(".phone") || input.name.endsWith(".emergencyPhone")) return phoneSchema;
+  return null;
+};
+
+const clearInstantValidation = (input: HTMLInputElement) => {
+  input.setCustomValidity("");
+  input.classList.remove("is-invalid");
+  input.removeAttribute("aria-invalid");
+  const error = input.closest(".field")?.querySelector<HTMLElement>("[data-field-validation-error]");
+  if (error) error.hidden = true;
+};
+
+const validateInstantField = (input: HTMLInputElement, showError: boolean) => {
+  const schema = instantSchemaFor(input);
+  if (!schema || input.disabled) return true;
+
+  input.setCustomValidity("");
+  const result = schema.safeParse(input.value);
+  const message = result.success ? "" : (result.error.issues[0]?.message ?? "Revisa este dato.");
+  input.setCustomValidity(message);
+
+  const visible = Boolean(message) && showError;
+  input.classList.toggle("is-invalid", visible);
+  if (visible) input.setAttribute("aria-invalid", "true");
+  else input.removeAttribute("aria-invalid");
+
+  const error = input.closest(".field")?.querySelector<HTMLElement>("[data-field-validation-error]");
+  if (error) {
+    error.textContent = message;
+    error.hidden = !visible;
+  }
+  return !message;
+};
+
 const updateProgress = (name = currentStepName) => {
   const activeNames = activeStepNames();
   const activePhase = visualPhaseByStep[name] ?? 1;
@@ -113,6 +151,7 @@ const setPartnerEnabled = (enabled: boolean) => {
       return;
     }
     control.disabled = !enabled;
+    if (!enabled && control instanceof HTMLInputElement) clearInstantValidation(control);
   });
   form.querySelectorAll<HTMLElement>("[data-partner-medical]").forEach((partnerMedical) => {
     partnerMedical.hidden = !enabled;
@@ -177,7 +216,11 @@ const collectPayload = (turnstileToken: string): RegistrationPayload => {
 };
 
 const validateVisibleControls = (step: HTMLElement) => {
-  const invalid = Array.from(step.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>("input, select, textarea"))
+  const controls = Array.from(step.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>("input, select, textarea"));
+  controls.forEach((control) => {
+    if (control instanceof HTMLInputElement) validateInstantField(control, true);
+  });
+  const invalid = controls
     .find((control) => !control.disabled && !control.checkValidity());
   if (invalid) {
     invalid.reportValidity();
@@ -335,9 +378,22 @@ form.addEventListener("change", (event) => {
   setMedicalAlert();
   saveDraft();
 });
-form.addEventListener("input", () => {
+form.addEventListener("input", (event) => {
+  const target = event.target;
+  if (target instanceof HTMLInputElement && instantSchemaFor(target)) {
+    validateInstantField(target, Boolean(target.value.trim()) || target.dataset.validationTouched === "true");
+  }
   setMedicalAlert();
   saveDraft();
+});
+
+form.addEventListener("focusout", (event) => {
+  const target = event.target;
+  if (!(target instanceof HTMLInputElement) || !instantSchemaFor(target)) return;
+  target.value = target.value.trim();
+  if (target.name.endsWith(".email")) target.value = target.value.toLowerCase();
+  target.dataset.validationTouched = "true";
+  validateInstantField(target, true);
 });
 
 form.querySelectorAll<HTMLButtonElement>("[data-next]").forEach((button) => button.addEventListener("click", () => {

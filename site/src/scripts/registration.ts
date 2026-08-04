@@ -30,8 +30,6 @@ const progressItems = Array.from(document.querySelectorAll<HTMLElement>("[data-p
 const progressCopy = document.querySelector<HTMLElement>("[data-progress-copy]");
 const submitAlert = form.querySelector<HTMLElement>("[data-submit-alert]");
 const medicalAlert = form.querySelector<HTMLElement>("[data-medical-alert]");
-const legalDocuments = form.querySelector<HTMLElement>("[data-legal-documents]");
-const legalAcceptance = form.querySelector<HTMLElement>("[data-legal-acceptance]");
 const categoryError = form.querySelector<HTMLElement>("[data-category-error]");
 let currentStepName = "categories";
 let registrationEnabled = false;
@@ -291,51 +289,6 @@ const restoreDraft = () => {
   }
 };
 
-const renderLegalDocuments = (documents: Array<{ kind: string; title: string; version: string; public_url: string | null }>) => {
-  if (!legalDocuments) return;
-  const visibleDocuments = documents.filter((document) => document.kind !== "health");
-  legalDocuments.replaceChildren(...visibleDocuments.map((document) => {
-    const item = document.public_url ? window.document.createElement("a") : window.document.createElement("div");
-    item.className = "legal-document";
-    if (item instanceof HTMLAnchorElement && document.public_url) {
-      item.href = document.public_url;
-      item.target = "_blank";
-      item.rel = "noreferrer";
-    }
-    const copy = window.document.createElement("span");
-    const title = window.document.createElement("strong");
-    title.textContent = document.title;
-    copy.append(title);
-    item.append(copy);
-    return item;
-  }));
-
-  if (!legalAcceptance) return;
-  legalAcceptance.replaceChildren(window.document.createTextNode("Al dar en Finalizar inscripción aceptas "));
-  const references = [
-    { kind: "terms", prefix: "los ", fallback: "Términos y reglas del evento" },
-    { kind: "privacy", prefix: "el ", fallback: "Aviso de privacidad" },
-    { kind: "captain_authority", prefix: "la ", fallback: "Declaración de autorización del compañero" },
-    { kind: "image", prefix: "la ", fallback: "Autorización de imagen y voz" }
-  ];
-  references.forEach((reference, index) => {
-    const document = visibleDocuments.find((item) => item.kind === reference.kind);
-    legalAcceptance.append(window.document.createTextNode(reference.prefix));
-    const label = document?.title ?? reference.fallback;
-    if (document?.public_url) {
-      const link = window.document.createElement("a");
-      link.href = document.public_url;
-      link.target = "_blank";
-      link.rel = "noreferrer";
-      link.textContent = label;
-      legalAcceptance.append(link);
-    } else {
-      legalAcceptance.append(window.document.createTextNode(label));
-    }
-    legalAcceptance.append(window.document.createTextNode(index === references.length - 1 ? "." : index === references.length - 2 ? " y " : ", "));
-  });
-};
-
 const loadRegistrationState = async () => {
   if (!isBackendConfigured()) {
     setBanner("Configuración pendiente: falta conectar el proyecto de Supabase.", "error");
@@ -348,10 +301,11 @@ const loadRegistrationState = async () => {
 
   try {
     const client = getSupabase();
-    const [{ data: event, error }, { data: documents }] = await Promise.all([
-      client.from("events").select("registration_open").eq("slug", EVENT_SLUG).maybeSingle(),
-      client.from("legal_documents").select("kind, title, version, public_url").order("kind")
-    ]);
+    const { data: event, error } = await client
+      .from("events")
+      .select("registration_open")
+      .eq("slug", EVENT_SLUG)
+      .maybeSingle();
     if (error || !event) {
       setBanner("No pudimos comprobar el estado de las inscripciones. Intenta más tarde.", "error");
       return;
@@ -361,7 +315,6 @@ const loadRegistrationState = async () => {
       return;
     }
 
-    renderLegalDocuments(documents ?? []);
     registrationEnabled = true;
     formFields.disabled = false;
     restoreDraft();

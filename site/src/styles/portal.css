@@ -626,7 +626,7 @@ button.button:disabled {
 }
 
 a.legal-document::after {
-  content: "Abrir ↗";
+  content: "Ver PDF ↗";
   margin-left: auto;
   color: var(--blue);
   font-weight: 900;

@@ -3,6 +3,7 @@ import Icon from "./Icon.astro";
 import CategoryFields from "./CategoryFields.astro";
 import MedicalFields from "./MedicalFields.astro";
 import ProfileFields from "./ProfileFields.astro";
+import { withBase } from "../utils/paths";
 
 interface Props {
   turnstileSiteKey: string;
@@ -94,14 +95,38 @@ const { turnstileSiteKey, variant = "page" } = Astro.props;
             <p class="step-kicker" data-step-kicker>Paso 3 de 3</p>
             <h2>Términos y autorizaciones</h2>
           </div>
-          <div class="legal-documents" data-legal-documents></div>
+          <div class="legal-documents">
+            <a
+              class="legal-document"
+              href={withBase("/assets/legal/autorizacion-imagen-y-voz.pdf")}
+              target="_blank"
+              rel="noreferrer"
+              type="application/pdf"
+            >
+              <span><strong>Autorización de imagen y voz</strong></span>
+            </a>
+            <a
+              class="legal-document"
+              href={withBase("/assets/legal/terminos-y-condiciones-del-evento.pdf")}
+              target="_blank"
+              rel="noreferrer"
+              type="application/pdf"
+            >
+              <span><strong>Términos y condiciones del evento</strong></span>
+            </a>
+          </div>
           <div class="consent-list">
             <label>
               <input type="checkbox" name="consent.responsibility" required />
               <span>Participo de forma voluntaria y bajo mi responsabilidad. Estoy en condiciones de bailar y entiendo que Break The Beat no se hace responsable por lesiones o problemas de salud durante el evento.</span>
             </label>
           </div>
-          <p class="legal-acceptance" data-legal-acceptance></p>
+          <p class="legal-acceptance">
+            Al dar en Finalizar inscripción aceptas la{" "}
+            <a href={withBase("/assets/legal/autorizacion-imagen-y-voz.pdf")} target="_blank" rel="noreferrer">Autorización de imagen y voz</a>
+            {" "}y los{" "}
+            <a href={withBase("/assets/legal/terminos-y-condiciones-del-evento.pdf")} target="_blank" rel="noreferrer">Términos y condiciones del evento</a>.
+          </p>
           <div class="turnstile-block">
             {turnstileSiteKey ? (
               <div class="cf-turnstile" data-sitekey={turnstileSiteKey} data-theme={variant === "modal" ? "light" : "dark"} data-action="registration"></div>

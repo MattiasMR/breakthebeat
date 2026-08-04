@@ -73,6 +73,12 @@ export interface Edition {
     categoriesNote?: string;
     prize: string;
     schedule: string;
+    dateLabel: string;
+    timeLabel: string;
+    categoryPrizes?: Array<{
+      category: string;
+      prize: string;
+    }>;
   };
 }
 
@@ -250,7 +256,9 @@ export const editions: Edition[] = [
       categories: ["Batallas de breaking"],
       categoriesNote: "El detalle histórico de categorías todavía debe ser confirmado por la organización.",
       prize: "Premiación registrada en el archivo fotográfico; monto oficial por confirmar.",
-      schedule: "Evento realizado en 2024. Horario archivado por confirmar."
+      schedule: "Evento realizado en 2024. Horario archivado por confirmar.",
+      dateLabel: "Realizada en 2024",
+      timeLabel: "Por confirmar"
     }
   },
   {
@@ -415,7 +423,9 @@ export const editions: Edition[] = [
       categories: ["Batallas de breakdance", "Freestyle libre"],
       categoriesNote: "El archivo disponible no desglosa todas las categorías competitivas de 2025.",
       prize: "USD 600 anunciados en el dossier de la segunda edición.",
-      schedule: "Domingo 28 de septiembre de 2025 · jornada de más de 6 horas."
+      schedule: "Domingo 28 de septiembre de 2025 · jornada de más de 6 horas.",
+      dateLabel: "Domingo 28 de septiembre de 2025",
+      timeLabel: "Más de 6 horas"
     }
   },
   {
@@ -529,8 +539,7 @@ export const editions: Edition[] = [
       eyebrow: "Quiénes somos · Edición 3",
       title: "La tercera edición quiere llevar el torneo a otro nivel.",
       paragraphs: [
-        "Break The Beat es una competencia nacional de breakdance creada por estudiantes de Universidad Casa Grande para visibilizar el talento, la disciplina y las historias de sus bailarines.",
-        "En 2026 el proyecto busca ampliar auspicios, recursos y alcance para consolidarse como un referente cultural y deportivo de Guayaquil."
+        "Break The Beat es una competencia nacional de breakdance creada por estudiantes de Universidad Casa Grande para visibilizar el talento, la disciplina y las historias de sus bailarines."
       ]
     },
     milestones: [
@@ -572,8 +581,15 @@ export const editions: Edition[] = [
       description:
         "La tercera edición será una competencia nacional de breaking con música en vivo, shows, freestyle abierto y participación de bailarines de todo Ecuador.",
       categories: ["1 vs 1", "2 vs 2", "BGirls"],
-      prize: "1er lugar: USD 500. 2do lugar: USD 200.",
-      schedule: "Domingo 27 Sept, 2026 · 10 AM."
+      prize: "USD 700 repartidos entre las tres categorías.",
+      schedule: "Domingo 27 de septiembre de 2026 · 10 AM.",
+      dateLabel: "Domingo 27 de septiembre de 2026",
+      timeLabel: "10 AM",
+      categoryPrizes: [
+        { category: "1 vs 1", prize: "Premio de USD 100" },
+        { category: "2 vs 2", prize: "Premio de USD 500 al crew ganador" },
+        { category: "BGirls", prize: "Premio de USD 100" }
+      ]
     }
   }
 ];

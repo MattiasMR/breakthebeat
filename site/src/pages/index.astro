@@ -2,7 +2,7 @@
 import Icon from "../components/Icon.astro";
 import SiteFooter from "../components/SiteFooter.astro";
 import SiteHeader from "../components/SiteHeader.astro";
-import { currentEdition, editions } from "../data/editions";
+import { editions } from "../data/editions";
 import { withBase } from "../utils/paths";
 import "../styles/global.css";
 import "../styles/portal.css";
@@ -14,6 +14,9 @@ const galleryImages = Array.from({ length: 12 }, (_, index) =>
   withBase(`/assets/home-2026/gallery-${String(index + 1).padStart(2, "0")}.webp`)
 );
 const pastEditions = editions.filter((edition) => !edition.isCurrent);
+const editionOptions = [...editions].sort((a, b) => Number(b.id) - Number(a.id));
+const infoImageFor = (editionId: string, fallback: string) =>
+  editionId === "3" ? "/assets/home-2026/gallery-07.webp" : fallback;
 const participationRules = [
   "Solo pueden inscribirse personas mayores de 18 años.",
   "Cada participante puede elegir una o más categorías: 1 vs 1, 2 vs 2 y BGirls.",
@@ -188,58 +191,150 @@ const homeSponsorLogo = (logo: string, editionId: string) => {
         </div>
       </div>
 
-      <section class="home-info" id="informacion" aria-labelledby="home-info-title">
-        <nav class="home-info-tabs" aria-label="Información de Break The Beat">
-          <a href="#informacion" aria-current="page">Información del evento</a>
-          <a href="#reglas">Reglas</a>
+      <section class="home-info" id="informacion" aria-label="Información de Break The Beat">
+        <nav class="home-info-tabs" role="tablist" aria-label="Información del evento y reglas">
+          <button
+            id="home-info-tab-event"
+            type="button"
+            role="tab"
+            aria-selected="true"
+            aria-controls="home-info-pane-event"
+            data-home-info-tab="event"
+          >
+            Información del evento
+          </button>
+          <button
+            id="home-info-tab-rules"
+            type="button"
+            role="tab"
+            aria-selected="false"
+            aria-controls="reglas"
+            data-home-info-tab="rules"
+          >
+            Reglas
+          </button>
         </nav>
 
-        <div class="home-info-overview">
-          <aside class="home-info-series" aria-label="Serie del evento">
-            <p>Parte de la serie</p>
-            <div>
-              <img
-                src={withBase("/assets/favicon.png")}
-                width="96"
-                height="96"
-                alt=""
-                aria-hidden="true"
-              />
-              <span>
-                <strong>Break The Beat</strong>
-                <small>{editions.length} ediciones</small>
-              </span>
+        <div
+          id="home-info-pane-event"
+          role="tabpanel"
+          aria-labelledby="home-info-tab-event"
+          data-home-info-pane="event"
+        >
+          <section class="home-series-selector" aria-labelledby="home-series-title">
+            <header class="home-series-heading">
+              <div>
+                <p>Parte de la serie</p>
+                <h2 id="home-series-title">Break The Beat</h2>
+                <span>{editions.length} ediciones</span>
+              </div>
+              <div class="home-series-controls" aria-label="Desplazar ediciones">
+                <button type="button" data-home-edition-scroll="prev" aria-label="Ver ediciones anteriores">←</button>
+                <button type="button" data-home-edition-scroll="next" aria-label="Ver ediciones siguientes">→</button>
+              </div>
+            </header>
+
+            <div class="home-series-track" role="tablist" aria-label="Seleccionar edición" data-home-edition-track>
+              {editionOptions.map((edition) => (
+                <button
+                  id={`home-edition-tab-${edition.id}`}
+                  type="button"
+                  role="tab"
+                  aria-selected={edition.isCurrent ? "true" : "false"}
+                  aria-controls={`home-edition-panel-${edition.id}`}
+                  data-home-edition-option={edition.id}
+                >
+                  <img src={withBase("/assets/favicon.png")} width="56" height="56" alt="" aria-hidden="true" />
+                  <span>
+                    <strong>{edition.shortLabel}</strong>
+                    <small>{edition.year} · {edition.status}</small>
+                  </span>
+                </button>
+              ))}
             </div>
-          </aside>
+          </section>
 
-          <article class="home-info-copy">
-            <p class="kicker">{currentEdition.label} · {currentEdition.year}</p>
-            <h2 id="home-info-title">Todo lo que necesitas saber antes de entrar a la pista.</h2>
-            <p class="home-info-lead">{currentEdition.eventInfo.description}</p>
-            <p>{currentEdition.about.paragraphs[1]}</p>
+          <div class="home-info-edition-stage" data-home-edition-transition>
+            {editions.map((edition) => (
+              <article
+                id={`home-edition-panel-${edition.id}`}
+                class="home-info-edition"
+                role="tabpanel"
+                aria-labelledby={`home-edition-tab-${edition.id}`}
+                data-home-edition-panel={edition.id}
+                data-page-title={`Break The Beat | ${edition.label}`}
+                hidden={!edition.isCurrent}
+              >
+                <div class="home-info-overview">
+                  <div class="home-info-copy">
+                    <p class="kicker">Break The Beat {edition.id}</p>
+                    <h2>Sobre esta edición</h2>
+                    <p class="home-info-lead">{edition.eventInfo.description}</p>
 
-            <dl class="home-info-facts">
-              <div>
-                <dt><Icon name="calendar-days" size={18} /> Fecha</dt>
-                <dd>{currentEdition.date}</dd>
-              </div>
-              <div>
-                <dt><Icon name="map-pin" size={18} /> Lugar</dt>
-                <dd>{currentEdition.location}, {currentEdition.city}</dd>
-              </div>
-              <div>
-                <dt><Icon name="trophy" size={18} /> Categorías</dt>
-                <dd>{currentEdition.eventInfo.categories.join(" · ")}</dd>
-              </div>
-            </dl>
-          </article>
+                    <dl class="home-info-facts">
+                      <div>
+                        <dt><Icon name="calendar-days" size={18} /> Fecha</dt>
+                        <dd>{edition.eventInfo.dateLabel}</dd>
+                      </div>
+                      <div>
+                        <dt><Icon name="map-pin" size={18} /> Lugar</dt>
+                        <dd>{edition.location}</dd>
+                      </div>
+                      <div>
+                        <dt><Icon name="clock" size={18} /> Hora</dt>
+                        <dd>{edition.eventInfo.timeLabel}</dd>
+                      </div>
+                    </dl>
+                  </div>
+
+                  <figure class="home-info-visual">
+                    <img
+                      src={withBase(infoImageFor(edition.id, edition.hero.image))}
+                      width="1200"
+                      height="900"
+                      alt={edition.hero.alt}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <figcaption>{edition.label} · {edition.year}</figcaption>
+                  </figure>
+                </div>
+
+                <section class="home-awards" aria-labelledby={`home-awards-title-${edition.id}`}>
+                  <header>
+                    <p class="kicker">En la pista</p>
+                    <h3 id={`home-awards-title-${edition.id}`}>Categorías y premios</h3>
+                  </header>
+                  <div class="home-awards-grid">
+                    {(edition.eventInfo.categoryPrizes ?? [{
+                      category: edition.eventInfo.categories.join(" · "),
+                      prize: edition.eventInfo.prize
+                    }]).map((item) => (
+                      <article>
+                        <span aria-hidden="true">↗</span>
+                        <h4>{item.category}</h4>
+                        <p>{item.prize}</p>
+                      </article>
+                    ))}
+                  </div>
+                  {edition.eventInfo.categoriesNote && <p class="home-awards-note">{edition.eventInfo.categoriesNote}</p>}
+                </section>
+              </article>
+            ))}
+          </div>
         </div>
 
-        <section class="home-rules" id="reglas" aria-labelledby="home-rules-title">
+        <section
+          class="home-rules"
+          id="reglas"
+          role="tabpanel"
+          aria-labelledby="home-info-tab-rules"
+          data-home-info-pane="rules"
+          hidden
+        >
           <header>
-            <p class="kicker">Antes de competir</p>
-            <h2 id="home-rules-title">Reglas de participación</h2>
-            <p>Estas condiciones reflejan lo que actualmente valida el formulario oficial de inscripción.</p>
+            <p class="kicker">Antes de competir · 2026</p>
+            <h2>Reglas de participación</h2>
             <a class="home-button home-button-pink" href={withBase("/inscripcion/")}>
               Revisar e inscribirme
               <Icon name="arrow-up-right" size={18} />
@@ -254,33 +349,33 @@ const homeSponsorLogo = (logo: string, editionId: string) => {
             ))}
           </ol>
         </section>
+      </section>
 
-        <section class="home-past-editions" id="ediciones" aria-labelledby="past-editions-title">
-          <header>
-            <p class="kicker">El movimiento continúa</p>
-            <h2 id="past-editions-title">Ediciones pasadas</h2>
-          </header>
-          <div class="home-past-grid">
-            {pastEditions.map((edition) => (
-              <article class="home-past-card">
-                <img
-                  src={withBase(edition.hero.image)}
-                  width="1600"
-                  height="900"
-                  alt={edition.hero.alt}
-                  loading="lazy"
-                  decoding="async"
-                />
-                <div class="home-past-card-shade" aria-hidden="true"></div>
-                <div class="home-past-card-copy">
-                  <p>{edition.label} · {edition.year}</p>
-                  <h3>{edition.hero.title}</h3>
-                  <span>{edition.location}</span>
-                </div>
-              </article>
-            ))}
-          </div>
-        </section>
+      <section class="home-past-editions" id="ediciones" aria-labelledby="past-editions-title">
+        <header>
+          <p class="kicker">El origen del movimiento</p>
+          <h2 id="past-editions-title">Donde comenzó todo</h2>
+        </header>
+        <div class="home-past-grid">
+          {pastEditions.slice(0, 2).map((edition) => (
+            <article class="home-past-card">
+              <img
+                src={withBase(edition.hero.image)}
+                width="1600"
+                height="900"
+                alt={edition.hero.alt}
+                loading="lazy"
+                decoding="async"
+              />
+              <div class="home-past-card-shade" aria-hidden="true"></div>
+              <div class="home-past-card-copy">
+                <p>{edition.label} · {edition.year}</p>
+                <h3>{edition.hero.title}</h3>
+                <span>{edition.location}</span>
+              </div>
+            </article>
+          ))}
+        </div>
       </section>
 
       <section class="home-about" id="evento">
@@ -358,7 +453,6 @@ const homeSponsorLogo = (logo: string, editionId: string) => {
         <h2>La pista te espera</h2>
         <div>
           <a class="home-button home-button-pink" href={withBase("/inscripcion/")}>Inscribirme</a>
-          <a class="home-button home-button-paper" href="#informacion">Información del evento</a>
         </div>
       </section>
     </main>
@@ -367,6 +461,7 @@ const homeSponsorLogo = (logo: string, editionId: string) => {
 
     <script>
       import "../scripts/home-countdown";
+      import "../scripts/edition-switcher";
     </script>
   </body>
 </html>

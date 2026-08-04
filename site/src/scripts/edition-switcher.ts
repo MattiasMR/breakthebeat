@@ -1,92 +1,153 @@
-const EDITIONS = new Set(["1", "2", "3"]);
-const DEFAULT_EDITION = "3";
-const FADE_OUT_MS = 130;
+const editionPanels = Array.from(document.querySelectorAll<HTMLElement>("[data-home-edition-panel]"));
+const editionOptions = Array.from(document.querySelectorAll<HTMLButtonElement>("[data-home-edition-option]"));
+const editionStage = document.querySelector<HTMLElement>("[data-home-edition-transition]");
+const editionTrack = document.querySelector<HTMLElement>("[data-home-edition-track]");
+const infoTabs = Array.from(document.querySelectorAll<HTMLButtonElement>("[data-home-info-tab]"));
+const infoPanes = Array.from(document.querySelectorAll<HTMLElement>("[data-home-info-pane]"));
 
-const panels = Array.from(document.querySelectorAll<HTMLElement>("[data-edition-panel]"));
-const selectors = Array.from(document.querySelectorAll<HTMLSelectElement>("[data-edition-select]"));
-const transitionGroups = Array.from(document.querySelectorAll<HTMLElement>("[data-edition-transition]"));
-let activeEdition = document.documentElement.dataset.edition ?? DEFAULT_EDITION;
+const editionIds = new Set(editionOptions.map((option) => option.dataset.homeEditionOption ?? ""));
+const defaultEdition = editionOptions.find((option) => option.getAttribute("aria-selected") === "true")
+  ?.dataset.homeEditionOption ?? "3";
+const fadeOutMs = 150;
+let activeEdition = defaultEdition;
 let transitionTimer: number | undefined;
 
 function editionFromUrl() {
   const requested = new URL(window.location.href).searchParams.get("edicion");
-  return requested && EDITIONS.has(requested) ? requested : DEFAULT_EDITION;
+  return requested && editionIds.has(requested) ? requested : defaultEdition;
 }
 
-function renderEdition(activeId: string) {
-  panels.forEach((panel) => {
-    const isActive = panel.dataset.editionPanel === activeId;
+function renderEdition(editionId: string, moveIntoView = false) {
+  editionPanels.forEach((panel) => {
+    const isActive = panel.dataset.homeEditionPanel === editionId;
     panel.hidden = !isActive;
-    if (isActive) {
-      panel.removeAttribute("aria-hidden");
-    } else {
-      panel.setAttribute("aria-hidden", "true");
+    panel.setAttribute("aria-hidden", String(!isActive));
+  });
+
+  editionOptions.forEach((option) => {
+    const isActive = option.dataset.homeEditionOption === editionId;
+    option.setAttribute("aria-selected", String(isActive));
+    option.tabIndex = isActive ? 0 : -1;
+
+    if (isActive && moveIntoView) {
+      option.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
     }
   });
 
-  selectors.forEach((selector) => {
-    selector.value = activeId;
-  });
+  document.documentElement.dataset.edition = editionId;
 
-  document.documentElement.dataset.edition = activeId;
+  const activePanel = editionPanels.find((panel) => panel.dataset.homeEditionPanel === editionId);
+  if (activePanel?.dataset.pageTitle) document.title = activePanel.dataset.pageTitle;
 
-  const titlePanel = panels.find(
-    (panel) => panel.dataset.editionPanel === activeId && panel.dataset.pageTitle
-  );
-  if (titlePanel?.dataset.pageTitle) {
-    document.title = titlePanel.dataset.pageTitle;
-  }
-
-  activeEdition = activeId;
-  document.dispatchEvent(new CustomEvent("breakthebeat:edition-change", { detail: { editionId: activeId } }));
+  activeEdition = editionId;
+  document.dispatchEvent(new CustomEvent("breakthebeat:edition-change", { detail: { editionId } }));
 }
 
-function showEdition(editionId: string, updateUrl = true, animate = true) {
-  const activeId = EDITIONS.has(editionId) ? editionId : DEFAULT_EDITION;
-
-  selectors.forEach((selector) => {
-    selector.value = activeId;
-  });
+function showEdition(editionId: string, updateUrl = true, animate = true, moveIntoView = true) {
+  const nextEdition = editionIds.has(editionId) ? editionId : defaultEdition;
 
   if (updateUrl) {
     const url = new URL(window.location.href);
-    url.searchParams.set("edicion", activeId);
-    window.history.replaceState({ editionId: activeId }, "", url);
+    if (nextEdition === defaultEdition) {
+      url.searchParams.delete("edicion");
+    } else {
+      url.searchParams.set("edicion", nextEdition);
+    }
+    window.history.replaceState({ editionId: nextEdition }, "", url);
   }
 
-  if (!animate || activeId === activeEdition || transitionGroups.length === 0) {
+  if (!animate || nextEdition === activeEdition || !editionStage) {
     if (transitionTimer) window.clearTimeout(transitionTimer);
     transitionTimer = undefined;
-    transitionGroups.forEach((group) => {
-      group.classList.remove("is-edition-fading");
-      group.removeAttribute("aria-busy");
-    });
-    renderEdition(activeId);
+    editionStage?.classList.remove("is-edition-fading");
+    editionStage?.removeAttribute("aria-busy");
+    renderEdition(nextEdition, moveIntoView);
     return;
   }
 
   if (transitionTimer) window.clearTimeout(transitionTimer);
-  transitionGroups.forEach((group) => {
-    group.classList.add("is-edition-fading");
-    group.setAttribute("aria-busy", "true");
-  });
+  editionStage.classList.add("is-edition-fading");
+  editionStage.setAttribute("aria-busy", "true");
 
   transitionTimer = window.setTimeout(() => {
-    renderEdition(activeId);
+    renderEdition(nextEdition, moveIntoView);
     window.requestAnimationFrame(() => {
-      transitionGroups.forEach((group) => {
-        group.classList.remove("is-edition-fading");
-        group.removeAttribute("aria-busy");
-      });
+      editionStage.classList.remove("is-edition-fading");
+      editionStage.removeAttribute("aria-busy");
     });
     transitionTimer = undefined;
-  }, FADE_OUT_MS);
+  }, fadeOutMs);
 }
 
-selectors.forEach((selector) => {
-  selector.addEventListener("change", () => showEdition(selector.value));
+editionOptions.forEach((option, index) => {
+  option.addEventListener("click", () => showEdition(option.dataset.homeEditionOption ?? defaultEdition));
+  option.addEventListener("keydown", (event) => {
+    let nextIndex: number | undefined;
+    if (event.key === "ArrowRight") nextIndex = (index + 1) % editionOptions.length;
+    if (event.key === "ArrowLeft") nextIndex = (index - 1 + editionOptions.length) % editionOptions.length;
+    if (event.key === "Home") nextIndex = 0;
+    if (event.key === "End") nextIndex = editionOptions.length - 1;
+    if (nextIndex === undefined) return;
+
+    event.preventDefault();
+    const nextOption = editionOptions[nextIndex];
+    nextOption.focus();
+    showEdition(nextOption.dataset.homeEditionOption ?? defaultEdition);
+  });
 });
 
-window.addEventListener("popstate", () => showEdition(editionFromUrl(), false));
+document.querySelectorAll<HTMLButtonElement>("[data-home-edition-scroll]").forEach((control) => {
+  control.addEventListener("click", () => {
+    const direction = control.dataset.homeEditionScroll === "prev" ? -1 : 1;
+    editionTrack?.scrollBy({
+      left: direction * Math.max((editionTrack?.clientWidth ?? 0) * 0.75, 260),
+      behavior: "smooth"
+    });
+  });
+});
 
-showEdition(editionFromUrl(), false, false);
+function showInfoPane(name: string, updateUrl = true) {
+  const nextName = name === "rules" ? "rules" : "event";
+
+  infoTabs.forEach((tab) => {
+    const isActive = tab.dataset.homeInfoTab === nextName;
+    tab.setAttribute("aria-selected", String(isActive));
+    tab.tabIndex = isActive ? 0 : -1;
+  });
+
+  infoPanes.forEach((pane) => {
+    const isActive = pane.dataset.homeInfoPane === nextName;
+    pane.hidden = !isActive;
+    pane.setAttribute("aria-hidden", String(!isActive));
+  });
+
+  if (updateUrl) {
+    const url = new URL(window.location.href);
+    url.hash = nextName === "rules" ? "reglas" : "informacion";
+    window.history.replaceState(window.history.state, "", url);
+  }
+}
+
+infoTabs.forEach((tab, index) => {
+  tab.addEventListener("click", () => showInfoPane(tab.dataset.homeInfoTab ?? "event"));
+  tab.addEventListener("keydown", (event) => {
+    if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+    event.preventDefault();
+    const direction = event.key === "ArrowRight" ? 1 : -1;
+    const nextTab = infoTabs[(index + direction + infoTabs.length) % infoTabs.length];
+    nextTab.focus();
+    showInfoPane(nextTab.dataset.homeInfoTab ?? "event");
+  });
+});
+
+window.addEventListener("popstate", () => {
+  showEdition(editionFromUrl(), false);
+  showInfoPane(window.location.hash === "#reglas" ? "rules" : "event", false);
+});
+
+window.addEventListener("hashchange", () => {
+  showInfoPane(window.location.hash === "#reglas" ? "rules" : "event", false);
+});
+
+showEdition(editionFromUrl(), false, false, false);
+showInfoPane(window.location.hash === "#reglas" ? "rules" : "event", false);

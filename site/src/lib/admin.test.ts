@@ -14,7 +14,6 @@ const row = (overrides: Partial<AdminParticipant> = {}): AdminParticipant => ({
   age: 22,
   categories: ["1v1", "2v2"],
   status: "confirmed",
-  emailStatus: "sent",
   createdAt: "2026-07-15T12:00:00Z",
   checkedInAt: null,
   hasMedicalAlert: false,

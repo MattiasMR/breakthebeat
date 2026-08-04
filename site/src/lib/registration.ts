@@ -114,7 +114,6 @@ export type RegistrationPayload = z.infer<typeof registrationPayloadSchema>;
 
 export type RegistrationConfirmation = {
   registrationCode: string;
-  emailStatus: "pending" | "sent" | "partial" | "failed";
   participants: Array<{
     displayName: string;
     participantCode: string;

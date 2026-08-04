@@ -84,7 +84,6 @@ const normalizeRows = (data: any[]): AdminParticipant[] => data.map((item) => {
     age: item.age,
     categories: (item.participant_categories ?? []).map((entry: any) => entry.category),
     status: registration?.status ?? "confirmed",
-    emailStatus: registration?.email_status ?? "pending",
     createdAt: registration?.created_at ?? item.created_at,
     checkedInAt: checkIn?.checked_in_at ?? null,
     hasMedicalAlert: Boolean(medical?.has_condition || medical?.has_allergies || medical?.takes_medication)
@@ -220,7 +219,7 @@ const loadRows = async () => {
     .select(`
       id, registration_id, participant_code, role, display_name, social_url,
       age, phone, email, created_at,
-      registrations!inner(id, public_code, status, email_status, created_at),
+      registrations!inner(id, public_code, status, created_at),
       participant_categories(category),
       check_ins(checked_in_at),
       medical_profiles(has_condition, has_allergies, takes_medication)

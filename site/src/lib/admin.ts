@@ -13,7 +13,6 @@ export type AdminParticipant = {
   age: number;
   categories: Category[];
   status: "confirmed" | "cancelled";
-  emailStatus: "pending" | "sent" | "partial" | "failed";
   createdAt: string;
   checkedInAt: string | null;
   hasMedicalAlert: boolean;

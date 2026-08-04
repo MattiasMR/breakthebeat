@@ -19,9 +19,6 @@ jobs:
       SUPABASE_PROJECT_ID: ${{ vars.SUPABASE_PROJECT_ID }}
       TURNSTILE_SECRET_KEY: ${{ secrets.TURNSTILE_SECRET_KEY }}
       LOGIN_RATE_LIMIT_SALT: ${{ secrets.LOGIN_RATE_LIMIT_SALT }}
-      RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
-      RESEND_FROM: ${{ vars.RESEND_FROM }}
-      RESEND_REPLY_TO: ${{ vars.RESEND_REPLY_TO }}
       ALLOWED_ORIGINS: ${{ vars.ALLOWED_ORIGINS }}
     steps:
       - name: Checkout
@@ -44,9 +41,6 @@ jobs:
           --project-ref "$SUPABASE_PROJECT_ID"
           TURNSTILE_SECRET_KEY="$TURNSTILE_SECRET_KEY"
           LOGIN_RATE_LIMIT_SALT="$LOGIN_RATE_LIMIT_SALT"
-          RESEND_API_KEY="$RESEND_API_KEY"
-          RESEND_FROM="$RESEND_FROM"
-          RESEND_REPLY_TO="$RESEND_REPLY_TO"
           ALLOWED_ORIGINS="$ALLOWED_ORIGINS"
 
       - name: Deploy functions

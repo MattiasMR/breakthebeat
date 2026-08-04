@@ -3,9 +3,6 @@ import { errorResponse, jsonResponse } from "../_shared/http.ts";
 import { createAdminClient } from "../_shared/supabase.ts";
 import { verifyTurnstile } from "../_shared/turnstile.ts";
 import { registrationPayloadSchema } from "../_shared/registration-schema.ts";
-import { sendRegistrationEmails, updateEmailStatus, type EmailRegistration } from "../_shared/email.ts";
-
-declare const EdgeRuntime: { waitUntil(promise: Promise<unknown>): void } | undefined;
 
 const handleRequest = async (request: Request) => {
   if (request.method === "OPTIONS") return optionsResponse(request);
@@ -54,31 +51,8 @@ const handleRequest = async (request: Request) => {
     }>;
   };
 
-  const emailRegistration: EmailRegistration = registration;
-  const deliveryTask = (async () => {
-    let emailResult: { status: "sent" | "partial" | "failed"; error: string | null };
-    try {
-      emailResult = await sendRegistrationEmails(emailRegistration, `initial-${registration.registrationId}`);
-    } catch {
-      emailResult = { status: "failed", error: "EMAIL_DELIVERY_FAILED" };
-    }
-
-    try {
-      await updateEmailStatus(client, registration.registrationId, emailResult);
-    } catch (error) {
-      console.error("Unable to update registration email status", error);
-    }
-  })();
-
-  if (typeof EdgeRuntime !== "undefined") {
-    EdgeRuntime.waitUntil(deliveryTask);
-  } else {
-    void deliveryTask;
-  }
-
   return jsonResponse(request, {
     registrationCode: registration.registrationCode,
-    emailStatus: "pending",
     participants: registration.participants.map((participant) => ({
       displayName: participant.displayName,
       participantCode: participant.participantCode,

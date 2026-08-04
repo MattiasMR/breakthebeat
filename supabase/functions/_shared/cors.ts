@@ -1,7 +1,9 @@
 const defaultOrigins = [
   "http://localhost:4321",
   "http://127.0.0.1:4321",
-  "https://mattiasmr.github.io"
+  "https://mattiasmr.github.io",
+  "https://breakthebeat.com.ec",
+  "https://www.breakthebeat.com.ec"
 ];
 
 const allowedOrigins = () => {
@@ -31,4 +33,3 @@ export const corsHeaders = (request: Request) => {
 
 export const optionsResponse = (request: Request) =>
   new Response(null, { status: 204, headers: corsHeaders(request) });
-

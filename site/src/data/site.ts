@@ -18,7 +18,6 @@ export const event = {
 export const navItems = [
   { label: "Quiénes somos", href: "#evento" },
   { label: "Impacto", href: "#impacto" },
-  { label: "Ediciones", href: "#ediciones" },
   { label: "Sponsors", href: "#sponsors" }
 ];
 
@@ -281,7 +280,6 @@ export const footerGroups = [
     links: [
       { label: "Quiénes somos", href: "/#evento" },
       { label: "Impacto", href: "/#impacto" },
-      { label: "Ediciones", href: "/#ediciones" },
       { label: "Sponsors", href: "/#sponsors" },
       { label: "Información del evento", href: "/#informacion" }
     ]

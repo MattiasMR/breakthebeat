@@ -330,6 +330,64 @@
   color: var(--magenta-dark);
 }
 
+.field-help {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  cursor: help;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+.field-help:focus-visible {
+  outline: 2px solid var(--magenta-dark);
+  outline-offset: 3px;
+}
+
+.field-help-tooltip {
+  position: absolute;
+  z-index: 40;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  width: max-content;
+  max-width: min(260px, 78vw);
+  padding: 8px 10px;
+  border-radius: 7px;
+  background: #080808;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 1.35;
+  opacity: 0;
+  pointer-events: none;
+  text-align: left;
+  text-transform: none;
+  transform: translate(-50%, 4px);
+  transition: opacity 140ms ease, transform 140ms ease, visibility 140ms ease;
+  visibility: hidden;
+  white-space: normal;
+}
+
+.field-help-tooltip::after {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  border: 6px solid transparent;
+  border-top-color: #080808;
+  content: "";
+  transform: translateX(-50%);
+}
+
+.field-help:hover .field-help-tooltip,
+.field-help:focus .field-help-tooltip {
+  opacity: 1;
+  transform: translate(-50%, 0);
+  visibility: visible;
+}
+
 .field small {
   color: #71695f;
   font-weight: 650;
@@ -2152,7 +2210,7 @@ a.legal-document::after {
 }
 
 .registration-standalone-body .legal-documents::before {
-  content: "⌄  Documentos";
+  content: "Documentos";
   margin-bottom: 2px;
   color: #080808;
   font-size: 0.72rem;

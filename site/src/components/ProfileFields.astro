@@ -4,6 +4,7 @@ interface Props {
 }
 
 const { prefix } = Astro.props;
+const ageHelpId = `${prefix}-age-help`;
 ---
 
 <div class="field-grid">
@@ -16,7 +17,19 @@ const { prefix } = Astro.props;
     <input name={`${prefix}.artisticName`} minlength="2" maxlength="45" required placeholder="Ríos" />
   </label>
   <label class="field">
-    <span>Edad <span class="field-help" title="Solo pueden inscribirse mayores de edad" aria-label="Solo pueden inscribirse mayores de edad">ⓘ</span> <b aria-hidden="true">*</b></span>
+    <span>
+      Edad
+      <span
+        class="field-help"
+        tabindex="0"
+        aria-label="Información sobre el requisito de edad"
+        aria-describedby={ageHelpId}
+      >
+        ⓘ
+        <span class="field-help-tooltip" id={ageHelpId} role="tooltip">Solo pueden inscribirse mayores de edad.</span>
+      </span>
+      <b aria-hidden="true">*</b>
+    </span>
     <input name={`${prefix}.age`} type="number" min="18" max="100" inputmode="numeric" required placeholder="+18" />
   </label>
   <label class="field">

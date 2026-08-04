@@ -3090,13 +3090,8 @@ html[data-home-overhaul] body {
   color: #ff0076;
 }
 
-.home-past-editions .kicker {
-  color: #b40053;
-}
-
 .home-info-copy h2,
-.home-rules h2,
-.home-past-editions h2 {
+.home-rules h2 {
   margin: 0;
   font-family: "Aurochs Heavy", Impact, sans-serif;
   font-weight: 500;
@@ -3331,90 +3326,6 @@ html[data-home-overhaul] body {
   font-size: clamp(1rem, 1.4vw, 1.18rem);
   font-weight: 600;
   line-height: 1.5;
-}
-
-.home-past-editions {
-  scroll-margin-top: 100px;
-  padding: clamp(72px, 8vw, 122px) clamp(24px, 6vw, 96px) clamp(88px, 10vw, 150px);
-  background: #f7f4ef;
-  color: #090909;
-}
-
-.home-past-editions header {
-  margin-bottom: clamp(34px, 5vw, 64px);
-}
-
-.home-past-editions h2 {
-  font-size: clamp(2.25rem, 7.2vw, 6.8rem);
-  white-space: nowrap;
-}
-
-.home-past-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(18px, 2.4vw, 34px);
-}
-
-.home-past-card {
-  position: relative;
-  min-height: clamp(330px, 34vw, 520px);
-  overflow: hidden;
-  border-radius: 22px;
-  background: #090909;
-  color: #fff;
-}
-
-.home-past-card > img,
-.home-past-card-shade {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.home-past-card > img {
-  object-fit: cover;
-  transition: transform 360ms ease;
-}
-
-.home-past-card-shade {
-  background: linear-gradient(180deg, transparent 24%, rgba(0, 0, 0, 0.84) 100%);
-}
-
-.home-past-card:hover > img {
-  transform: scale(1.025);
-}
-
-.home-past-card-copy {
-  position: absolute;
-  z-index: 2;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  padding: clamp(24px, 4vw, 42px);
-}
-
-.home-past-card-copy p,
-.home-past-card-copy span {
-  margin: 0;
-  color: rgba(255, 255, 255, 0.72);
-  font-size: 0.74rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.home-past-card-copy h3 {
-  max-width: 700px;
-  margin: 10px 0 16px;
-  font-family: "Aurochs Heavy", Impact, sans-serif;
-  font-size: clamp(2.25rem, 4vw, 4rem);
-  font-weight: 500;
-  hyphens: none;
-  line-height: 0.9;
-  overflow-wrap: normal;
-  text-transform: uppercase;
-  word-break: normal;
 }
 
 @keyframes home-tape-marquee {
@@ -4285,22 +4196,6 @@ html[data-home-overhaul] body {
 
   .home-rules h2 {
     font-size: clamp(2.45rem, 10vw, 4rem);
-  }
-
-  .home-past-editions h2 {
-    font-size: clamp(2.25rem, 9.3vw, 3.75rem);
-  }
-
-  .home-past-card-copy h3 {
-    font-size: clamp(2rem, 10vw, 3rem);
-  }
-
-  .home-past-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .home-past-card {
-    min-height: 390px;
   }
 
   .home-edition-bar {

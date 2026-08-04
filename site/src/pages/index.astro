@@ -13,7 +13,6 @@ const description =
 const galleryImages = Array.from({ length: 12 }, (_, index) =>
   withBase(`/assets/home-2026/gallery-${String(index + 1).padStart(2, "0")}.webp`)
 );
-const pastEditions = editions.filter((edition) => !edition.isCurrent);
 const editionOptions = [...editions].sort((a, b) => Number(b.id) - Number(a.id));
 const infoImageFor = (editionId: string, fallback: string) =>
   editionId === "3" ? "/assets/home-2026/gallery-07.webp" : fallback;
@@ -331,32 +330,6 @@ const homeSponsorLogo = (logo: string, editionId: string) => {
                   </ol>
                 </section>
               )}
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section class="home-past-editions" id="ediciones" aria-labelledby="past-editions-title">
-        <header>
-          <h2 id="past-editions-title">Donde comenzó todo</h2>
-        </header>
-        <div class="home-past-grid">
-          {pastEditions.slice(0, 2).map((edition) => (
-            <article class="home-past-card">
-              <img
-                src={withBase(edition.hero.image)}
-                width="1600"
-                height="900"
-                alt={edition.hero.alt}
-                loading="lazy"
-                decoding="async"
-              />
-              <div class="home-past-card-shade" aria-hidden="true"></div>
-              <div class="home-past-card-copy">
-                <p>{edition.label} · {edition.year}</p>
-                <h3>{edition.hero.title}</h3>
-                <span>{edition.location}</span>
-              </div>
             </article>
           ))}
         </div>

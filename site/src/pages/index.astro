@@ -192,78 +192,64 @@ const homeSponsorLogo = (logo: string, editionId: string) => {
       </div>
 
       <section class="home-info" id="informacion" aria-label="Información de Break The Beat">
-        <nav class="home-info-tabs" role="tablist" aria-label="Información del evento y reglas">
-          <button
-            id="home-info-tab-event"
-            type="button"
-            role="tab"
-            aria-selected="true"
-            aria-controls="home-info-pane-event"
-            data-home-info-tab="event"
-          >
-            Información del evento
-          </button>
-          <button
-            id="home-info-tab-rules"
-            type="button"
-            role="tab"
-            aria-selected="false"
-            aria-controls="reglas"
-            data-home-info-tab="rules"
-          >
-            Reglas
-          </button>
-        </nav>
+        <section class="home-series-selector" aria-label="Seleccionar edición">
+          <div class="home-series-track" role="tablist" aria-label="Seleccionar edición">
+            {editionOptions.map((edition) => (
+              <button
+                id={`home-edition-tab-${edition.id}`}
+                type="button"
+                role="tab"
+                aria-selected={edition.isCurrent ? "true" : "false"}
+                aria-controls={`home-edition-panel-${edition.id}`}
+                data-home-edition-option={edition.id}
+              >
+                <strong>Edición - {edition.year}</strong>
+              </button>
+            ))}
+          </div>
+        </section>
 
-        <div
-          id="home-info-pane-event"
-          role="tabpanel"
-          aria-labelledby="home-info-tab-event"
-          data-home-info-pane="event"
-        >
-          <section class="home-series-selector" aria-labelledby="home-series-title">
-            <header class="home-series-heading">
-              <div>
-                <p>Parte de la serie</p>
-                <h2 id="home-series-title">Break The Beat</h2>
-                <span>{editions.length} ediciones</span>
-              </div>
-              <div class="home-series-controls" aria-label="Desplazar ediciones">
-                <button type="button" data-home-edition-scroll="prev" aria-label="Ver ediciones anteriores">←</button>
-                <button type="button" data-home-edition-scroll="next" aria-label="Ver ediciones siguientes">→</button>
-              </div>
-            </header>
+        <div class="home-info-edition-stage" data-home-edition-transition>
+          {editions.map((edition) => (
+            <article
+              id={`home-edition-panel-${edition.id}`}
+              class="home-info-edition"
+              role="tabpanel"
+              aria-labelledby={`home-edition-tab-${edition.id}`}
+              data-home-edition-panel={edition.id}
+              data-page-title={`Break The Beat | ${edition.label}`}
+              hidden={!edition.isCurrent}
+            >
+              {edition.id === "3" && (
+                <nav class="home-info-tabs" role="tablist" aria-label="Información del evento y reglas">
+                  <button
+                    id="home-info-tab-event"
+                    type="button"
+                    role="tab"
+                    aria-selected="true"
+                    aria-controls="home-info-pane-event"
+                    data-home-info-tab="event"
+                  >
+                    Información del evento
+                  </button>
+                  <button
+                    id="home-info-tab-rules"
+                    type="button"
+                    role="tab"
+                    aria-selected="false"
+                    aria-controls="reglas"
+                    data-home-info-tab="rules"
+                  >
+                    Reglas
+                  </button>
+                </nav>
+              )}
 
-            <div class="home-series-track" role="tablist" aria-label="Seleccionar edición" data-home-edition-track>
-              {editionOptions.map((edition) => (
-                <button
-                  id={`home-edition-tab-${edition.id}`}
-                  type="button"
-                  role="tab"
-                  aria-selected={edition.isCurrent ? "true" : "false"}
-                  aria-controls={`home-edition-panel-${edition.id}`}
-                  data-home-edition-option={edition.id}
-                >
-                  <img src={withBase("/assets/favicon.png")} width="56" height="56" alt="" aria-hidden="true" />
-                  <span>
-                    <strong>{edition.shortLabel}</strong>
-                    <small>{edition.year} · {edition.status}</small>
-                  </span>
-                </button>
-              ))}
-            </div>
-          </section>
-
-          <div class="home-info-edition-stage" data-home-edition-transition>
-            {editions.map((edition) => (
-              <article
-                id={`home-edition-panel-${edition.id}`}
-                class="home-info-edition"
-                role="tabpanel"
-                aria-labelledby={`home-edition-tab-${edition.id}`}
-                data-home-edition-panel={edition.id}
-                data-page-title={`Break The Beat | ${edition.label}`}
-                hidden={!edition.isCurrent}
+              <div
+                id={edition.id === "3" ? "home-info-pane-event" : undefined}
+                role={edition.id === "3" ? "tabpanel" : undefined}
+                aria-labelledby={edition.id === "3" ? "home-info-tab-event" : undefined}
+                data-home-info-pane={edition.id === "3" ? "event" : undefined}
               >
                 <div class="home-info-overview">
                   <div class="home-info-copy">
@@ -300,60 +286,58 @@ const homeSponsorLogo = (logo: string, editionId: string) => {
                   </figure>
                 </div>
 
-                <section class="home-awards" aria-labelledby={`home-awards-title-${edition.id}`}>
-                  <header>
-                    <p class="kicker">En la pista</p>
-                    <h3 id={`home-awards-title-${edition.id}`}>Categorías y premios</h3>
-                  </header>
-                  <div class="home-awards-grid">
-                    {(edition.eventInfo.categoryPrizes ?? [{
-                      category: edition.eventInfo.categories.join(" · "),
-                      prize: edition.eventInfo.prize
-                    }]).map((item) => (
-                      <article>
-                        <span aria-hidden="true">↗</span>
-                        <h4>{item.category}</h4>
-                        <p>{item.prize}</p>
-                      </article>
-                    ))}
-                  </div>
-                  {edition.eventInfo.categoriesNote && <p class="home-awards-note">{edition.eventInfo.categoriesNote}</p>}
-                </section>
-              </article>
-            ))}
-          </div>
-        </div>
+                {edition.id === "3" && (
+                  <section class="home-awards" aria-labelledby="home-awards-title-3">
+                    <header>
+                      <h3 id="home-awards-title-3">Categorías y premios</h3>
+                    </header>
+                    <div class="home-awards-grid">
+                      {(edition.eventInfo.categoryPrizes ?? []).map((item) => (
+                        <article>
+                          <span aria-hidden="true">↗</span>
+                          <h4>{item.category}</h4>
+                          <p>{item.prize}</p>
+                        </article>
+                      ))}
+                    </div>
+                  </section>
+                )}
+              </div>
 
-        <section
-          class="home-rules"
-          id="reglas"
-          role="tabpanel"
-          aria-labelledby="home-info-tab-rules"
-          data-home-info-pane="rules"
-          hidden
-        >
-          <header>
-            <p class="kicker">Antes de competir · 2026</p>
-            <h2>Reglas de participación</h2>
-            <a class="home-button home-button-pink" href={withBase("/inscripcion/")}>
-              Revisar e inscribirme
-              <Icon name="arrow-up-right" size={18} />
-            </a>
-          </header>
-          <ol>
-            {participationRules.map((rule, index) => (
-              <li>
-                <span>{String(index + 1).padStart(2, "0")}</span>
-                <p>{rule}</p>
-              </li>
-            ))}
-          </ol>
-        </section>
+              {edition.id === "3" && (
+                <section
+                  class="home-rules"
+                  id="reglas"
+                  role="tabpanel"
+                  aria-labelledby="home-info-tab-rules"
+                  data-home-info-pane="rules"
+                  hidden
+                >
+                  <header>
+                    <p class="kicker">Antes de competir · 2026</p>
+                    <h2>Reglas de participación</h2>
+                    <a class="home-button home-button-pink" href={withBase("/inscripcion/")}>
+                      Revisar e inscribirme
+                      <Icon name="arrow-up-right" size={18} />
+                    </a>
+                  </header>
+                  <ol>
+                    {participationRules.map((rule, index) => (
+                      <li>
+                        <span>{String(index + 1).padStart(2, "0")}</span>
+                        <p>{rule}</p>
+                      </li>
+                    ))}
+                  </ol>
+                </section>
+              )}
+            </article>
+          ))}
+        </div>
       </section>
 
       <section class="home-past-editions" id="ediciones" aria-labelledby="past-editions-title">
         <header>
-          <p class="kicker">El origen del movimiento</p>
           <h2 id="past-editions-title">Donde comenzó todo</h2>
         </header>
         <div class="home-past-grid">

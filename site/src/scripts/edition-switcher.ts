@@ -1,7 +1,6 @@
 const editionPanels = Array.from(document.querySelectorAll<HTMLElement>("[data-home-edition-panel]"));
 const editionOptions = Array.from(document.querySelectorAll<HTMLButtonElement>("[data-home-edition-option]"));
 const editionStage = document.querySelector<HTMLElement>("[data-home-edition-transition]");
-const editionTrack = document.querySelector<HTMLElement>("[data-home-edition-track]");
 const infoTabs = Array.from(document.querySelectorAll<HTMLButtonElement>("[data-home-info-tab]"));
 const infoPanes = Array.from(document.querySelectorAll<HTMLElement>("[data-home-info-pane]"));
 
@@ -93,16 +92,6 @@ editionOptions.forEach((option, index) => {
     const nextOption = editionOptions[nextIndex];
     nextOption.focus();
     showEdition(nextOption.dataset.homeEditionOption ?? defaultEdition);
-  });
-});
-
-document.querySelectorAll<HTMLButtonElement>("[data-home-edition-scroll]").forEach((control) => {
-  control.addEventListener("click", () => {
-    const direction = control.dataset.homeEditionScroll === "prev" ? -1 : 1;
-    editionTrack?.scrollBy({
-      left: direction * Math.max((editionTrack?.clientWidth ?? 0) * 0.75, 260),
-      behavior: "smooth"
-    });
   });
 });
 

@@ -26,15 +26,22 @@ const handleRequest = async (request: Request) => {
   const { data, error } = await client.rpc("create_registration", { p_payload: parsed.data });
   if (error || !data) {
     const message = error?.message ?? "REGISTRATION_FAILED";
+    const duplicateCategory = message.match(/DUPLICATE_PARTICIPANT_CATEGORY:(1v1|2v2|bgirls)/)?.[1];
     const known = [
       "REGISTRATION_CLOSED",
       "LEGAL_DOCUMENTS_NOT_READY",
+      "DUPLICATE_PARTICIPANT_CATEGORY",
       "DUPLICATE_PARTICIPANT",
       "CATEGORY_FULL",
       "INVALID_DUO",
       "CAPTAIN_AUTHORITY_REQUIRED"
     ].find((code) => message.includes(code));
-    const status = known === "DUPLICATE_PARTICIPANT" || known === "CATEGORY_FULL" ? 409 : 400;
+    const status = ["DUPLICATE_PARTICIPANT_CATEGORY", "DUPLICATE_PARTICIPANT", "CATEGORY_FULL"].includes(known ?? "")
+      ? 409
+      : 400;
+    if (known === "DUPLICATE_PARTICIPANT_CATEGORY" && duplicateCategory) {
+      return jsonResponse(request, { error: known, category: duplicateCategory }, status);
+    }
     return errorResponse(request, known ?? "REGISTRATION_FAILED", status);
   }
 

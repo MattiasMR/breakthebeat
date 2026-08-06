@@ -1,6 +1,8 @@
 import {
   CONFIRMATION_STORAGE_KEY,
   DRAFT_STORAGE_KEY,
+  categoryLabels,
+  categorySchema,
   emailSchema,
   EVENT_SLUG,
   participantSchema,
@@ -382,12 +384,22 @@ form.addEventListener("submit", async (event) => {
     const { data, error } = await client.functions.invoke<RegistrationConfirmation>("submit-registration", { body: parsed.data });
     if (error || !data) {
       let code = "REGISTRATION_FAILED";
+      let duplicateCategory: Category | undefined;
       const context = (error as { context?: Response } | null)?.context;
       if (context) {
-        try { code = ((await context.clone().json()) as { error?: string }).error ?? code; } catch { /* response without JSON */ }
+        try {
+          const body = (await context.clone().json()) as { error?: string; category?: unknown };
+          code = body.error ?? code;
+          const parsedCategory = categorySchema.safeParse(body.category);
+          if (parsedCategory.success) duplicateCategory = parsedCategory.data;
+        } catch { /* response without JSON */ }
       }
+      const duplicateMessage = duplicateCategory
+        ? `Este correo ya está inscrito en ${categoryLabels[duplicateCategory]}. Desmarca esa categoría e inténtalo nuevamente.`
+        : "Este correo ya está inscrito en una de las categorías seleccionadas. Desmarca la categoría repetida e inténtalo nuevamente.";
       const messages: Record<string, string> = {
-        DUPLICATE_PARTICIPANT: "El correo ingresado ya se encuentra registrado.",
+        DUPLICATE_PARTICIPANT_CATEGORY: duplicateMessage,
+        DUPLICATE_PARTICIPANT: "Este correo ya se encuentra inscrito. Revisa las categorías seleccionadas.",
         CATEGORY_FULL: "La categoría seleccionada acaba de completar sus 50 cupos. Elige otra categoría o inténtalo más tarde.",
         REGISTRATION_CLOSED: "Las inscripciones se cerraron antes de completar el envío.",
         LEGAL_DOCUMENTS_NOT_READY: "Los documentos legales aún no están listos para recibir inscripciones.",

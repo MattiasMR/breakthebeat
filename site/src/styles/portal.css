@@ -942,7 +942,7 @@ a.legal-document::after {
 
 .metric-grid {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 12px;
 }
 
@@ -972,11 +972,6 @@ a.legal-document::after {
 .metric-grid article > strong {
   font-size: 2.6rem;
   line-height: 1;
-}
-
-.metric-grid .medical-metric {
-  background: #251018;
-  color: var(--paper-strong);
 }
 
 .distribution-grid {
@@ -1050,6 +1045,24 @@ a.legal-document::after {
   text-transform: uppercase;
 }
 
+.admin-code-guide {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px 18px;
+  margin: -8px 0 22px;
+  padding: 12px 14px;
+  border: 1px solid #cfc5b6;
+  border-radius: 8px;
+  background: #f4ecdf;
+  color: #514a41;
+  font-size: 0.76rem;
+}
+
+.admin-code-guide strong {
+  flex-basis: 100%;
+  color: var(--black);
+}
+
 .data-table-wrap {
   overflow-x: auto;
   border: 1px solid #cfc5b6;
@@ -1120,8 +1133,7 @@ a.legal-document::after {
   color: #0d5a35;
 }
 
-.data-chip.cancelled,
-.data-chip.medical {
+.data-chip.cancelled {
   background: #f7c8d5;
   color: #7f0e2c;
 }
@@ -1139,6 +1151,12 @@ a.legal-document::after {
   cursor: pointer;
   font: inherit;
   font-weight: 800;
+}
+
+.row-actions .qr-action-button {
+  border-color: var(--black);
+  background: var(--black);
+  color: white;
 }
 
 .table-empty {

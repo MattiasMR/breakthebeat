@@ -6,6 +6,12 @@ import {
   type AdminFilters,
   type AdminParticipant
 } from "../lib/admin";
+import {
+  buildLabeledParticipantQr,
+  buildParticipantQrPayload,
+  createParticipantQrDataUrl,
+  participantQrFilename
+} from "../lib/participant-qr";
 import { categoryLabels, EVENT_SLUG } from "../lib/registration";
 import { backendConfiguration, getSupabase, isBackendConfigured } from "../lib/supabase";
 
@@ -70,12 +76,12 @@ const resetInactivity = () => {
 const normalizeRows = (data: any[]): AdminParticipant[] => data.map((item) => {
   const registration = relationOne<any>(item.registrations);
   const checkIn = relationOne<any>(item.check_ins);
-  const medical = relationOne<any>(item.medical_profiles);
   return {
     id: item.id,
     registrationId: item.registration_id,
     registrationCode: registration?.public_code ?? "",
     participantCode: item.participant_code,
+    qrToken: item.qr_token,
     role: item.role,
     displayName: item.display_name,
     email: item.email,
@@ -85,8 +91,7 @@ const normalizeRows = (data: any[]): AdminParticipant[] => data.map((item) => {
     categories: (item.participant_categories ?? []).map((entry: any) => entry.category),
     status: registration?.status ?? "confirmed",
     createdAt: registration?.created_at ?? item.created_at,
-    checkedInAt: checkIn?.checked_in_at ?? null,
-    hasMedicalAlert: Boolean(medical?.has_condition || medical?.has_allergies || medical?.takes_medication)
+    checkedInAt: checkIn?.checked_in_at ?? null
   };
 });
 
@@ -157,9 +162,9 @@ const renderRows = () => {
     const name = document.createElement("strong");
     name.textContent = row.displayName;
     const code = document.createElement("small");
-    code.textContent = `${row.registrationCode} · ${row.role === "captain" ? "Principal" : "Compañero"}`;
+    code.textContent = `Inscripción: ${row.registrationCode} · ${row.role === "captain" ? "Principal" : "Compañero"}`;
     const email = document.createElement("small");
-    email.textContent = `${row.participantCode} · ${row.email}`;
+    email.textContent = `Participante: ${row.participantCode} · ${row.email}`;
     personCell.append(name, code, email);
 
     const categoryCell = document.createElement("td");
@@ -168,7 +173,6 @@ const renderRows = () => {
     const statusCell = document.createElement("td");
     statusCell.append(chip(row.status === "cancelled" ? "Cancelado" : "Confirmado", row.status));
     statusCell.append(chip(row.checkedInAt ? "Ingresó" : "Sin check-in", row.checkedInAt ? "checked" : ""));
-    if (row.hasMedicalAlert) statusCell.append(chip("Alerta médica", "medical"));
 
     const actionCell = document.createElement("td");
     actionCell.className = "row-actions";
@@ -194,7 +198,12 @@ const renderRows = () => {
     deleteButton.textContent = "Eliminar";
     deleteButton.dataset.deleteRegistration = row.registrationId;
     deleteButton.dataset.registrationCode = row.registrationCode;
-    actionCell.append(detailsButton, checkInButton, cancelButton, deleteButton);
+    const qrButton = document.createElement("button");
+    qrButton.type = "button";
+    qrButton.textContent = "Generar QR";
+    qrButton.dataset.generateQr = row.id;
+    qrButton.className = "qr-action-button";
+    actionCell.append(detailsButton, checkInButton, cancelButton, deleteButton, qrButton);
 
     tr.append(selectCell, personCell, categoryCell, statusCell, actionCell);
     return tr;
@@ -217,12 +226,11 @@ const loadRows = async () => {
   const { data, error } = await getSupabase()
     .from("participants")
     .select(`
-      id, registration_id, participant_code, role, display_name, social_url,
+      id, registration_id, participant_code, qr_token, role, display_name, social_url,
       age, phone, email, created_at,
       registrations!inner(id, public_code, status, created_at),
       participant_categories(category),
-      check_ins(checked_in_at),
-      medical_profiles(has_condition, has_allergies, takes_medication)
+      check_ins(checked_in_at)
     `)
     .order("created_at", { ascending: false });
   if (error) {
@@ -326,6 +334,7 @@ rowsContainer.addEventListener("click", async (event) => {
   const manualCheckInButton = target.closest<HTMLButtonElement>("[data-manual-checkin]");
   const toggle = target.closest<HTMLButtonElement>("[data-toggle-registration]");
   const remove = target.closest<HTMLButtonElement>("[data-delete-registration]");
+  const generateQrButton = target.closest<HTMLButtonElement>("[data-generate-qr]");
   if (view) await openParticipantDetail(view.dataset.viewParticipant ?? "");
   if (manualCheckInButton) {
     await manualCheckIn(
@@ -335,6 +344,7 @@ rowsContainer.addEventListener("click", async (event) => {
   }
   if (toggle) await toggleRegistrationStatus(toggle.dataset.toggleRegistration ?? "", toggle.dataset.nextStatus as "confirmed" | "cancelled");
   if (remove) await deleteRegistrations([remove.dataset.deleteRegistration ?? ""], remove.dataset.registrationCode ?? "esta inscripción");
+  if (generateQrButton) await generateParticipantQr(generateQrButton.dataset.generateQr ?? "", generateQrButton);
 });
 
 const openParticipantDetail = async (participantId: string) => {
@@ -397,6 +407,34 @@ const toggleRegistrationStatus = async (registrationId: string, status: "confirm
   const { error } = await getSupabase().from("registrations").update({ status }).eq("id", registrationId);
   if (error) return setNotice("No se pudo cambiar el estado.", "error");
   await loadRows();
+};
+
+const generateParticipantQr = async (participantId: string, button: HTMLButtonElement) => {
+  const row = participants.find((participant) => participant.id === participantId);
+  if (!row?.qrToken) return setNotice("No se encontró el token QR de este participante.", "error");
+
+  button.disabled = true;
+  setNotice(`Generando el QR de ${row.displayName}…`);
+  try {
+    const qrSource = await createParticipantQrDataUrl(buildParticipantQrPayload(row.qrToken));
+    const categories = row.categories.map((category) => categoryLabels[category]).join(" · ");
+    const href = await buildLabeledParticipantQr(qrSource, row.displayName, categories, row.participantCode);
+    const download = document.createElement("a");
+    download.href = href;
+    download.download = participantQrFilename(row.participantCode);
+    download.click();
+    await getSupabase().rpc("log_admin_action", {
+      p_action: "generate_participant_qr",
+      p_target_type: "participant",
+      p_target_id: row.id,
+      p_metadata: { participant_code: row.participantCode }
+    });
+    setNotice(`QR de ${row.displayName} descargado.`, "success");
+  } catch {
+    setNotice("No se pudo generar el QR. Intenta nuevamente.", "error");
+  } finally {
+    button.disabled = false;
+  }
 };
 
 document.querySelector("[data-toggle-registration]")?.addEventListener("click", async () => {

@@ -1,50 +1,40 @@
-const form = document.querySelector<HTMLFormElement>("[data-donation-form]");
+const copyButtons = Array.from(document.querySelectorAll<HTMLButtonElement>("[data-copy-value]"));
+const feedback = document.querySelector<HTMLElement>("[data-donation-feedback]");
 
-if (form) {
-  const customAmount = form.elements.namedItem("customAmount") as HTMLInputElement | null;
-  const presetAmounts = Array.from(form.querySelectorAll<HTMLInputElement>('input[name="donationAmount"]'));
-  const feedback = form.querySelector<HTMLElement>("[data-donation-feedback]");
+const copyText = async (value: string) => {
+  if (!navigator.clipboard || !window.isSecureContext) {
+    throw new Error("El portapapeles no está disponible");
+  }
 
-  presetAmounts.forEach((input) => {
-    input.addEventListener("change", () => {
-      if (input.checked && customAmount) customAmount.value = "";
-      if (feedback) feedback.textContent = "";
-    });
-  });
+  await Promise.race([
+    navigator.clipboard.writeText(value),
+    new Promise<never>((_, reject) => {
+      window.setTimeout(() => reject(new Error("El portapapeles no respondió")), 2000);
+    })
+  ]);
+};
 
-  customAmount?.addEventListener("input", () => {
-    if (customAmount.value) {
-      presetAmounts.forEach((input) => {
-        input.checked = false;
-      });
-    }
-    if (feedback) feedback.textContent = "";
-  });
+copyButtons.forEach((button) => {
+  button.addEventListener("click", async () => {
+    const value = button.dataset.copyValue;
+    const name = button.dataset.copyName ?? "Dato";
+    const label = button.querySelector<HTMLElement>("[data-copy-button-label]");
+    const idleLabel = label?.textContent ?? "Copiar";
 
-  form.addEventListener("submit", (event) => {
-    event.preventDefault();
+    if (!value) return;
 
-    const customValue = Number(customAmount?.value ?? 0);
-    const selectedPreset = presetAmounts.find((input) => input.checked);
-    const amount = customValue > 0 ? customValue : Number(selectedPreset?.value ?? 0);
+    try {
+      await copyText(value);
+      if (label) label.textContent = "Copiado";
+      if (feedback) feedback.textContent = `${name} copiado. Ahora abre la aplicación de tu banco.`;
 
-    if (!Number.isFinite(amount) || amount <= 0) {
-      if (feedback) feedback.textContent = "Selecciona o ingresa un monto mayor a cero.";
-      customAmount?.focus();
-      return;
-    }
-
-    if (!form.checkValidity()) {
-      form.reportValidity();
-      return;
-    }
-
-    const formattedAmount = new Intl.NumberFormat("es-EC", {
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 2
-    }).format(amount);
-    if (feedback) {
-      feedback.textContent = `Demo lista: aquí continuarías al pago de USD ${formattedAmount}. No se enviaron tus datos.`;
+      window.setTimeout(() => {
+        if (label) label.textContent = idleLabel;
+      }, 1800);
+    } catch {
+      if (feedback) {
+        feedback.textContent = "No se pudo copiar automáticamente. Mantén presionado el dato para copiarlo.";
+      }
     }
   });
-}
+});

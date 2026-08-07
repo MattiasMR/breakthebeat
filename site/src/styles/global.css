@@ -1132,146 +1132,110 @@ h3 {
   box-shadow: 10px 10px 0 var(--magenta);
 }
 
-.donation-card fieldset {
-  margin: 0;
-  padding: 0;
-  border: 0;
+.donation-card-heading {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
 }
 
-.donation-card legend,
-.donation-custom > span {
-  margin-bottom: 12px;
-  color: var(--black);
-  font-size: 0.82rem;
+.donation-card-heading p {
+  margin: 0 0 4px;
+  color: rgba(5, 5, 5, 0.58);
+  font-size: 0.76rem;
   font-weight: 900;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
-.donation-amounts {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
+.donation-card-heading h3,
+.donation-next-step h3 {
+  margin: 0;
+  font-size: clamp(1.25rem, 2vw, 1.7rem);
 }
 
-.donation-option {
-  position: relative;
-  cursor: pointer;
-}
-
-.donation-option input {
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.donation-option span {
-  min-height: 56px;
-  display: grid;
-  place-items: center;
-  border: 2px solid var(--black);
-  border-radius: 9px;
-  background: #fff;
-  color: var(--black);
-  font-size: 1rem;
-  font-weight: 950;
-}
-
-.donation-option input:checked + span {
-  background: var(--magenta);
-  color: #fff;
-}
-
-.donation-option input:focus-visible + span {
-  outline: 3px solid var(--black);
-  outline-offset: 3px;
-}
-
-.donation-custom {
-  display: grid;
-}
-
-.donation-custom > div {
-  display: grid;
-  grid-template-columns: auto 1fr;
+.donation-step {
+  display: inline-flex;
+  flex: 0 0 auto !important;
   align-items: center;
-  overflow: hidden;
-  border: 2px solid var(--black);
-  border-radius: 9px;
-  background: #fff;
-}
-
-.donation-custom strong {
-  padding: 0 14px;
-  font-size: 0.82rem;
-}
-
-.donation-custom input {
-  width: 100%;
-  min-height: 58px;
-  padding: 0 16px;
-  border: 0;
-  border-left: 2px solid var(--black);
-  background: #fff;
+  width: auto !important;
+  height: 30px !important;
+  margin: 0 !important;
+  padding: 0 10px;
+  border-radius: 999px !important;
+  background: var(--magenta) !important;
   color: var(--black);
-  font: 800 1rem "Space Grotesk", sans-serif;
+  font-size: 0.72rem;
+  font-weight: 950;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
-.donation-custom input:focus {
-  outline: 3px solid var(--magenta);
-  outline-offset: -3px;
+.donation-account-details {
+  margin: 0;
+  border-top: 2px solid var(--black);
 }
 
-.donation-personal-data {
-  padding-top: 22px !important;
-  border-top: 2px solid var(--black) !important;
+.donation-account-row {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 0;
+  border-bottom: 1px solid rgba(5, 5, 5, 0.18);
 }
 
-.donation-personal-data > p {
-  margin: -4px 0 18px;
-  color: rgba(5, 5, 5, 0.68);
-  font-size: 0.84rem;
-  line-height: 1.5;
+.donation-account-row > div {
+  min-width: 0;
 }
 
-.donation-fields {
-  display: grid;
-  gap: 14px;
+.donation-account-row dt {
+  margin-bottom: 3px;
+  color: rgba(5, 5, 5, 0.58);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
 }
 
-.donation-fields label {
-  display: grid;
-  gap: 7px;
+.donation-account-row dd {
+  overflow-wrap: anywhere;
+  margin: 0;
   color: var(--black);
-  font-size: 0.78rem;
+  font-size: 0.98rem;
   font-weight: 850;
 }
 
-.donation-fields label small {
-  color: rgba(5, 5, 5, 0.58);
-  font-size: inherit;
-  font-weight: 650;
+.donation-account-row dd.is-emphasized {
+  font-size: clamp(1.25rem, 2.2vw, 1.6rem);
+  letter-spacing: 0.04em;
 }
 
-.donation-fields input {
-  width: 100%;
-  min-height: 52px;
-  padding: 0 14px;
-  border: 2px solid var(--black);
-  border-radius: 8px;
+.donation-copy-field {
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 7px;
+  align-items: center;
+  min-height: 38px;
+  padding: 0 11px;
+  cursor: pointer;
+  border: 1px solid rgba(5, 5, 5, 0.3);
+  border-radius: 999px;
   background: #fff;
   color: var(--black);
-  font: 750 0.96rem "Space Grotesk", sans-serif;
+  font: 850 0.76rem "Space Grotesk", sans-serif;
 }
 
-.donation-fields input:focus {
-  outline: 3px solid var(--magenta);
-  outline-offset: 2px;
+.donation-copy-field:hover,
+.donation-copy-field:focus-visible {
+  border-color: var(--magenta);
+  background: rgba(243, 35, 131, 0.09);
 }
 
 .donation-card .button {
   width: 100%;
+  min-height: 54px;
   justify-content: center;
+  cursor: pointer;
 }
 
 .donation-feedback {
@@ -1288,12 +1252,30 @@ h3 {
   line-height: 1.55;
 }
 
+.donation-help strong {
+  color: var(--black);
+}
+
 .donation-assurances {
   grid-template-columns: 1fr;
 }
 
 .donation-assurances article {
   min-height: 104px;
+}
+
+.donation-assurances .donation-next-step {
+  gap: 14px;
+  min-height: 148px;
+  border-color: var(--black);
+  background: var(--black);
+  color: var(--paper-strong);
+}
+
+.donation-next-step p {
+  margin-top: 10px;
+  color: rgba(255, 248, 234, 0.76);
+  font-weight: 700;
 }
 
 @media (max-width: 1060px) {

@@ -61,9 +61,9 @@ export const heroSlides = [
     eyebrow: "Funding",
     image: "/assets/winners.webp",
     alt: "Ganadores del torneo con cheque de premiación",
-    cta: "Ver formas de aportar",
+    cta: "Donar por transferencia",
     text:
-      "Los canales de apoyo se activaran cuando el equipo confirme cuentas y links oficiales.",
+      "Aporta directamente a Break The Beat mediante una transferencia bancaria.",
     href: "/apoyar/"
   }
 ];
@@ -136,15 +136,25 @@ export const featurePages = [
     image: "/assets/winners.webp",
     alt: "Ganadores del torneo con cheque de premiación",
     summary:
-      "Demo del futuro flujo de donación: elige un monto y completa los datos básicos antes de continuar al pago.",
+      "Apoya a Break The Beat con una transferencia directa y segura a la cuenta receptora del proyecto.",
     bullets: [
-      "Puedes indicar el monto de tu aporte en dólares.",
-      "El flujo contempla nombre, correo electrónico y teléfono opcional.",
-      "Esta demostración no envía ni almacena la información ingresada.",
-      "Por ahora no existe un cobro, una transferencia ni una pasarela conectada."
+      "Copia todos los datos de la cuenta con un solo botón.",
+      "Abre la aplicación o banca web de tu banco y realiza la transferencia.",
+      "Antes de confirmar, verifica que el titular sea Rojas Paladines Krystel Del Rocio.",
+      "Break The Beat nunca te pedirá claves bancarias ni códigos de seguridad."
     ]
   }
 ];
+
+export const donationAccount = {
+  bank: "Banco Guayaquil",
+  accountType: "Cuenta de ahorros",
+  accountNumber: "0019791853",
+  holder: "Rojas Paladines Krystel Del Rocio",
+  identificationType: "Cédula",
+  identification: "0956260335",
+  suggestedReason: "Donación Break The Beat"
+} as const;
 
 export const stats = [
   { value: "+4", label: "medios de cobertura" },
@@ -266,11 +276,11 @@ export const payments = [
   {
     key: "transfer",
     label: "Transferencia",
-    description: "Datos bancarios institucionales o del equipo.",
-    enabled: false,
+    description: `Transferencia directa a ${donationAccount.bank}.`,
+    enabled: true,
     url: "",
-    status: "Datos por definir",
-    disclaimer: "No publicar cuenta hasta definir responsable y rendición."
+    status: "Disponible",
+    disclaimer: `Verifica que el titular sea ${donationAccount.holder} antes de confirmar.`
   }
 ];
 
@@ -293,8 +303,7 @@ export const footerGroups = [
       { label: "TikTok", href: event.tiktokUrl },
       { label: "YouTube", href: event.youtubeUrl },
       { label: "WhatsApp", href: event.whatsappUrl },
-      { label: "Email del proyecto", href: `mailto:${event.email}` },
-      { label: "Demo de donaciones", href: "/apoyar/" }
+      { label: "Email del proyecto", href: `mailto:${event.email}` }
     ]
   },
   {
@@ -302,7 +311,7 @@ export const footerGroups = [
     links: [
       { label: "Domingo 27 de septiembre 2026", href: "/#inicio" },
       { label: "Plaza de los Teatros, calle Panamá", href: "/#inicio" },
-      { label: "Donaciones en modo demo", href: "/apoyar/" },
+      { label: "Transferencias habilitadas", href: "/apoyar/" },
       { label: "Sponsors 2026", href: "/#sponsors" }
     ]
   }

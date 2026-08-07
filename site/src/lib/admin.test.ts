@@ -6,6 +6,7 @@ const row = (overrides: Partial<AdminParticipant> = {}): AdminParticipant => ({
   registrationId: "r1",
   registrationCode: "BTB26-AAAA",
   participantCode: "BTB26-AAAA-A",
+  qrToken: "123e4567-e89b-42d3-a456-426614174000",
   role: "captain",
   displayName: "Bboy Test",
   email: "test@example.com",
@@ -16,7 +17,6 @@ const row = (overrides: Partial<AdminParticipant> = {}): AdminParticipant => ({
   status: "confirmed",
   createdAt: "2026-07-15T12:00:00Z",
   checkedInAt: null,
-  hasMedicalAlert: false,
   ...overrides
 });
 

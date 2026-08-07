@@ -1,5 +1,5 @@
-import QRCode from "qrcode";
 import { categoryLabels, CONFIRMATION_STORAGE_KEY, type RegistrationConfirmation } from "../lib/registration";
+import { buildLabeledParticipantQr, createParticipantQrDataUrl, participantQrFilename } from "../lib/participant-qr";
 
 const shell = document.querySelector<HTMLElement>("[data-confirmation-shell]");
 const empty = document.querySelector<HTMLElement>("[data-confirmation-empty]");
@@ -8,32 +8,6 @@ const registrationCode = document.querySelector<HTMLElement>("[data-registration
 const downloadWarning = document.querySelector<HTMLElement>("[data-download-warning]");
 const downloadAll = document.querySelector<HTMLButtonElement>("[data-download-all]");
 const confirmationCopy = document.querySelector<HTMLElement>("[data-confirmation-copy]");
-
-const buildLabeledQr = async (qrSource: string, name: string, categories: string, participantCode: string) => {
-  await document.fonts.ready;
-  const qrImage = new Image();
-  qrImage.src = qrSource;
-  await qrImage.decode();
-
-  const canvas = document.createElement("canvas");
-  canvas.width = 780;
-  canvas.height = 940;
-  const context = canvas.getContext("2d");
-  if (!context) return qrSource;
-
-  context.fillStyle = "#ffffff";
-  context.fillRect(0, 0, canvas.width, canvas.height);
-  context.fillStyle = "#080808";
-  context.textAlign = "center";
-  context.font = "700 38px Poppins, sans-serif";
-  context.fillText(name, canvas.width / 2, 48);
-  context.font = "24px Poppins, sans-serif";
-  context.fillText(categories, canvas.width / 2, 84);
-  context.drawImage(qrImage, 30, 120, 720, 720);
-  context.font = "22px ui-monospace, monospace";
-  context.fillText(participantCode, canvas.width / 2, 900);
-  return canvas.toDataURL("image/png");
-};
 
 downloadAll?.addEventListener("click", async () => {
   const cards = Array.from(document.querySelectorAll<HTMLElement>(".qr-card"));
@@ -127,14 +101,14 @@ if (!confirmation || !shell || !grid) {
     image.width = 360;
     image.height = 360;
     image.alt = `QR de ingreso de ${participant.displayName}`;
-    image.src = await QRCode.toDataURL(participant.qrPayload, { width: 720, margin: 2, errorCorrectionLevel: "M" });
+    image.src = await createParticipantQrDataUrl(participant.qrPayload);
     const code = document.createElement("strong");
     code.className = "qr-human-code";
     code.textContent = participant.participantCode;
     const download = document.createElement("a");
     download.className = "button button-primary";
-    download.href = await buildLabeledQr(image.src, participant.displayName, categories.textContent ?? "", participant.participantCode);
-    download.download = `QR-${participant.participantCode}.png`;
+    download.href = await buildLabeledParticipantQr(image.src, participant.displayName, categories.textContent ?? "", participant.participantCode);
+    download.download = participantQrFilename(participant.participantCode);
     download.textContent = "Guardar QR";
     card.append(role, name, categories, image, code, download);
     return card;

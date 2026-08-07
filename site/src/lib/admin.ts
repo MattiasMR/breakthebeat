@@ -5,6 +5,7 @@ export type AdminParticipant = {
   registrationId: string;
   registrationCode: string;
   participantCode: string;
+  qrToken: string;
   role: "captain" | "partner";
   displayName: string;
   email: string;
@@ -15,7 +16,6 @@ export type AdminParticipant = {
   status: "confirmed" | "cancelled";
   createdAt: string;
   checkedInAt: string | null;
-  hasMedicalAlert: boolean;
 };
 
 export type AdminFilters = {
@@ -46,7 +46,6 @@ export const calculateStats = (rows: AdminParticipant[]) => {
     registrations: registrations.size,
     duos: duos.size,
     checkedIn: active.filter((row) => row.checkedInAt).length,
-    medicalAlerts: active.filter((row) => row.hasMedicalAlert).length,
     categories: {
       "1v1": active.filter((row) => row.categories.includes("1v1")).length,
       "2v2": active.filter((row) => row.categories.includes("2v2")).length,

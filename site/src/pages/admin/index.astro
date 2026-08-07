@@ -75,7 +75,6 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
           <article><Icon name="bar-chart-3" size={22} /><span>Inscripciones</span><strong data-stat="registrations">0</strong></article>
           <article><span>2×2</span><span>Duplas</span><strong data-stat="duos">0</strong></article>
           <article><Icon name="qr-code" size={22} /><span>Check-ins</span><strong data-stat="checkedIn">0</strong></article>
-          <article class="medical-metric"><Icon name="shield-alert" size={22} /><span>Alertas médicas</span><strong data-stat="medicalAlerts">0</strong></article>
         </section>
 
         <section class="distribution-grid">
@@ -98,6 +97,12 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
             <label class="field"><span>Estado</span><select data-filter="status"><option value="all">Todos</option><option value="confirmed">Confirmado</option><option value="cancelled">Cancelado</option></select></label>
             <label class="field"><span>Check-in</span><select data-filter="checkIn"><option value="all">Todos</option><option value="yes">Realizado</option><option value="no">Pendiente</option></select></label>
           </div>
+
+          <aside class="admin-code-guide" aria-label="Cómo funcionan los códigos">
+            <strong>Cómo leer los códigos</strong>
+            <span><b>Inscripción:</b> BTB26-54A79D88 agrupa el registro completo.</span>
+            <span><b>Participante:</b> BTB26-54A79D88-A identifica a una persona y su QR; en una dupla, el compañero usa la terminación -B.</span>
+          </aside>
 
           <div class="data-table-wrap">
             <table class="data-table">

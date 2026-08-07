@@ -13,6 +13,12 @@ import {
   type RegistrationConfirmation,
   type RegistrationPayload
 } from "../lib/registration";
+import {
+  trackRegistrationComplete,
+  trackRegistrationError,
+  trackRegistrationStart,
+  type RegistrationType
+} from "../lib/analytics";
 import { backendConfiguration, getSupabase, isBackendConfigured, withClientBase } from "../lib/supabase";
 
 declare global {
@@ -35,8 +41,10 @@ const medicalAlert = form.querySelector<HTMLElement>("[data-medical-alert]");
 const categoryError = form.querySelector<HTMLElement>("[data-category-error]");
 let currentStepName = "categories";
 let registrationEnabled = false;
+let registrationStartTracked = false;
 
 const isDuo = () => Boolean(form.querySelector<HTMLInputElement>('input[name="captain.categories"][value="2v2"]')?.checked);
+const registrationType = (): RegistrationType => isDuo() ? "duo" : "individual";
 
 const activeStepNames = () => isDuo()
   ? ["categories", "partner", "emergency", "consents"]
@@ -353,6 +361,10 @@ form.addEventListener("focusout", (event) => {
 
 form.querySelectorAll<HTMLButtonElement>("[data-next]").forEach((button) => button.addEventListener("click", () => {
   if (!validateCurrentStep()) return;
+  if (currentStepName === "categories" && !registrationStartTracked) {
+    registrationStartTracked = true;
+    trackRegistrationStart(registrationType());
+  }
   const names = activeStepNames();
   const next = names[names.indexOf(currentStepName) + 1];
   if (next) showStep(next);
@@ -371,6 +383,7 @@ form.addEventListener("submit", async (event) => {
   const token = getString(new FormData(form), "cf-turnstile-response") || (backendConfiguration.testMode ? "test-ok" : "");
   const parsed = registrationPayloadSchema.safeParse(collectPayload(token));
   if (!parsed.success) {
+    trackRegistrationError("CLIENT_VALIDATION");
     setSubmitAlert(parsed.error.issues[0]?.message ?? "Revisa los campos obligatorios.");
     return;
   }
@@ -379,6 +392,7 @@ form.addEventListener("submit", async (event) => {
   if (submitButton) submitButton.textContent = "Guardando inscripción…";
   setSubmitAlert();
 
+  let failureCode = "NETWORK_ERROR";
   try {
     const client = getSupabase();
     const { data, error } = await client.functions.invoke<RegistrationConfirmation>("submit-registration", { body: parsed.data });
@@ -394,6 +408,7 @@ form.addEventListener("submit", async (event) => {
           if (parsedCategory.success) duplicateCategory = parsedCategory.data;
         } catch { /* response without JSON */ }
       }
+      failureCode = code;
       const duplicateMessage = duplicateCategory
         ? `Este correo ya está inscrito en ${categoryLabels[duplicateCategory]}. Desmarca esa categoría e inténtalo nuevamente.`
         : "Este correo ya está inscrito en una de las categorías seleccionadas. Desmarca la categoría repetida e inténtalo nuevamente.";
@@ -412,8 +427,10 @@ form.addEventListener("submit", async (event) => {
 
     sessionStorage.setItem(CONFIRMATION_STORAGE_KEY, JSON.stringify(data));
     sessionStorage.removeItem(DRAFT_STORAGE_KEY);
+    trackRegistrationComplete(registrationType());
     window.location.assign(withClientBase("/confirmacion/"));
   } catch (error) {
+    trackRegistrationError(failureCode);
     setSubmitAlert(error instanceof Error ? error.message : "No pudimos guardar la inscripción.");
     window.turnstile?.reset();
   } finally {

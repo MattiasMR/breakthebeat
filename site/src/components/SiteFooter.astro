@@ -22,7 +22,11 @@ const homeSocials = [
     <div class="home-footer-grid">
       <nav aria-label="Menú del sitio">
         <a href="#inicio">Inicio</a>
-        <a href={withBase("/inscripcion/")} data-registration-open>Inscripciones</a>
+        <a
+          href={withBase("/inscripcion/")}
+          data-registration-open
+          data-analytics-registration-cta="footer_home"
+        >Inscripciones</a>
         <a href="#informacion">Más del evento</a>
         <a href={withBase("/apoyar/")}>Quiero donar</a>
       </nav>

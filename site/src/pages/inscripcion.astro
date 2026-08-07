@@ -1,4 +1,5 @@
 ---
+import Analytics from "../components/Analytics.astro";
 import Icon from "../components/Icon.astro";
 import RegistrationFlow from "../components/RegistrationFlow.astro";
 import { event } from "../data/site";
@@ -43,5 +44,6 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
     <script>
       import "../scripts/registration";
     </script>
+    <Analytics />
   </body>
 </html>

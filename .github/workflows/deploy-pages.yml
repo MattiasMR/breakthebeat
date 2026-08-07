@@ -27,6 +27,7 @@ jobs:
       PUBLIC_SUPABASE_URL: ${{ vars.PUBLIC_SUPABASE_URL }}
       PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ vars.PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
       PUBLIC_TURNSTILE_SITE_KEY: ${{ vars.PUBLIC_TURNSTILE_SITE_KEY }}
+      PUBLIC_GA_MEASUREMENT_ID: G-BS44F8XJYY
     steps:
       - name: Checkout
         uses: actions/checkout@v6

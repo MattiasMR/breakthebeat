@@ -1,4 +1,5 @@
 ---
+import Analytics from "../components/Analytics.astro";
 import Icon from "../components/Icon.astro";
 import SiteFooter from "../components/SiteFooter.astro";
 import SiteHeader from "../components/SiteHeader.astro";
@@ -166,7 +167,11 @@ const homeSponsorLogo = (logo: string, editionId: string) => {
 
               <div class="home-hero-actions">
                 {edition.isCurrent && (
-                  <a class="home-button home-button-pink" href={withBase("/inscripcion/")}>¡Quiero unirme!</a>
+                  <a
+                    class="home-button home-button-pink"
+                    href={withBase("/inscripcion/")}
+                    data-analytics-registration-cta="hero"
+                  >¡Quiero unirme!</a>
                 )}
               </div>
             </div>
@@ -315,7 +320,11 @@ const homeSponsorLogo = (logo: string, editionId: string) => {
                   <header>
                     <p class="kicker">Antes de competir · 2026</p>
                     <h2>Reglas de participación</h2>
-                    <a class="home-button home-button-pink" href={withBase("/inscripcion/")}>
+                    <a
+                      class="home-button home-button-pink"
+                      href={withBase("/inscripcion/")}
+                      data-analytics-registration-cta="rules"
+                    >
                       Revisar e inscribirme
                       <Icon name="arrow-up-right" size={18} />
                     </a>
@@ -409,7 +418,11 @@ const homeSponsorLogo = (logo: string, editionId: string) => {
         <img src={withBase("/assets/home-2026/dancer.svg")} width="115" height="184" alt="" aria-hidden="true" />
         <h2>La pista te espera</h2>
         <div>
-          <a class="home-button home-button-pink" href={withBase("/inscripcion/")}>Inscribirme</a>
+          <a
+            class="home-button home-button-pink"
+            href={withBase("/inscripcion/")}
+            data-analytics-registration-cta="final"
+          >Inscribirme</a>
         </div>
       </section>
     </main>
@@ -420,5 +433,6 @@ const homeSponsorLogo = (logo: string, editionId: string) => {
       import "../scripts/home-countdown";
       import "../scripts/edition-switcher";
     </script>
+    <Analytics />
   </body>
 </html>

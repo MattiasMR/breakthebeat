@@ -1,0 +1,259 @@
+---
+const measurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID?.trim() ?? "";
+const isConfigured = /^G-[A-Z0-9]+$/i.test(measurementId);
+---
+
+{isConfigured && (
+  <>
+    <aside
+      class="analytics-consent"
+      data-analytics-consent
+      role="dialog"
+      aria-labelledby="analytics-consent-title"
+      aria-describedby="analytics-consent-description"
+      hidden
+    >
+      <div>
+        <strong id="analytics-consent-title">Medición de visitas</strong>
+        <p id="analytics-consent-description">
+          Usamos Google Analytics para medir el interés en el evento. No enviamos datos del formulario ni
+          información personal.
+        </p>
+      </div>
+      <div class="analytics-consent-actions">
+        <button type="button" data-analytics-reject>No permitir</button>
+        <button type="button" class="is-primary" data-analytics-accept>Permitir analítica</button>
+      </div>
+    </aside>
+
+    <button class="analytics-preferences" type="button" data-analytics-preferences hidden>
+      Privacidad
+    </button>
+
+    <script is:inline define:vars={{ measurementId }}>
+      (() => {
+        const storageKey = "btb_analytics_consent_v1";
+        const banner = document.querySelector("[data-analytics-consent]");
+        const acceptButton = document.querySelector("[data-analytics-accept]");
+        const rejectButton = document.querySelector("[data-analytics-reject]");
+        const preferencesButton = document.querySelector("[data-analytics-preferences]");
+        if (!banner || !acceptButton || !rejectButton || !preferencesButton) return;
+
+        window.dataLayer = window.dataLayer || [];
+        window.gtag = window.gtag || function gtag() { window.dataLayer.push(arguments); };
+        window.gtag("consent", "default", {
+          analytics_storage: "denied",
+          ad_storage: "denied",
+          ad_user_data: "denied",
+          ad_personalization: "denied"
+        });
+
+        const readConsent = () => {
+          try {
+            const value = localStorage.getItem(storageKey);
+            return value === "granted" || value === "denied" ? value : null;
+          } catch {
+            return null;
+          }
+        };
+        const writeConsent = (value) => {
+          try { localStorage.setItem(storageKey, value); } catch { /* storage unavailable */ }
+        };
+
+        let consent = readConsent();
+        let analyticsLoaded = false;
+
+        const hideBanner = () => {
+          banner.hidden = true;
+          preferencesButton.hidden = false;
+        };
+        const showBanner = () => {
+          banner.hidden = false;
+          preferencesButton.hidden = true;
+          acceptButton.focus();
+        };
+        const removeAnalyticsCookies = () => {
+          const rootDomain = location.hostname.split(".").slice(-2).join(".");
+          document.cookie.split(";").forEach((entry) => {
+            const name = entry.split("=")[0]?.trim();
+            if (!name || !name.startsWith("_ga")) return;
+            const expired = `${name}=; Max-Age=0; path=/`;
+            document.cookie = expired;
+            document.cookie = `${expired}; domain=${location.hostname}`;
+            if (rootDomain.includes(".")) document.cookie = `${expired}; domain=.${rootDomain}`;
+          });
+        };
+        const loadAnalytics = () => {
+          if (analyticsLoaded || consent !== "granted") return;
+          analyticsLoaded = true;
+          window.gtag("consent", "update", {
+            analytics_storage: "granted",
+            ad_storage: "denied",
+            ad_user_data: "denied",
+            ad_personalization: "denied"
+          });
+          window.gtag("js", new Date());
+          window.gtag("config", measurementId, {
+            allow_google_signals: false,
+            allow_ad_personalization_signals: false
+          });
+
+          const script = document.createElement("script");
+          script.async = true;
+          script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(measurementId)}`;
+          document.head.append(script);
+        };
+
+        window.btbAnalytics = {
+          consentGranted: () => consent === "granted",
+          openPreferences: showBanner,
+          track: (eventName, parameters = {}) => {
+            if (consent !== "granted") return;
+            loadAnalytics();
+            window.gtag("event", eventName, parameters);
+          }
+        };
+
+        acceptButton.addEventListener("click", () => {
+          consent = "granted";
+          writeConsent(consent);
+          loadAnalytics();
+          hideBanner();
+        });
+        rejectButton.addEventListener("click", () => {
+          const wasGranted = consent === "granted";
+          consent = "denied";
+          writeConsent(consent);
+          window.gtag("consent", "update", {
+            analytics_storage: "denied",
+            ad_storage: "denied",
+            ad_user_data: "denied",
+            ad_personalization: "denied"
+          });
+          removeAnalyticsCookies();
+          hideBanner();
+          if (wasGranted) location.reload();
+        });
+        preferencesButton.addEventListener("click", showBanner);
+
+        document.addEventListener("click", (event) => {
+          const target = event.target;
+          if (!(target instanceof Element)) return;
+          const cta = target.closest("[data-analytics-registration-cta]");
+          if (!cta) return;
+          window.btbAnalytics.track("registration_cta_click", {
+            event_edition: "2026",
+            cta_location: cta.getAttribute("data-analytics-registration-cta") || "unknown"
+          });
+        });
+
+        if (consent === "granted") {
+          loadAnalytics();
+          hideBanner();
+        } else if (consent === "denied") {
+          hideBanner();
+        } else {
+          showBanner();
+        }
+      })();
+    </script>
+  </>
+)}
+
+<style>
+  .analytics-consent {
+    position: fixed;
+    z-index: 10000;
+    right: 1rem;
+    bottom: 1rem;
+    left: 1rem;
+    display: flex;
+    max-width: 760px;
+    margin-inline: auto;
+    padding: 1rem;
+    gap: 1rem;
+    align-items: center;
+    justify-content: space-between;
+    color: #fff;
+    background: #080808;
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    border-radius: 16px;
+    box-shadow: 0 18px 60px rgba(0, 0, 0, 0.45);
+    font-family: Poppins, system-ui, sans-serif;
+  }
+
+  .analytics-consent[hidden],
+  .analytics-preferences[hidden] {
+    display: none !important;
+  }
+
+  .analytics-consent strong {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-size: 0.95rem;
+  }
+
+  .analytics-consent p {
+    max-width: 48ch;
+    margin: 0;
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 0.78rem;
+    line-height: 1.5;
+  }
+
+  .analytics-consent-actions {
+    display: flex;
+    flex: 0 0 auto;
+    gap: 0.55rem;
+  }
+
+  .analytics-consent button,
+  .analytics-preferences {
+    min-height: 40px;
+    padding: 0.6rem 0.85rem;
+    color: #fff;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.38);
+    border-radius: 999px;
+    font: 600 0.75rem/1 Poppins, system-ui, sans-serif;
+    cursor: pointer;
+  }
+
+  .analytics-consent button.is-primary {
+    color: #080808;
+    background: #ff3f97;
+    border-color: #ff3f97;
+  }
+
+  .analytics-consent button:focus-visible,
+  .analytics-preferences:focus-visible {
+    outline: 3px solid #fff;
+    outline-offset: 3px;
+  }
+
+  .analytics-preferences {
+    position: fixed;
+    z-index: 9999;
+    bottom: 0.75rem;
+    left: 0.75rem;
+    min-height: 34px;
+    padding: 0.5rem 0.7rem;
+    color: rgba(255, 255, 255, 0.82);
+    background: rgba(8, 8, 8, 0.88);
+    border-color: rgba(255, 255, 255, 0.25);
+    font-size: 0.68rem;
+    backdrop-filter: blur(10px);
+  }
+
+  @media (max-width: 680px) {
+    .analytics-consent {
+      align-items: stretch;
+      flex-direction: column;
+    }
+
+    .analytics-consent-actions {
+      display: grid;
+      grid-template-columns: 1fr 1.25fr;
+    }
+  }
+</style>

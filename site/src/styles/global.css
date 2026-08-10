@@ -3860,7 +3860,7 @@ html[data-home-overhaul] body {
 
 .donation-purpose-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 18px;
 }
 
@@ -3874,12 +3874,12 @@ html[data-home-overhaul] body {
   background: transparent;
 }
 
-.donation-purpose-grid article:nth-child(2) {
+.donation-purpose-grid article:first-child {
   background: #000;
   color: #ede6d8;
 }
 
-.donation-purpose-grid article:nth-child(3) {
+.donation-purpose-grid article:nth-child(2) {
   border-color: #ff0076;
   background: #ff0076;
   color: #000;

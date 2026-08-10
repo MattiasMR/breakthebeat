@@ -136,9 +136,8 @@ export const featurePages = [
     image: "/assets/winners.webp",
     alt: "Ganadores del torneo con cheque de premiación",
     summary:
-      "Tu aporte ayuda a impulsar artistas emergentes, llevar clases gratuitas de baile a colegios y hacer posible la edición 2026 de Break The Beat.",
+      "Tu aporte ayuda a llevar clases gratuitas de baile a colegios y hacer posible la edición 2026 de Break The Beat.",
     bullets: [
-      "Promover el arte urbano y dar visibilidad a artistas emergentes.",
       "Financiar clases de iniciación en colegios sin costo para sus estudiantes.",
       "Cubrir la producción y realización del evento de tesis Break The Beat 2026."
     ]
@@ -148,18 +147,12 @@ export const featurePages = [
 export const donationUses = [
   {
     number: "01",
-    title: "Nuevas voces y artistas",
-    description:
-      "Promover el arte urbano, visibilizar talento emergente y abrir espacios para artistas nuevos dentro de la comunidad."
-  },
-  {
-    number: "02",
     title: "Clases gratuitas en colegios",
     description:
       "Pagar a profesores de baile para realizar jornadas de iniciación en colegios, sin costo para niñas, niños y jóvenes."
   },
   {
-    number: "03",
+    number: "02",
     title: "Evento de tesis 2026",
     description:
       "Cubrir producción, logística, infraestructura y otros costos necesarios para realizar Break The Beat 2026."

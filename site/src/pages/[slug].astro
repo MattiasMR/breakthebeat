@@ -3,7 +3,7 @@ import Analytics from "../components/Analytics.astro";
 import Icon from "../components/Icon.astro";
 import SiteFooter from "../components/SiteFooter.astro";
 import SiteHeader from "../components/SiteHeader.astro";
-import { donationAccount, event, featurePages } from "../data/site";
+import { donationAccount, donationUses, event, featurePages } from "../data/site";
 import { withBase } from "../utils/paths";
 import "../styles/global.css";
 
@@ -21,7 +21,11 @@ const isDonationPage = page.slug === "apoyar";
 ---
 
 <!doctype html>
-<html lang="es">
+<html
+  lang="es"
+  data-home-overhaul={isDonationPage ? true : undefined}
+  data-donation-overhaul={isDonationPage ? true : undefined}
+>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -33,57 +37,105 @@ const isDonationPage = page.slug === "apoyar";
     <meta property="og:image" content={withBase(page.image)} />
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" type="image/png" href={withBase("/assets/favicon.png")} />
+    {isDonationPage && (
+      <>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet"
+        />
+        <style
+          is:inline
+          set:html={`
+            @font-face {
+              font-family: "Aurochs Heavy";
+              src: url("${withBase("/assets/home-2026/aurochs-heavy.woff")}") format("woff");
+              font-style: normal;
+              font-weight: 800;
+              font-display: swap;
+            }
+            @font-face {
+              font-family: "Aurochs Regular";
+              src: url("${withBase("/assets/home-2026/aurochs-regular.woff")}") format("woff");
+              font-style: normal;
+              font-weight: 500;
+              font-display: swap;
+            }
+          `}
+        ></style>
+      </>
+    )}
     <title>{pageTitle}</title>
   </head>
   <body>
-    <SiteHeader />
-    <main id="inicio" class="detail-page">
-      <section class="detail-hero section-dark">
-        <div class="detail-media" aria-hidden="true">
-          <img src={withBase(page.image)} alt="" />
-        </div>
-        <div class="detail-overlay"></div>
-        <div class="detail-content">
-          <a class="text-link detail-back" href={withBase("/")}>
-            <Icon name="arrow-left" size={18} />
-            Volver
-          </a>
-          <p class="eyebrow">{page.eyebrow}</p>
-          <h1>{page.title}</h1>
-          <p>{page.summary}</p>
-          {isDonationPage ? (
-            <a class="button button-primary" href="#donar">
+    <SiteHeader variant={isDonationPage ? "home" : "default"} />
+    {isDonationPage ? (
+      <main id="inicio" class="donation-page-modern">
+        <section class="donation-hero-modern" aria-labelledby="donation-hero-title">
+          <img
+            class="donation-hero-image-modern"
+            src={withBase(page.image)}
+            width="1600"
+            height="900"
+            alt={page.alt}
+            fetchpriority="high"
+          />
+          <div class="donation-hero-overlay-modern" aria-hidden="true"></div>
+          <div class="donation-hero-content-modern">
+            <p class="donation-kicker">Donaciones · Break The Beat 2026</p>
+            <h1 id="donation-hero-title">
+              <span>Tu aporte</span>
+              <strong>mueve la cultura</strong>
+            </h1>
+            <p>{page.summary}</p>
+            <a class="home-button home-button-pink" href="#donar">
               Ver datos para transferir
-              <Icon name="hand-heart" size={18} />
+              <Icon name="arrow-right" size={18} />
             </a>
-          ) : (
-            <a class="button button-primary" href={`mailto:${event.email}`}>
-              Contacto oficial
-              <Icon name="mail" size={18} />
-            </a>
-          )}
-        </div>
-      </section>
+          </div>
+        </section>
 
-      {isDonationPage ? (
-        <section class="donation-section section-light" id="donar">
-          <div class="section-heading compact">
-            <div class="section-label">Transferencia bancaria</div>
-            <h2>Tu aporte está a dos pasos.</h2>
+        <section class="donation-purpose" aria-labelledby="donation-purpose-title">
+          <div class="donation-purpose-heading">
+            <div>
+              <p class="donation-kicker donation-kicker-dark">¿Para qué sirve tu aporte?</p>
+              <h2 id="donation-purpose-title">Cada donación abre una oportunidad.</h2>
+            </div>
             <p>
-              Copia los datos, abre la aplicación de tu banco y transfiere el monto que quieras.
-              No necesitas completar formularios en esta página.
+              Los aportes se destinan a actividades y costos reales del proyecto, priorizados según
+              las necesidades de la edición 2026.
+            </p>
+          </div>
+          <div class="donation-purpose-grid">
+            {donationUses.map((item) => (
+              <article>
+                <span>{item.number}</span>
+                <h3>{item.title}</h3>
+                <p>{item.description}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section class="donation-transfer" id="donar" aria-labelledby="donation-transfer-title">
+          <div class="donation-transfer-heading">
+            <p class="donation-kicker">Transferencia bancaria</p>
+            <h2 id="donation-transfer-title">Dona el monto que tú elijas.</h2>
+            <p>
+              No seleccionas un monto aquí: copia los datos y define tu aporte directamente en la
+              aplicación o banca web de tu banco.
             </p>
           </div>
 
-          <div class="donation-layout">
-            <article class="donation-card" aria-labelledby="donation-account-title">
-              <div class="donation-card-heading">
-                <span class="donation-step">Paso 1</span>
+          <div class="donation-transfer-grid">
+            <article class="donation-account-card-modern" aria-labelledby="donation-account-title">
+              <div class="donation-card-heading-modern">
                 <div>
                   <p>Cuenta receptora</p>
-                  <h3 id="donation-account-title">Copia los datos bancarios</h3>
+                  <h3 id="donation-account-title">Datos para transferir</h3>
                 </div>
+                <Icon name="hand-heart" size={30} />
               </div>
 
               <dl class="donation-account-details">
@@ -117,7 +169,7 @@ const isDonationPage = page.slug === "apoyar";
               </dl>
 
               <button
-                class="button button-primary donation-copy-all"
+                class="home-button home-button-pink donation-copy-all"
                 type="button"
                 data-copy-value={`Banco: ${donationAccount.bank}\nTipo de cuenta: ${donationAccount.accountType}\nNúmero de cuenta: ${donationAccount.accountNumber}\nTitular: ${donationAccount.holder}\n${donationAccount.identificationType}: ${donationAccount.identification}\nMotivo sugerido: ${donationAccount.suggestedReason}`}
                 data-copy-name="Todos los datos"
@@ -126,33 +178,66 @@ const isDonationPage = page.slug === "apoyar";
                 <span data-copy-button-label>Copiar todos los datos</span>
               </button>
               <p class="donation-feedback" data-donation-feedback aria-live="polite"></p>
-              <p class="donation-help" id="donation-help">
-                Antes de confirmar la transferencia, verifica que tu banco muestre como titular a
-                <strong>{donationAccount.holder}</strong>.
+              <p class="donation-help">
+                Verifica que tu banco muestre como titular a
+                <strong>{donationAccount.holder}</strong> antes de confirmar.
               </p>
             </article>
 
-            <div class="detail-list donation-assurances" aria-label="Cómo realizar la donación">
-              <article class="donation-next-step">
-                <span class="donation-step">Paso 2</span>
-                <div>
-                  <h3>Transfiere desde tu banco</h3>
-                  <p>
-                    Abre la aplicación o banca web de tu banco, registra esta cuenta y elige el
-                    monto de tu aporte.
-                  </p>
-                </div>
-              </article>
-              {page.bullets.map((item) => (
-                <article>
-                  <span aria-hidden="true"></span>
-                  <p>{item}</p>
-                </article>
-              ))}
-            </div>
+            <aside class="donation-bank-guide" aria-labelledby="donation-guide-title">
+              <p class="donation-kicker">Proceso simple</p>
+              <h3 id="donation-guide-title">Abre tu banco y transfiere.</h3>
+              <ol>
+                <li>
+                  <span>1</span>
+                  <div>
+                    <strong>Copia los datos</strong>
+                    <p>Usa el botón para llevarte toda la información de una sola vez.</p>
+                  </div>
+                </li>
+                <li>
+                  <span>2</span>
+                  <div>
+                    <strong>Elige cuánto aportar</strong>
+                    <p>Ingresa el monto directamente en la aplicación de tu banco.</p>
+                  </div>
+                </li>
+                <li>
+                  <span>3</span>
+                  <div>
+                    <strong>Confirma al titular</strong>
+                    <p>Comprueba el nombre de la cuenta antes de completar la transferencia.</p>
+                  </div>
+                </li>
+              </ol>
+              <p class="donation-security-note">
+                Break The Beat nunca te pedirá claves bancarias ni códigos de seguridad.
+              </p>
+            </aside>
           </div>
         </section>
-      ) : (
+      </main>
+    ) : (
+      <main id="inicio" class="detail-page">
+        <section class="detail-hero section-dark">
+          <div class="detail-media" aria-hidden="true">
+            <img src={withBase(page.image)} alt="" />
+          </div>
+          <div class="detail-overlay"></div>
+          <div class="detail-content">
+            <a class="text-link detail-back" href={withBase("/")}>
+              <Icon name="arrow-left" size={18} />
+              Volver
+            </a>
+            <p class="eyebrow">{page.eyebrow}</p>
+            <h1>{page.title}</h1>
+            <p>{page.summary}</p>
+            <a class="button button-primary" href={`mailto:${event.email}`}>
+              Contacto oficial
+              <Icon name="mail" size={18} />
+            </a>
+          </div>
+        </section>
         <section class="detail-body section-light">
           <div class="section-heading compact">
             <div class="section-label">Detalle</div>
@@ -167,9 +252,9 @@ const isDonationPage = page.slug === "apoyar";
             ))}
           </div>
         </section>
-      )}
-    </main>
-    <SiteFooter />
+      </main>
+    )}
+    <SiteFooter variant={isDonationPage ? "home" : "default"} />
     <script>
       import "../scripts/donation";
     </script>

@@ -5,10 +5,12 @@ import { withBase } from "../utils/paths";
 
 interface Props {
   variant?: "default" | "home";
+  isHome?: boolean;
 }
 
-const { variant = "default" } = Astro.props;
+const { variant = "default", isHome = false } = Astro.props;
 const isHomeOverhaul = variant === "home";
+const resolveHomeHref = (hash: string) => (isHome ? hash : withBase(`/${hash}`));
 const homeSocials = [
   { label: "Instagram", href: event.instagramUrl },
   { label: "TikTok", href: event.tiktokUrl },
@@ -21,13 +23,13 @@ const homeSocials = [
   <footer class="site-footer site-footer-home">
     <div class="home-footer-grid">
       <nav aria-label="Menú del sitio">
-        <a href="#inicio">Inicio</a>
+        <a href={resolveHomeHref("#inicio")}>Inicio</a>
         <a
           href={withBase("/inscripcion/")}
           data-registration-open
           data-analytics-registration-cta="footer_home"
         >Inscripciones</a>
-        <a href="#informacion">Más del evento</a>
+        <a href={resolveHomeHref("#informacion")}>Más del evento</a>
         <a href={withBase("/apoyar/")}>Quiero donar</a>
       </nav>
       <nav aria-label="Redes sociales">

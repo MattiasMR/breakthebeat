@@ -12,12 +12,13 @@ const { isHome = false, variant = "default" } = Astro.props;
 const isHomeOverhaul = variant === "home";
 const resolveHref = (href: string) =>
   isHome && href.startsWith("#") ? href : withBase(href.startsWith("#") ? `/${href}` : href);
+const resolveHomeHref = (hash: string) => (isHome ? hash : withBase(`/${hash}`));
 const headerNavItems = isHomeOverhaul
   ? [
-      { label: "Inicio", href: "#inicio" },
-      { label: "Info del evento", href: "#informacion" },
-      { label: "Impacto", href: "#impacto" },
-      { label: "Sponsors", href: "#sponsors" },
+      { label: "Inicio", href: resolveHomeHref("#inicio") },
+      { label: "Info del evento", href: resolveHomeHref("#informacion") },
+      { label: "Impacto", href: resolveHomeHref("#impacto") },
+      { label: "Sponsors", href: resolveHomeHref("#sponsors") },
       { label: "Donaciones", href: withBase("/apoyar/") }
     ]
   : navItems.map((item) => ({ ...item, href: resolveHref(item.href) }));

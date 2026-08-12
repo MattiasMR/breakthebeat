@@ -3981,6 +3981,16 @@ html[data-home-overhaul] body {
   line-height: 1.7;
 }
 
+.donation-payment-qr {
+  display: block;
+  width: min(240px, 76%);
+  height: auto;
+  margin: 0 auto;
+  border: 2px solid #000;
+  border-radius: 22px;
+  background: #fff;
+}
+
 .donation-payment-card .donation-payment-button {
   width: 100%;
   justify-content: center;
@@ -4111,6 +4121,11 @@ html[data-home-overhaul] body {
     padding: 26px 22px;
     border-radius: 22px;
     box-shadow: 7px 7px 0 #ff0076;
+  }
+
+  .donation-payment-qr {
+    width: min(230px, 82%);
+    border-radius: 18px;
   }
 
   .donation-payment-guide {

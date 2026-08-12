@@ -143,9 +143,18 @@ const isDonationPage = page.slug === "apoyar";
               </div>
 
               <p class="donation-payment-copy">
-                No necesitas copiar datos bancarios. En PayPhone podrás escribir el monto y seguir
-                las instrucciones para completar tu donación.
+                Escanea el QR o continua en PayPhone, indicando el monto y siguiendo las
+                instrucciones para completar tu donación
               </p>
+              <img
+                class="donation-payment-qr"
+                src={withBase("/assets/payphone-donation-qr.jpeg")}
+                width="1280"
+                height="1280"
+                alt="Código QR para donar a Break The Beat mediante PayPhone"
+                loading="lazy"
+                decoding="async"
+              />
               <a
                 class="home-button home-button-pink donation-payment-button"
                 href={donationPayment.url}

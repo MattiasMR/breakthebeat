@@ -61,9 +61,9 @@ export const heroSlides = [
     eyebrow: "Funding",
     image: "/assets/winners.webp",
     alt: "Ganadores del torneo con cheque de premiación",
-    cta: "Donar por transferencia",
+    cta: "Donar con PayPhone",
     text:
-      "Aporta directamente a Break The Beat mediante una transferencia bancaria.",
+      "Aporta directamente a Break The Beat mediante PayPhone.",
     href: "/apoyar/"
   }
 ];
@@ -159,14 +159,9 @@ export const donationUses = [
   }
 ] as const;
 
-export const donationAccount = {
-  bank: "Banco Guayaquil",
-  accountType: "Cuenta de ahorros",
-  accountNumber: "0019791853",
-  holder: "Rojas Paladines Krystel Del Rocio",
-  identificationType: "Cédula",
-  identification: "0956260335",
-  suggestedReason: "Donación Break The Beat"
+export const donationPayment = {
+  provider: "PayPhone",
+  url: "https://ppls.me/sK0m4F8T63Z2tTv0sg7Uw"
 } as const;
 
 export const stats = [
@@ -271,11 +266,11 @@ export const payments = [
   {
     key: "payphone",
     label: "PayPhone",
-    description: "Boton de pago local para tarjetas emitidas en Ecuador.",
-    enabled: false,
-    url: "",
-    status: "Link pendiente",
-    disclaimer: "Cuenta receptora y política de devolución por confirmar."
+    description: "Enlace de pago para elegir el monto y donar en línea.",
+    enabled: true,
+    url: donationPayment.url,
+    status: "Disponible",
+    disclaimer: "El pago se completa en la plataforma de PayPhone."
   },
   {
     key: "paypal",
@@ -285,15 +280,6 @@ export const payments = [
     url: "",
     status: "Link pendiente",
     disclaimer: "Comisiones comerciales y retiro de fondos por validar."
-  },
-  {
-    key: "transfer",
-    label: "Transferencia",
-    description: `Transferencia directa a ${donationAccount.bank}.`,
-    enabled: true,
-    url: "",
-    status: "Disponible",
-    disclaimer: `Verifica que el titular sea ${donationAccount.holder} antes de confirmar.`
   }
 ];
 

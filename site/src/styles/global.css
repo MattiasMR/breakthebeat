@@ -3846,7 +3846,7 @@ html[data-home-overhaul] body {
 }
 
 .donation-purpose-heading h2,
-.donation-transfer-heading h2 {
+.donation-checkout-heading h2 {
   margin: 0;
   text-transform: uppercase;
   font: 800 clamp(3.2rem, 6vw, 6.5rem)/0.84 "Aurochs Heavy", Impact, sans-serif;
@@ -3910,32 +3910,32 @@ html[data-home-overhaul] body {
   font-size: 0.96rem;
 }
 
-.donation-transfer {
+.donation-checkout {
   padding: clamp(96px, 11vw, 164px) clamp(24px, 7vw, 112px);
   background: #000;
   color: #ede6d8;
 }
 
-.donation-transfer-heading {
+.donation-checkout-heading {
   width: min(930px, 100%);
   margin-bottom: clamp(48px, 7vw, 84px);
 }
 
-.donation-transfer-heading > p:last-child {
+.donation-checkout-heading > p:last-child {
   max-width: 700px;
   margin: 28px 0 0;
   color: rgba(255, 255, 255, 0.68);
   font-size: clamp(1rem, 1.3vw, 1.16rem);
 }
 
-.donation-transfer-grid {
+.donation-checkout-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(330px, 0.82fr);
   gap: clamp(24px, 4vw, 64px);
   align-items: start;
 }
 
-.donation-account-card-modern {
+.donation-payment-card {
   display: grid;
   gap: 24px;
   padding: clamp(26px, 4vw, 48px);
@@ -3968,45 +3968,37 @@ html[data-home-overhaul] body {
 }
 
 .donation-card-heading-modern h3,
-.donation-bank-guide h3 {
+.donation-payment-guide h3 {
   margin: 0;
   text-transform: uppercase;
   font: 800 clamp(2.1rem, 4vw, 4rem)/0.86 "Aurochs Heavy", Impact, sans-serif;
 }
 
-.donation-account-card-modern .donation-account-details {
-  border-top-color: #000;
+.donation-payment-copy {
+  margin: 0;
+  color: rgba(0, 0, 0, 0.7);
+  font-size: clamp(1rem, 1.3vw, 1.14rem);
+  line-height: 1.7;
 }
 
-.donation-account-card-modern .donation-account-row {
-  border-bottom-color: rgba(0, 0, 0, 0.18);
-}
-
-.donation-account-card-modern .donation-copy-all {
+.donation-payment-card .donation-payment-button {
   width: 100%;
-  cursor: pointer;
-  border: 0;
-  font-family: "Poppins", sans-serif;
+  justify-content: center;
 }
 
-.donation-account-card-modern .donation-feedback {
-  margin: -10px 0 0;
-  color: #a0004a;
-}
-
-.donation-account-card-modern .donation-help {
+.donation-payment-card .donation-help {
   margin: -10px 0 0;
   color: rgba(0, 0, 0, 0.62);
 }
 
-.donation-bank-guide {
+.donation-payment-guide {
   padding: clamp(30px, 4vw, 50px);
   border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 30px;
   background: #111;
 }
 
-.donation-bank-guide ol {
+.donation-payment-guide ol {
   display: grid;
   gap: 0;
   margin: 40px 0 28px;
@@ -4014,7 +4006,7 @@ html[data-home-overhaul] body {
   list-style: none;
 }
 
-.donation-bank-guide li {
+.donation-payment-guide li {
   display: grid;
   grid-template-columns: 48px 1fr;
   gap: 18px;
@@ -4022,7 +4014,7 @@ html[data-home-overhaul] body {
   border-top: 1px solid rgba(255, 255, 255, 0.15);
 }
 
-.donation-bank-guide li > span {
+.donation-payment-guide li > span {
   display: grid;
   place-items: center;
   width: 42px;
@@ -4033,11 +4025,11 @@ html[data-home-overhaul] body {
   font-weight: 700;
 }
 
-.donation-bank-guide li strong {
+.donation-payment-guide li strong {
   font-size: 1rem;
 }
 
-.donation-bank-guide li p {
+.donation-payment-guide li p {
   margin: 6px 0 0;
   color: rgba(255, 255, 255, 0.62);
   font-size: 0.88rem;
@@ -4055,7 +4047,7 @@ html[data-home-overhaul] body {
 
 @media (max-width: 980px) {
   .donation-purpose-heading,
-  .donation-transfer-grid {
+  .donation-checkout-grid {
     grid-template-columns: 1fr;
   }
 
@@ -4071,7 +4063,7 @@ html[data-home-overhaul] body {
     min-height: 280px;
   }
 
-  .donation-bank-guide {
+  .donation-payment-guide {
     margin-top: 14px;
   }
 }
@@ -4097,12 +4089,12 @@ html[data-home-overhaul] body {
   }
 
   .donation-purpose,
-  .donation-transfer {
+  .donation-checkout {
     padding-inline: 20px;
   }
 
   .donation-purpose-heading h2,
-  .donation-transfer-heading h2 {
+  .donation-checkout-heading h2 {
     font-size: clamp(2.8rem, 14vw, 4.5rem);
   }
 
@@ -4115,21 +4107,13 @@ html[data-home-overhaul] body {
     margin-top: 42px;
   }
 
-  .donation-account-card-modern {
+  .donation-payment-card {
     padding: 26px 22px;
     border-radius: 22px;
     box-shadow: 7px 7px 0 #ff0076;
   }
 
-  .donation-account-row {
-    gap: 10px;
-  }
-
-  .donation-copy-field {
-    padding-inline: 9px;
-  }
-
-  .donation-bank-guide {
+  .donation-payment-guide {
     padding: 30px 24px;
     border-radius: 22px;
   }

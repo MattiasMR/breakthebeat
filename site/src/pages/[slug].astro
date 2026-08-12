@@ -3,7 +3,7 @@ import Analytics from "../components/Analytics.astro";
 import Icon from "../components/Icon.astro";
 import SiteFooter from "../components/SiteFooter.astro";
 import SiteHeader from "../components/SiteHeader.astro";
-import { donationAccount, donationUses, event, featurePages } from "../data/site";
+import { donationPayment, donationUses, event, featurePages } from "../data/site";
 import { withBase } from "../utils/paths";
 import "../styles/global.css";
 
@@ -89,9 +89,14 @@ const isDonationPage = page.slug === "apoyar";
               <strong>mueve la cultura</strong>
             </h1>
             <p>{page.summary}</p>
-            <a class="home-button home-button-pink" href="#donar">
-              Ver datos para transferir
-              <Icon name="arrow-right" size={18} />
+            <a
+              class="home-button home-button-pink"
+              href={donationPayment.url}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Donar con PayPhone
+              <Icon name="arrow-up-right" size={18} />
             </a>
           </div>
         </section>
@@ -118,100 +123,71 @@ const isDonationPage = page.slug === "apoyar";
           </div>
         </section>
 
-        <section class="donation-transfer" id="donar" aria-labelledby="donation-transfer-title">
-          <div class="donation-transfer-heading">
-            <p class="donation-kicker">Transferencia bancaria</p>
-            <h2 id="donation-transfer-title">Dona el monto que tú elijas.</h2>
+        <section class="donation-checkout" id="donar" aria-labelledby="donation-checkout-title">
+          <div class="donation-checkout-heading">
+            <p class="donation-kicker">Donación en línea</p>
+            <h2 id="donation-checkout-title">Dona el monto que tú elijas.</h2>
             <p>
-              No seleccionas un monto aquí: copia los datos y define tu aporte directamente en la
-              aplicación o banca web de tu banco.
+              Abre PayPhone, ingresa cuánto quieres aportar y completa el pago en su plataforma.
             </p>
           </div>
 
-          <div class="donation-transfer-grid">
-            <article class="donation-account-card-modern" aria-labelledby="donation-account-title">
+          <div class="donation-checkout-grid">
+            <article class="donation-payment-card" aria-labelledby="donation-payment-title">
               <div class="donation-card-heading-modern">
                 <div>
-                  <p>Cuenta receptora</p>
-                  <h3 id="donation-account-title">Datos para transferir</h3>
+                  <p>Enlace oficial</p>
+                  <h3 id="donation-payment-title">Dona con PayPhone</h3>
                 </div>
                 <Icon name="hand-heart" size={30} />
               </div>
 
-              <dl class="donation-account-details">
-                {[
-                  { label: "Banco", value: donationAccount.bank },
-                  { label: "Tipo de cuenta", value: donationAccount.accountType },
-                  { label: "Número de cuenta", value: donationAccount.accountNumber, emphasize: true },
-                  { label: "Titular", value: donationAccount.holder },
-                  {
-                    label: donationAccount.identificationType,
-                    value: donationAccount.identification
-                  }
-                ].map((field) => (
-                  <div class="donation-account-row">
-                    <div>
-                      <dt>{field.label}</dt>
-                      <dd class:list={{ "is-emphasized": field.emphasize }}>{field.value}</dd>
-                    </div>
-                    <button
-                      class="donation-copy-field"
-                      type="button"
-                      data-copy-value={field.value}
-                      data-copy-name={field.label}
-                      aria-label={`Copiar ${field.label.toLowerCase()}`}
-                    >
-                      <Icon name="copy" size={17} />
-                      <span data-copy-button-label>Copiar</span>
-                    </button>
-                  </div>
-                ))}
-              </dl>
-
-              <button
-                class="home-button home-button-pink donation-copy-all"
-                type="button"
-                data-copy-value={`Banco: ${donationAccount.bank}\nTipo de cuenta: ${donationAccount.accountType}\nNúmero de cuenta: ${donationAccount.accountNumber}\nTitular: ${donationAccount.holder}\n${donationAccount.identificationType}: ${donationAccount.identification}\nMotivo sugerido: ${donationAccount.suggestedReason}`}
-                data-copy-name="Todos los datos"
+              <p class="donation-payment-copy">
+                No necesitas copiar datos bancarios. En PayPhone podrás escribir el monto y seguir
+                las instrucciones para completar tu donación.
+              </p>
+              <a
+                class="home-button home-button-pink donation-payment-button"
+                href={donationPayment.url}
+                target="_blank"
+                rel="noopener noreferrer"
               >
-                <Icon name="copy" size={18} />
-                <span data-copy-button-label>Copiar todos los datos</span>
-              </button>
-              <p class="donation-feedback" data-donation-feedback aria-live="polite"></p>
+                Ir a PayPhone y donar
+                <Icon name="arrow-up-right" size={18} />
+              </a>
               <p class="donation-help">
-                Verifica que tu banco muestre como titular a
-                <strong>{donationAccount.holder}</strong> antes de confirmar.
+                El enlace se abrirá en una pestaña nueva y el pago se procesará en PayPhone.
               </p>
             </article>
 
-            <aside class="donation-bank-guide" aria-labelledby="donation-guide-title">
+            <aside class="donation-payment-guide" aria-labelledby="donation-guide-title">
               <p class="donation-kicker">Proceso simple</p>
-              <h3 id="donation-guide-title">Abre tu banco y transfiere.</h3>
+              <h3 id="donation-guide-title">Abre el enlace y dona.</h3>
               <ol>
                 <li>
                   <span>1</span>
                   <div>
-                    <strong>Copia los datos</strong>
-                    <p>Usa el botón para llevarte toda la información de una sola vez.</p>
+                    <strong>Abre PayPhone</strong>
+                    <p>Usa el botón para entrar al enlace oficial de donación.</p>
                   </div>
                 </li>
                 <li>
                   <span>2</span>
                   <div>
-                    <strong>Elige cuánto aportar</strong>
-                    <p>Ingresa el monto directamente en la aplicación de tu banco.</p>
+                    <strong>Elige cuánto donar</strong>
+                    <p>Escribe el monto que quieras aportar a Break The Beat.</p>
                   </div>
                 </li>
                 <li>
                   <span>3</span>
                   <div>
-                    <strong>Confirma al titular</strong>
-                    <p>Comprueba el nombre de la cuenta antes de completar la transferencia.</p>
+                    <strong>Completa el pago</strong>
+                    <p>Sigue las instrucciones de PayPhone para finalizar la donación.</p>
                   </div>
                 </li>
               </ol>
               <p class="donation-security-note">
-                Break The Beat nunca te pedirá claves bancarias ni códigos de seguridad.
+                Break The Beat nunca te pedirá claves bancarias ni códigos de seguridad por mensaje.
               </p>
             </aside>
           </div>
@@ -255,9 +231,6 @@ const isDonationPage = page.slug === "apoyar";
       </main>
     )}
     <SiteFooter variant={isDonationPage ? "home" : "default"} />
-    <script>
-      import "../scripts/donation";
-    </script>
     <Analytics />
   </body>
 </html>

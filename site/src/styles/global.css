@@ -3932,7 +3932,7 @@ html[data-home-overhaul] body {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(330px, 0.82fr);
   gap: clamp(24px, 4vw, 64px);
-  align-items: start;
+  align-items: stretch;
 }
 
 .donation-payment-card {

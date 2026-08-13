@@ -31,10 +31,10 @@ import "../styles/portal.css";
       <section class="confirmation-shell" data-confirmation-shell hidden>
         <div class="confirmation-heading">
           <span class="success-icon"><Icon name="check-circle-2" size={38} /></span>
-          <p class="eyebrow">Todo está listo</p>
-          <h1>¡Ya estás inscrito!</h1>
+          <p class="eyebrow" data-confirmation-eyebrow>Todo está listo</p>
+          <h1 data-confirmation-title>¡Ya estás inscrito!</h1>
           <p data-confirmation-copy>Descarga los códigos y preséntalos en el ingreso el día del evento. Cada participante tiene su propio QR.</p>
-          <div class="confirmation-reference">Inscripción <strong data-registration-code></strong></div>
+          <div class="confirmation-reference"><span data-confirmation-reference-label>Inscripción</span> <strong data-registration-code></strong></div>
         </div>
         <div class="confirmation-download-warning" data-download-warning></div>
         <div class="qr-grid" data-qr-grid></div>
@@ -48,13 +48,13 @@ import "../styles/portal.css";
       <section class="confirmation-shell confirmation-empty" data-confirmation-empty hidden>
         <Icon name="qr-code" size={42} />
         <h1>No hay una confirmación reciente en esta pestaña.</h1>
-        <p>Los QR no se envían por correo y solo aparecen al finalizar la inscripción. Si no los descargaste, contacta al equipo.</p>
+        <p>Si ya te inscribiste y no guardaste tu QR, puedes recuperarlo con el mismo correo que usaste en el formulario.</p>
         <div class="confirmation-empty-actions">
           <a
             class="button button-primary"
-            href={withBase("/inscripcion/")}
+            href={withBase("/inscripcion/#recuperar-qr")}
             data-analytics-registration-cta="confirmation_retry"
-          >Ir a inscripción</a>
+          >Recuperar mi QR</a>
           <a class="button button-secondary" href={`mailto:${event.email}`}>Contactar</a>
         </div>
       </section>

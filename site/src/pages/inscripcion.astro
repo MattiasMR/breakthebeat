@@ -2,6 +2,7 @@
 import Analytics from "../components/Analytics.astro";
 import Icon from "../components/Icon.astro";
 import RegistrationFlow from "../components/RegistrationFlow.astro";
+import RegistrationRecovery from "../components/RegistrationRecovery.astro";
 import { event } from "../data/site";
 import { withBase } from "../utils/paths";
 import "../styles/global.css";
@@ -35,6 +36,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
     <main class="registration-page-main">
       <section class="registration-workspace" aria-label="Formulario de inscripción">
         <div class="registration-form-column">
+          <RegistrationRecovery turnstileSiteKey={turnstileSiteKey} />
           <RegistrationFlow turnstileSiteKey={turnstileSiteKey} />
         </div>
       </section>
@@ -43,6 +45,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
     {turnstileSiteKey && <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>}
     <script>
       import "../scripts/registration";
+      import "../scripts/registration-recovery";
     </script>
     <Analytics />
   </body>

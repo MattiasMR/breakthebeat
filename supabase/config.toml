@@ -3,6 +3,9 @@ project_id = "breakthebeat"
 [functions.submit-registration]
 verify_jwt = false
 
+[functions.recover-registration]
+verify_jwt = false
+
 [functions.admin-login]
 verify_jwt = false
 

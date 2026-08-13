@@ -1,0 +1,47 @@
+---
+import Icon from "./Icon.astro";
+
+interface Props {
+  turnstileSiteKey: string;
+}
+
+const { turnstileSiteKey } = Astro.props;
+---
+
+<section class="registration-recovery-entry" id="recuperar-qr" aria-labelledby="recovery-entry-title">
+  <span class="registration-recovery-entry-icon"><Icon name="qr-code" size={28} /></span>
+  <div>
+    <h2 id="recovery-entry-title">¿Ya estás inscrito?</h2>
+    <p>Recupera tu inscripción y vuelve a descargar tu QR.</p>
+  </div>
+  <button class="button button-ghost" type="button" data-recovery-open>Recuperar mi QR</button>
+</section>
+
+<dialog class="registration-recovery-dialog" data-recovery-dialog aria-labelledby="recovery-dialog-title">
+  <button class="registration-recovery-close" type="button" data-recovery-close aria-label="Cerrar">×</button>
+  <div class="registration-recovery-heading">
+    <span><Icon name="mail" size={26} /></span>
+    <p class="step-sidebar-label">Recuperación</p>
+    <h2 id="recovery-dialog-title">Vuelve a ver tu QR</h2>
+    <p>Ingresa exactamente el correo que usaste al inscribirte.</p>
+  </div>
+  <form data-recovery-form novalidate>
+    <label class="field">
+      <span>Correo de la inscripción</span>
+      <input type="email" name="email" autocomplete="email" maxlength="254" required placeholder="tu@correo.com" />
+    </label>
+    <div class="turnstile-block compact">
+      {turnstileSiteKey ? (
+        <div id="registration-recovery-turnstile" data-recovery-turnstile data-sitekey={turnstileSiteKey}></div>
+      ) : (
+        <p>La verificación humana todavía no está configurada.</p>
+      )}
+    </div>
+    <div class="submit-alert" data-recovery-alert role="alert" hidden></div>
+    <p class="registration-recovery-privacy">
+      <Icon name="shield-check" size={18} />
+      <span>Solo verás los QR personales asociados a ese correo. Este acceso no permite modificar ni eliminar la inscripción.</span>
+    </p>
+    <button class="button button-primary" type="submit" data-recovery-submit>Buscar mi inscripción</button>
+  </form>
+</dialog>

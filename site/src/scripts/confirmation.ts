@@ -8,6 +8,9 @@ const registrationCode = document.querySelector<HTMLElement>("[data-registration
 const downloadWarning = document.querySelector<HTMLElement>("[data-download-warning]");
 const downloadAll = document.querySelector<HTMLButtonElement>("[data-download-all]");
 const confirmationCopy = document.querySelector<HTMLElement>("[data-confirmation-copy]");
+const confirmationEyebrow = document.querySelector<HTMLElement>("[data-confirmation-eyebrow]");
+const confirmationTitle = document.querySelector<HTMLElement>("[data-confirmation-title]");
+const confirmationReferenceLabel = document.querySelector<HTMLElement>("[data-confirmation-reference-label]");
 
 downloadAll?.addEventListener("click", async () => {
   const cards = Array.from(document.querySelectorAll<HTMLElement>(".qr-card"));
@@ -73,18 +76,33 @@ if (!confirmation || !shell || !grid) {
 } else {
   shell.hidden = false;
   const isSingleParticipant = confirmation.participants.length === 1;
+  const isRecovery = confirmation.source === "recovery";
+  const isSingleRegistration = (confirmation.registrationCount ?? 1) === 1;
   if (registrationCode) registrationCode.textContent = confirmation.registrationCode;
+  if (isRecovery) {
+    if (confirmationEyebrow) confirmationEyebrow.textContent = isSingleParticipant ? "QR recuperado" : "QR recuperados";
+    if (confirmationTitle) confirmationTitle.textContent = isSingleRegistration
+      ? "¡Encontramos tu inscripción!"
+      : "¡Encontramos tus inscripciones!";
+    if (confirmationReferenceLabel) confirmationReferenceLabel.textContent = isSingleRegistration ? "Inscripción" : "Resultado";
+  }
   if (confirmationCopy) {
-    confirmationCopy.textContent = isSingleParticipant
-      ? "Descarga el código y preséntalo en el ingreso el día del evento. Este QR es personal."
-      : "Descarga los códigos y preséntalos en el ingreso el día del evento. Cada participante tiene su propio QR.";
+    confirmationCopy.textContent = isRecovery
+      ? (isSingleParticipant
+        ? "Este es el QR personal asociado a tu correo. Vuelve a descargarlo y preséntalo en el ingreso."
+        : "Estos son los QR personales asociados a tu correo. Vuelve a descargarlos y preséntalos en el ingreso.")
+      : (isSingleParticipant
+        ? "Descarga el código y preséntalo en el ingreso el día del evento. Este QR es personal."
+        : "Descarga los códigos y preséntalos en el ingreso el día del evento. Cada participante tiene su propio QR.");
   }
   if (downloadWarning) {
-    downloadWarning.textContent = isSingleParticipant
-      ? "Importante: descarga y guarda tu QR ahora. No se enviará por correo y lo necesitarás para ingresar al evento. No lo pierdas."
-      : "Importante: descarga y guarda tus QR ahora. No se enviarán por correo y los necesitarás para ingresar al evento. No los pierdas.";
+    downloadWarning.textContent = isRecovery
+      ? "Esta recuperación es de solo lectura: puedes volver a guardar tus QR, pero no modificar ni eliminar la inscripción."
+      : (isSingleParticipant
+        ? "Importante: descarga y guarda tu QR ahora. No se enviará por correo y lo necesitarás para ingresar al evento. No lo pierdas."
+        : "Importante: descarga y guarda tus QR ahora. No se enviarán por correo y los necesitarás para ingresar al evento. No los pierdas.");
   }
-  if (downloadAll) downloadAll.textContent = isSingleParticipant ? "Descargar QR" : "Descargar QRS";
+  if (downloadAll) downloadAll.textContent = isSingleParticipant ? "Descargar QR" : "Descargar todos los QR";
 
   void Promise.all(confirmation.participants.map(async (participant) => {
     const card = document.createElement("article");
@@ -92,7 +110,9 @@ if (!confirmation || !shell || !grid) {
     card.dataset.participantCode = participant.participantCode;
     const role = document.createElement("span");
     role.className = "qr-card-label";
-    role.textContent = "Acreditación individual";
+    role.textContent = isRecovery && participant.registrationCode
+      ? `Inscripción ${participant.registrationCode}`
+      : "Acreditación individual";
     const name = document.createElement("h2");
     name.textContent = participant.displayName;
     const categories = document.createElement("p");

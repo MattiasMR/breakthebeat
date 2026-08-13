@@ -113,8 +113,11 @@ export type ParticipantInput = z.infer<typeof participantSchema>;
 export type RegistrationPayload = z.infer<typeof registrationPayloadSchema>;
 
 export type RegistrationConfirmation = {
+  source?: "registration" | "recovery";
+  registrationCount?: number;
   registrationCode: string;
   participants: Array<{
+    registrationCode?: string;
     displayName: string;
     participantCode: string;
     qrPayload: string;

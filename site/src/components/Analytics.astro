@@ -1,6 +1,9 @@
 ---
 const measurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID?.trim() ?? "";
-const isConfigured = /^G-[A-Z0-9]+$/i.test(measurementId);
+const metaPixelId = import.meta.env.PUBLIC_META_PIXEL_ID?.trim() ?? "";
+const hasGoogleAnalytics = /^G-[A-Z0-9]+$/i.test(measurementId);
+const hasMetaPixel = /^\d{5,20}$/.test(metaPixelId);
+const isConfigured = hasGoogleAnalytics || hasMetaPixel;
 ---
 
 {isConfigured && (
@@ -14,10 +17,10 @@ const isConfigured = /^G-[A-Z0-9]+$/i.test(measurementId);
       hidden
     >
       <div>
-        <strong id="analytics-consent-title">Medición de visitas</strong>
+        <strong id="analytics-consent-title">Medición y publicidad</strong>
         <p id="analytics-consent-description">
-          Usamos Google Analytics para medir el interés en el evento. No enviamos datos del formulario ni
-          información personal.
+          Usamos Google Analytics y Meta Pixel para medir visitas, inscripciones y la efectividad de las
+          campañas. No enviamos nombres, datos de contacto ni información médica ingresada en el formulario.
         </p>
       </div>
       <div class="analytics-consent-actions">
@@ -30,9 +33,11 @@ const isConfigured = /^G-[A-Z0-9]+$/i.test(measurementId);
       Privacidad
     </button>
 
-    <script is:inline define:vars={{ measurementId }}>
+    <script is:inline define:vars={{ measurementId, metaPixelId }}>
       (() => {
-        const storageKey = "btb_analytics_consent_v1";
+        const storageKey = "btb_analytics_consent_v2";
+        const googleAnalyticsConfigured = /^G-[A-Z0-9]+$/i.test(measurementId);
+        const metaPixelConfigured = /^\d{5,20}$/.test(metaPixelId);
         const banner = document.querySelector("[data-analytics-consent]");
         const acceptButton = document.querySelector("[data-analytics-accept]");
         const rejectButton = document.querySelector("[data-analytics-reject]");
@@ -61,7 +66,8 @@ const isConfigured = /^G-[A-Z0-9]+$/i.test(measurementId);
         };
 
         let consent = readConsent();
-        let analyticsLoaded = false;
+        let googleAnalyticsLoaded = false;
+        let metaPixelLoaded = false;
 
         const hideBanner = () => {
           banner.hidden = true;
@@ -72,20 +78,23 @@ const isConfigured = /^G-[A-Z0-9]+$/i.test(measurementId);
           preferencesButton.hidden = true;
           acceptButton.focus();
         };
-        const removeAnalyticsCookies = () => {
+        const expireCookie = (name) => {
           const rootDomain = location.hostname.split(".").slice(-2).join(".");
+          const expired = `${name}=; Max-Age=0; path=/`;
+          document.cookie = expired;
+          document.cookie = `${expired}; domain=${location.hostname}`;
+          if (rootDomain.includes(".")) document.cookie = `${expired}; domain=.${rootDomain}`;
+        };
+        const removeAnalyticsCookies = () => {
           document.cookie.split(";").forEach((entry) => {
             const name = entry.split("=")[0]?.trim();
-            if (!name || !name.startsWith("_ga")) return;
-            const expired = `${name}=; Max-Age=0; path=/`;
-            document.cookie = expired;
-            document.cookie = `${expired}; domain=${location.hostname}`;
-            if (rootDomain.includes(".")) document.cookie = `${expired}; domain=.${rootDomain}`;
+            if (!name || (!name.startsWith("_ga") && name !== "_fbp" && name !== "_fbc")) return;
+            expireCookie(name);
           });
         };
-        const loadAnalytics = () => {
-          if (analyticsLoaded || consent !== "granted") return;
-          analyticsLoaded = true;
+        const loadGoogleAnalytics = () => {
+          if (!googleAnalyticsConfigured || googleAnalyticsLoaded || consent !== "granted") return;
+          googleAnalyticsLoaded = true;
           window.gtag("consent", "update", {
             analytics_storage: "granted",
             ad_storage: "denied",
@@ -103,21 +112,66 @@ const isConfigured = /^G-[A-Z0-9]+$/i.test(measurementId);
           script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(measurementId)}`;
           document.head.append(script);
         };
+        const loadMetaPixel = () => {
+          if (!metaPixelConfigured || metaPixelLoaded || consent !== "granted") return;
+          metaPixelLoaded = true;
+
+          if (!window.fbq) {
+            const fbq = (...args) => {
+              if (fbq.callMethod) fbq.callMethod.apply(fbq, args);
+              else fbq.queue.push(args);
+            };
+            fbq.push = fbq;
+            fbq.loaded = true;
+            fbq.version = "2.0";
+            fbq.queue = [];
+            window.fbq = fbq;
+            window._fbq = fbq;
+          }
+
+          window.fbq("consent", "grant");
+          window.fbq("init", metaPixelId);
+          window.fbq("track", "PageView");
+          if (/\/inscripcion\/?$/.test(location.pathname)) {
+            window.fbq("track", "ViewContent", {
+              content_name: "Inscripción Break The Beat 2026",
+              content_category: "event_registration"
+            });
+          }
+
+          const script = document.createElement("script");
+          script.async = true;
+          script.src = "https://connect.facebook.net/en_US/fbevents.js";
+          document.head.append(script);
+        };
+        const trackMetaEvent = (eventName, parameters) => {
+          if (!metaPixelConfigured || consent !== "granted") return;
+          loadMetaPixel();
+          if (eventName === "registration_complete") {
+            window.fbq("track", "CompleteRegistration", parameters);
+          } else if (eventName === "registration_start") {
+            window.fbq("trackCustom", "RegistrationStart", parameters);
+          } else if (eventName === "registration_cta_click") {
+            window.fbq("trackCustom", "RegistrationCtaClick", parameters);
+          }
+        };
 
         window.btbAnalytics = {
           consentGranted: () => consent === "granted",
           openPreferences: showBanner,
           track: (eventName, parameters = {}) => {
             if (consent !== "granted") return;
-            loadAnalytics();
-            window.gtag("event", eventName, parameters);
+            loadGoogleAnalytics();
+            if (googleAnalyticsConfigured) window.gtag("event", eventName, parameters);
+            trackMetaEvent(eventName, parameters);
           }
         };
 
         acceptButton.addEventListener("click", () => {
           consent = "granted";
           writeConsent(consent);
-          loadAnalytics();
+          loadGoogleAnalytics();
+          loadMetaPixel();
           hideBanner();
         });
         rejectButton.addEventListener("click", () => {
@@ -130,6 +184,7 @@ const isConfigured = /^G-[A-Z0-9]+$/i.test(measurementId);
             ad_user_data: "denied",
             ad_personalization: "denied"
           });
+          if (window.fbq) window.fbq("consent", "revoke");
           removeAnalyticsCookies();
           hideBanner();
           if (wasGranted) location.reload();
@@ -148,7 +203,8 @@ const isConfigured = /^G-[A-Z0-9]+$/i.test(measurementId);
         });
 
         if (consent === "granted") {
-          loadAnalytics();
+          loadGoogleAnalytics();
+          loadMetaPixel();
           hideBanner();
         } else if (consent === "denied") {
           hideBanner();

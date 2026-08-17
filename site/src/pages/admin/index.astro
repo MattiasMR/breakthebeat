@@ -55,6 +55,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
             <p>Sesión de <strong data-admin-username></strong></p>
           </div>
           <div class="admin-heading-actions">
+            <a class="button button-secondary dark" href={withBase("/admin/asistencia/")}><Icon name="users-round" size={18} /> Invitados</a>
             <a class="button button-primary" href={withBase("/check-in/")}><Icon name="qr-code" size={18} /> Abrir check-in</a>
             <button class="button button-secondary" type="button" data-logout><Icon name="log-out" size={18} /> Salir</button>
           </div>

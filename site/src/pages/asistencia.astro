@@ -1,0 +1,82 @@
+---
+import Analytics from "../components/Analytics.astro";
+import Icon from "../components/Icon.astro";
+import { event } from "../data/site";
+import { withBase } from "../utils/paths";
+import "../styles/global.css";
+import "../styles/portal.css";
+
+const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Confirma tu asistencia a Break The Beat 2026." />
+    <meta name="theme-color" content="#050505" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <link rel="icon" type="image/png" href={withBase("/assets/favicon.png")} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <title>Confirma tu asistencia | Break The Beat</title>
+  </head>
+  <body class="attendance-public-body">
+    <main class="attendance-public-main">
+      <a class="attendance-brand" href={withBase("/")} aria-label="Volver a Break The Beat">
+        <img src={withBase("/assets/break-the-beat-logo.webp")} alt="Break The Beat" />
+      </a>
+
+      <section class="attendance-invitation" aria-labelledby="attendance-title">
+        <div class="attendance-invitation-copy">
+          <p class="eyebrow">Break The Beat 2026</p>
+          <h1 id="attendance-title">El beat te espera.</h1>
+          <p>Confirma tu asistencia y sé parte de una jornada de cultura, comunidad y movimiento.</p>
+          <dl class="attendance-event-details">
+            <div><dt><Icon name="calendar-days" size={19} /> Fecha</dt><dd>{event.date}</dd></div>
+            <div><dt><Icon name="map-pin" size={19} /> Lugar</dt><dd>{event.location}, {event.city}</dd></div>
+          </dl>
+        </div>
+
+        <form class="attendance-form" data-attendance-form novalidate>
+          <div class="attendance-form-heading">
+            <span><Icon name="ticket-check" size={27} /></span>
+            <div><p class="step-kicker">Lista de invitados</p><h2>Confirma tu asistencia.</h2></div>
+          </div>
+          <p class="attendance-form-intro">Completa tus datos para reservar tu lugar en la lista de invitados.</p>
+          <div class="attendance-name-grid">
+            <label class="field"><span>Nombre</span><input name="firstName" autocomplete="given-name" maxlength="80" required placeholder="Tu nombre" /></label>
+            <label class="field"><span>Apellido</span><input name="lastName" autocomplete="family-name" maxlength="80" required placeholder="Tu apellido" /></label>
+          </div>
+          <label class="field"><span>Empresa o sponsor <em>(opcional)</em></span><input name="organization" autocomplete="organization" maxlength="120" placeholder="Ej. Marca aliada" /></label>
+          <div class="turnstile-block compact">
+            {turnstileSiteKey ? (
+              <div class="cf-turnstile" data-sitekey={turnstileSiteKey} data-theme="light" data-action="guest_attendance"></div>
+            ) : (
+              <p>La verificación humana todavía no está disponible.</p>
+            )}
+          </div>
+          <div class="submit-alert" data-attendance-alert role="alert" hidden></div>
+          <button class="button button-primary" type="submit" data-attendance-submit><Icon name="check-circle-2" size={18} /> Confirmar asistencia</button>
+          <p class="attendance-privacy"><Icon name="shield-check" size={17} /> Usaremos estos datos únicamente para organizar la lista de invitados del evento.</p>
+        </form>
+
+        <section class="attendance-success" data-attendance-success hidden aria-live="polite">
+          <span><Icon name="check-circle-2" size={34} /></span>
+          <p class="eyebrow">Listo</p>
+          <h2>Tu asistencia está confirmada.</h2>
+          <p data-attendance-success-copy>Nos vemos en Break The Beat.</p>
+          <a class="button button-secondary dark" href={withBase("/")}>Conocer Break The Beat</a>
+        </section>
+      </section>
+    </main>
+
+    {turnstileSiteKey && <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>}
+    <script>
+      import "../scripts/guest-attendance";
+    </script>
+    <Analytics />
+  </body>
+</html>

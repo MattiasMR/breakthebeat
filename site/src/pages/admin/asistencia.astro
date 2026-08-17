@@ -1,0 +1,71 @@
+---
+import Icon from "../../components/Icon.astro";
+import { withBase } from "../../utils/paths";
+import "../../styles/global.css";
+import "../../styles/portal.css";
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#050505" />
+    <link rel="icon" type="image/png" href={withBase("/assets/favicon.png")} />
+    <title>Invitados | Administración Break The Beat</title>
+  </head>
+  <body class="admin-body">
+    <header class="admin-topbar">
+      <a href={withBase("/")} class="admin-brand"><img src={withBase("/assets/break-the-beat-logo.webp")} alt="Break The Beat" /></a>
+      <span>Administración 2026</span>
+    </header>
+
+    <main class="admin-main">
+      <section class="admin-dashboard attendance-admin-dashboard" data-guest-dashboard hidden>
+        <div class="admin-dashboard-heading">
+          <div>
+            <p class="eyebrow">Lista independiente</p>
+            <h1>Invitados</h1>
+            <p>Asistencias confirmadas desde el QR general.</p>
+          </div>
+          <div class="admin-heading-actions">
+            <a class="button button-secondary dark" href={withBase("/admin/")}><Icon name="arrow-left" size={18} /> Inscripciones</a>
+            <button class="button button-primary" type="button" data-download-guest-qr><Icon name="qr-code" size={18} /> Descargar QR general</button>
+          </div>
+        </div>
+
+        <div class="admin-notice" data-guest-notice role="status">Cargando invitados…</div>
+
+        <section class="metric-grid" aria-label="Resumen de invitados">
+          <article><Icon name="users-round" size={22} /><span>Asistencias confirmadas</span><strong data-guest-stat>0</strong></article>
+        </section>
+
+        <section class="guest-qr-card">
+          <div><p class="step-kicker">QR general para invitados</p><h2>Comparte este enlace en tu invitación.</h2><p>Al escanearlo, cada invitado confirma su propia asistencia en <code data-guest-attendance-url></code>.</p></div>
+          <button class="button button-secondary dark" type="button" data-copy-guest-url><Icon name="copy" size={17} /> Copiar enlace</button>
+        </section>
+
+        <section class="admin-table-section">
+          <div class="admin-table-heading">
+            <div><h2>Lista de invitados</h2><p><span data-guest-filtered-count>0</span> resultados visibles</p></div>
+            <div class="table-action-row"><button class="button button-secondary dark" type="button" data-export-guests><Icon name="download" size={17} /> Exportar CSV</button></div>
+          </div>
+          <div class="filter-grid guest-filter-grid">
+            <label class="field filter-search"><span>Buscar</span><input type="search" data-guest-filter placeholder="Nombre, apellido, empresa o sponsor…" /></label>
+            <label class="field"><span>Empresa / sponsor</span><select data-guest-organization-filter><option value="all">Todas</option></select></label>
+          </div>
+          <div class="data-table-wrap"><table class="data-table"><thead><tr><th>Nombre</th><th>Apellido</th><th>Empresa / sponsor</th><th>Confirmó asistencia</th></tr></thead><tbody data-guest-rows></tbody></table></div>
+          <div class="table-empty" data-guest-empty hidden>No hay invitados que coincidan con la búsqueda.</div>
+        </section>
+      </section>
+
+      <section class="admin-login-shell guest-access-message" data-guest-access-message>
+        <div class="admin-login-copy"><p class="eyebrow">Acceso restringido</p><h1>Verificando sesión.</h1><p>Necesitas iniciar sesión como administrador para acceder a la lista de invitados.</p></div>
+      </section>
+    </main>
+    <script>
+      import "../../scripts/admin-attendance";
+    </script>
+  </body>
+</html>

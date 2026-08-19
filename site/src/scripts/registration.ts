@@ -415,7 +415,7 @@ form.addEventListener("submit", async (event) => {
       const messages: Record<string, string> = {
         DUPLICATE_PARTICIPANT_CATEGORY: duplicateMessage,
         DUPLICATE_PARTICIPANT: "Este correo ya se encuentra inscrito. Revisa las categorías seleccionadas.",
-        CATEGORY_FULL: "La categoría seleccionada acaba de completar sus 50 cupos. Elige otra categoría o inténtalo más tarde.",
+        CATEGORY_FULL: "La categoría seleccionada acaba de completar sus 30 cupos. Elige otra categoría o inténtalo más tarde.",
         REGISTRATION_CLOSED: "Las inscripciones se cerraron antes de completar el envío.",
         LEGAL_DOCUMENTS_NOT_READY: "Los documentos legales aún no están listos para recibir inscripciones.",
         TURNSTILE_FAILED: "La verificación humana expiró. Inténtalo nuevamente.",

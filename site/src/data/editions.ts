@@ -586,9 +586,9 @@ export const editions: Edition[] = [
       dateLabel: "Domingo 27 de septiembre de 2026",
       timeLabel: "10 AM",
       categoryPrizes: [
-        { category: "1 vs 1", prize: "Premio de USD 100" },
+        { category: "1 vs 1", prize: "Premio de USD 200" },
         { category: "2 vs 2", prize: "Premio de USD 500 al crew ganador" },
-        { category: "BGirls", prize: "Premio de USD 100" }
+        { category: "BGirls", prize: "Premio de USD 200" }
       ]
     }
   }

@@ -1,9 +1,11 @@
 import { z } from "zod";
 
+export const guestTypes = ["Influencer", "Bailarín", "Sponsor", "Invitado"] as const;
+
 export const guestAttendanceSchema = z.object({
   firstName: z.string().trim().min(2, "Ingresa tu nombre").max(80, "El nombre es demasiado largo"),
   lastName: z.string().trim().min(2, "Ingresa tu apellido").max(80, "El apellido es demasiado largo"),
-  organization: z.string().trim().max(120, "El nombre de la empresa o sponsor es demasiado largo")
+  organization: z.enum(guestTypes, { error: "Selecciona tu tipo de invitado" })
 });
 
 export type GuestAttendance = {
@@ -36,7 +38,7 @@ const csvCell = (value: unknown) => {
 };
 
 export const guestAttendanceCsv = (rows: GuestAttendance[]) => {
-  const header = ["Nombre", "Apellido", "Empresa / sponsor", "Confirmó asistencia"];
+  const header = ["Nombre", "Apellido", "Tipo de invitado", "Confirmó asistencia"];
   const data = rows.map((row) => [row.firstName, row.lastName, row.organization ?? "", row.confirmedAt]);
   return [header, ...data].map((line) => line.map(csvCell).join(",")).join("\r\n");
 };

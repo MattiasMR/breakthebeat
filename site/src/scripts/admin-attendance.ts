@@ -62,7 +62,7 @@ const renderOrganizationFilter = () => {
   select.replaceChildren();
   const all = document.createElement("option");
   all.value = "all";
-  all.textContent = "Todas";
+  all.textContent = "Todos";
   select.append(all);
   organizations.forEach((organization) => {
     const option = document.createElement("option");

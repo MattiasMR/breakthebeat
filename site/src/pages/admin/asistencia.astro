@@ -52,10 +52,10 @@ import "../../styles/portal.css";
             <div class="table-action-row"><button class="button button-secondary dark" type="button" data-export-guests><Icon name="download" size={17} /> Exportar CSV</button></div>
           </div>
           <div class="filter-grid guest-filter-grid">
-            <label class="field filter-search"><span>Buscar</span><input type="search" data-guest-filter placeholder="Nombre, apellido, empresa o sponsor…" /></label>
-            <label class="field"><span>Empresa / sponsor</span><select data-guest-organization-filter><option value="all">Todas</option></select></label>
+            <label class="field filter-search"><span>Buscar</span><input type="search" data-guest-filter placeholder="Nombre, apellido o tipo de invitado…" /></label>
+            <label class="field"><span>Tipo de invitado</span><select data-guest-organization-filter><option value="all">Todos</option></select></label>
           </div>
-          <div class="data-table-wrap"><table class="data-table"><thead><tr><th>Nombre</th><th>Apellido</th><th>Empresa / sponsor</th><th>Confirmó asistencia</th></tr></thead><tbody data-guest-rows></tbody></table></div>
+          <div class="data-table-wrap"><table class="data-table"><thead><tr><th>Nombre</th><th>Apellido</th><th>Tipo de invitado</th><th>Confirmó asistencia</th></tr></thead><tbody data-guest-rows></tbody></table></div>
           <div class="table-empty" data-guest-empty hidden>No hay invitados que coincidan con la búsqueda.</div>
         </section>
       </section>

@@ -12,7 +12,7 @@ const requestSchema = z.object({
   eventSlug: z.literal(eventSlug),
   firstName: textField(2, 80),
   lastName: textField(2, 80),
-  organization: z.string().trim().max(120).transform((value) => value.replace(/\s+/g, " ")),
+  organization: z.enum(["Influencer", "Bailarín", "Sponsor", "Invitado"]),
   turnstileToken: z.string().min(1).max(2048)
 }).strict();
 
@@ -46,7 +46,7 @@ Deno.serve(async (request) => {
       event_id: event.id,
       first_name: parsed.data.firstName,
       last_name: parsed.data.lastName,
-      organization: parsed.data.organization || null
+      organization: parsed.data.organization
     })
     .select("confirmed_at")
     .single();

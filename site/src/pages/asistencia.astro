@@ -2,6 +2,7 @@
 import Analytics from "../components/Analytics.astro";
 import Icon from "../components/Icon.astro";
 import { event } from "../data/site";
+import { guestTypes } from "../lib/guest-attendance";
 import { withBase } from "../utils/paths";
 import "../styles/global.css";
 import "../styles/portal.css";
@@ -50,7 +51,13 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
             <label class="field"><span>Nombre</span><input name="firstName" autocomplete="given-name" maxlength="80" required placeholder="Tu nombre" /></label>
             <label class="field"><span>Apellido</span><input name="lastName" autocomplete="family-name" maxlength="80" required placeholder="Tu apellido" /></label>
           </div>
-          <label class="field"><span>Empresa o sponsor <em>(opcional)</em></span><input name="organization" autocomplete="organization" maxlength="120" placeholder="Ej. Marca aliada" /></label>
+          <label class="field">
+            <span>Tipo de invitado</span>
+            <select name="organization" required>
+              <option value="" selected disabled>Selecciona una opción</option>
+              {guestTypes.map((guestType) => <option value={guestType}>{guestType}</option>)}
+            </select>
+          </label>
           <div class="turnstile-block compact">
             {turnstileSiteKey ? (
               <div class="cf-turnstile" data-sitekey={turnstileSiteKey} data-theme="light" data-action="guest_attendance"></div>

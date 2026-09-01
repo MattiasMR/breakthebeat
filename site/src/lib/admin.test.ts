@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
+import ExcelJS from "exceljs";
 import { calculateStats, filterParticipants, operationalCsv, type AdminParticipant } from "./admin";
+import { buildOperationalWorkbook } from "./admin-workbook";
 
 const row = (overrides: Partial<AdminParticipant> = {}): AdminParticipant => ({
   id: "p1",
@@ -41,5 +43,19 @@ describe("admin helpers", () => {
 
   it("neutraliza fórmulas al exportar CSV", () => {
     expect(operationalCsv([row({ displayName: "=HYPERLINK(\"bad\")" })])).toContain("'=HYPERLINK");
+  });
+
+  it("crea un Excel operativo con resumen y tabla filtrable", async () => {
+    const workbook = buildOperationalWorkbook([row({ checkedInAt: "2026-08-31T12:00:00Z" })], new Date("2026-08-31T13:00:00Z"));
+    const summary = workbook.getWorksheet("Resumen");
+    const participants = workbook.getWorksheet("Participantes");
+    expect(summary?.getCell("A1").value).toContain("Break The Beat 2026");
+    expect(summary?.getCell("B7").value).toEqual({ formula: 'COUNTIF(Participantes[Estado],"Confirmado")' });
+    expect(participants?.getCell("A1").value).toBe("Código");
+    expect(participants?.getTable("Participantes").name).toBe("Participantes");
+
+    const reopened = new ExcelJS.Workbook();
+    await reopened.xlsx.load(await workbook.xlsx.writeBuffer());
+    expect(reopened.getWorksheet("Participantes")?.getTable("Participantes").name).toBe("Participantes");
   });
 });

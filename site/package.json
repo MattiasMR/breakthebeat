@@ -14,6 +14,7 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.110.6",
     "@zxing/browser": "^0.2.1",
+    "exceljs": "^4.4.0",
     "qrcode": "^1.5.4",
     "zod": "^4.4.3"
   },

@@ -2,7 +2,6 @@ import {
   calculateStats,
   downloadCsv,
   filterParticipants,
-  operationalCsv,
   type AdminFilters,
   type AdminParticipant
 } from "../lib/admin";
@@ -454,8 +453,14 @@ document.querySelector("[data-toggle-registration]")?.addEventListener("click", 
 });
 
 document.querySelector("[data-export]")?.addEventListener("click", async () => {
-  downloadCsv(`break-the-beat-participantes-${new Date().toISOString().slice(0, 10)}.csv`, operationalCsv(filtered));
-  await getSupabase().rpc("log_admin_action", { p_action: "export_operational_csv", p_target_type: "event", p_target_id: eventState?.id, p_metadata: { rows: filtered.length } });
+  try {
+    const { downloadOperationalWorkbook } = await import("../lib/admin-workbook");
+    await downloadOperationalWorkbook(`break-the-beat-participantes-${new Date().toISOString().slice(0, 10)}.xlsx`, filtered);
+    await getSupabase().rpc("log_admin_action", { p_action: "export_operational_xlsx", p_target_type: "event", p_target_id: eventState?.id, p_metadata: { rows: filtered.length } });
+    setNotice("Excel operativo descargado.", "success");
+  } catch {
+    setNotice("No se pudo generar el Excel operativo.", "error");
+  }
 });
 
 const csvCell = (value: unknown) => {

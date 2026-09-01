@@ -88,14 +88,14 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
             <div class="table-action-row">
               <button class="button button-secondary dark" type="button" data-export><Icon name="download" size={17} /> Excel operativo</button>
               <button class="button button-secondary dark" type="button" data-export-emergency><Icon name="shield-alert" size={17} /> CSV emergencia</button>
-              <button class="button danger-button" type="button" data-delete-selected disabled><Icon name="trash-2" size={17} /> Eliminar selección</button>
+              <button class="button danger-button" type="button" data-deactivate-selected disabled><Icon name="shield-alert" size={17} /> Desactivar selección</button>
             </div>
           </div>
 
           <div class="filter-grid">
             <label class="field filter-search"><span>Buscar</span><input type="search" data-filter="query" placeholder="Nombre, correo, código…" /></label>
             <label class="field"><span>Categoría</span><select data-filter="category"><option value="all">Todas</option><option value="1v1">1 vs 1</option><option value="2v2">2 vs 2</option><option value="bgirls">BGirls</option></select></label>
-            <label class="field"><span>Estado</span><select data-filter="status"><option value="all">Todos</option><option value="confirmed">Confirmado</option><option value="cancelled">Cancelado</option></select></label>
+            <label class="field"><span>Estado</span><select data-filter="status"><option value="all">Todos</option><option value="confirmed">Confirmado</option><option value="cancelled">Desactivado</option></select></label>
             <label class="field"><span>Check-in</span><select data-filter="checkIn"><option value="all">Todos</option><option value="yes">Realizado</option><option value="no">Pendiente</option></select></label>
           </div>
 

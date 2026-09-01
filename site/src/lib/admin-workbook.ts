@@ -6,7 +6,7 @@ const excelSafeText = (value: unknown) => {
   return /^[=+\-@]/.test(text) ? `'${text}` : text;
 };
 
-const localizedStatus = (status: AdminParticipant["status"]) => status === "cancelled" ? "Cancelado" : "Confirmado";
+const localizedStatus = (status: AdminParticipant["status"]) => status === "cancelled" ? "Desactivado" : "Confirmado";
 
 const localizedRole = (role: AdminParticipant["role"]) => role === "captain" ? "Principal" : "Compañero";
 
@@ -67,7 +67,7 @@ export const buildOperationalWorkbook = (rows: AdminParticipant[], generatedAt =
   ["A5", "B5"].forEach((cell) => summary.getCell(cell).fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FF2563EB" } });
   const indicators = [
     ["Participantes exportados", rows.length], ["Confirmados", { formula: `COUNTIF('Participantes'!$J$2:$J$${dataLastRow},"Confirmado")` }],
-    ["Cancelados", { formula: `COUNTIF('Participantes'!$J$2:$J$${dataLastRow},"Cancelado")` }], ["Con check-in", { formula: `COUNT('Participantes'!$K$2:$K$${dataLastRow})` }],
+    ["Desactivados", { formula: `COUNTIF('Participantes'!$J$2:$J$${dataLastRow},"Desactivado")` }], ["Con check-in", { formula: `COUNT('Participantes'!$K$2:$K$${dataLastRow})` }],
     ["1 vs 1", { formula: `COUNTIF('Participantes'!$I$2:$I$${dataLastRow},"*1v1*")` }], ["2 vs 2", { formula: `COUNTIF('Participantes'!$I$2:$I$${dataLastRow},"*2v2*")` }],
     ["BGirls", { formula: `COUNTIF('Participantes'!$I$2:$I$${dataLastRow},"*bgirls*")` }]
   ];

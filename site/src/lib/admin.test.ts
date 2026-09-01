@@ -27,7 +27,8 @@ describe("admin helpers", () => {
     const stats = calculateStats([
       row(),
       row({ id: "p2", role: "partner", participantCode: "BTB26-AAAA-B", email: "partner@example.com", categories: ["2v2"] }),
-      row({ id: "p3", registrationId: "r2", registrationCode: "BTB26-BBBB", participantCode: "BTB26-BBBB-A", categories: ["bgirls"] })
+      row({ id: "p3", registrationId: "r2", registrationCode: "BTB26-BBBB", participantCode: "BTB26-BBBB-A", categories: ["bgirls"] }),
+      row({ id: "p4", registrationId: "r3", registrationCode: "BTB26-CCCC", participantCode: "BTB26-CCCC-A", categories: ["1v1"], status: "cancelled" })
     ]);
     expect(stats.participants).toBe(3);
     expect(stats.registrations).toBe(2);
@@ -46,13 +47,14 @@ describe("admin helpers", () => {
   });
 
   it("crea un Excel operativo con resumen y filtros compatibles", async () => {
-    const workbook = buildOperationalWorkbook([row({ checkedInAt: "2026-08-31T12:00:00Z" })], new Date("2026-08-31T13:00:00Z"));
+    const workbook = buildOperationalWorkbook([row({ checkedInAt: "2026-08-31T12:00:00Z", status: "cancelled" })], new Date("2026-08-31T13:00:00Z"));
     const summary = workbook.getWorksheet("Resumen");
     const participants = workbook.getWorksheet("Participantes");
     expect(summary?.getCell("A1").value).toContain("Break The Beat 2026");
     expect(summary?.getCell("B7").value).toEqual({ formula: "COUNTIF('Participantes'!$J$2:$J$2,\"Confirmado\")" });
     expect(participants?.getCell("A1").value).toBe("Código");
     expect(participants?.getCell("C2").value).toBe("Bboy Test");
+    expect(participants?.getCell("J2").value).toBe("Desactivado");
 
     const reopened = new ExcelJS.Workbook();
     await reopened.xlsx.load(await workbook.xlsx.writeBuffer());

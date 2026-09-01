@@ -60,30 +60,42 @@ begin
       v_confirmed_people;
   end if;
 
+  update public.registrations
+  set status = 'cancelled'
+  where id = v_first_registration;
+
+  insert into public.registrations(event_id, public_code)
+  values (v_event_id, 'CAPACITY-TEST-B')
+  returning id into v_second_registration;
+
+  insert into public.participants(
+    event_id, registration_id, participant_code, role, display_name, social_url,
+    age, country, city, phone, email, email_normalized
+  ) values (
+    v_event_id, v_second_registration, 'CAPACITY-TEST-B-1', 'captain',
+    'Replacement captain', '', 18, '', '', '12345678',
+    'capacity-b1@example.test', 'capacity-b1@example.test'
+  ) returning id into v_participant_id;
+
+  insert into public.participant_categories(participant_id, category)
+  values (v_participant_id, '2v2');
+
   begin
-    insert into public.registrations(event_id, public_code)
-    values (v_event_id, 'CAPACITY-TEST-B')
-    returning id into v_second_registration;
+    update public.registrations
+    set status = 'confirmed'
+    where id = v_first_registration;
 
-    insert into public.participants(
-      event_id, registration_id, participant_code, role, display_name, social_url,
-      age, country, city, phone, email, email_normalized
-    ) values (
-      v_event_id, v_second_registration, 'CAPACITY-TEST-B-1', 'captain',
-      'Blocked captain', '', 18, '', '', '12345678',
-      'capacity-b1@example.test', 'capacity-b1@example.test'
-    ) returning id into v_participant_id;
-
-    insert into public.participant_categories(participant_id, category)
-    values (v_participant_id, '2v2');
-
-    raise exception 'Expected CATEGORY_FULL was not raised';
+    raise exception 'Expected CATEGORY_FULL was not raised on reactivation';
   exception
     when sqlstate 'P0001' then
       if sqlerrm <> 'CATEGORY_FULL:2v2' then
         raise;
       end if;
   end;
+
+  if (select status from public.registrations where id = v_first_registration) <> 'cancelled' then
+    raise exception 'Failed reactivation must leave the registration deactivated';
+  end if;
 
   delete from public.registrations
   where id = v_first_registration;
@@ -95,6 +107,9 @@ begin
   ) then
     raise exception 'Registration cascade cleanup failed';
   end if;
+
+  delete from public.registrations
+  where id = v_second_registration;
 end;
 $capacity_test$;
 

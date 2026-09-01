@@ -1159,6 +1159,12 @@ a.legal-document::after {
   color: white;
 }
 
+.row-actions .deactivate-action-button {
+  border-color: #a60d35;
+  background: #fff4f6;
+  color: #7f0e2c;
+}
+
 .table-empty {
   padding: 36px;
   color: #71695f;

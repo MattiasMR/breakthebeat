@@ -170,7 +170,7 @@ const renderRows = () => {
     row.categories.forEach((category) => categoryCell.append(chip(categoryLabels[category])));
 
     const statusCell = document.createElement("td");
-    statusCell.append(chip(row.status === "cancelled" ? "Cancelado" : "Confirmado", row.status));
+    statusCell.append(chip(row.status === "cancelled" ? "Desactivado" : "Confirmado", row.status));
     statusCell.append(chip(row.checkedInAt ? "Ingresó" : "Sin check-in", row.checkedInAt ? "checked" : ""));
 
     const actionCell = document.createElement("td");
@@ -186,30 +186,26 @@ const renderRows = () => {
     checkInButton.dataset.participantName = row.displayName;
     checkInButton.disabled = Boolean(row.checkedInAt) || row.status === "cancelled";
     if (row.checkedInAt) checkInButton.title = "Este participante ya hizo check-in";
-    if (row.status === "cancelled") checkInButton.title = "La inscripción está cancelada";
-    const cancelButton = document.createElement("button");
-    cancelButton.type = "button";
-    cancelButton.textContent = row.status === "cancelled" ? "Reactivar" : "Cancelar";
-    cancelButton.dataset.toggleRegistration = row.registrationId;
-    cancelButton.dataset.nextStatus = row.status === "cancelled" ? "confirmed" : "cancelled";
-    const deleteButton = document.createElement("button");
-    deleteButton.type = "button";
-    deleteButton.textContent = "Eliminar";
-    deleteButton.dataset.deleteRegistration = row.registrationId;
-    deleteButton.dataset.registrationCode = row.registrationCode;
+    if (row.status === "cancelled") checkInButton.title = "La inscripción está desactivada";
+    const statusButton = document.createElement("button");
+    statusButton.type = "button";
+    statusButton.textContent = row.status === "cancelled" ? "Reactivar" : "Desactivar";
+    statusButton.dataset.toggleRegistration = row.registrationId;
+    statusButton.dataset.nextStatus = row.status === "cancelled" ? "confirmed" : "cancelled";
+    if (row.status !== "cancelled") statusButton.className = "deactivate-action-button";
     const qrButton = document.createElement("button");
     qrButton.type = "button";
     qrButton.textContent = "Generar QR";
     qrButton.dataset.generateQr = row.id;
     qrButton.className = "qr-action-button";
-    actionCell.append(detailsButton, checkInButton, cancelButton, deleteButton, qrButton);
+    actionCell.append(detailsButton, checkInButton, statusButton, qrButton);
 
     tr.append(selectCell, personCell, categoryCell, statusCell, actionCell);
     return tr;
   }));
 
-  const deleteButton = document.querySelector<HTMLButtonElement>("[data-delete-selected]");
-  if (deleteButton) deleteButton.disabled = selected.size === 0;
+  const deactivateButton = document.querySelector<HTMLButtonElement>("[data-deactivate-selected]");
+  if (deactivateButton) deactivateButton.disabled = selected.size === 0;
 };
 
 const applyFilters = () => {
@@ -332,7 +328,6 @@ rowsContainer.addEventListener("click", async (event) => {
   const view = target.closest<HTMLButtonElement>("[data-view-participant]");
   const manualCheckInButton = target.closest<HTMLButtonElement>("[data-manual-checkin]");
   const toggle = target.closest<HTMLButtonElement>("[data-toggle-registration]");
-  const remove = target.closest<HTMLButtonElement>("[data-delete-registration]");
   const generateQrButton = target.closest<HTMLButtonElement>("[data-generate-qr]");
   if (view) await openParticipantDetail(view.dataset.viewParticipant ?? "");
   if (manualCheckInButton) {
@@ -342,7 +337,6 @@ rowsContainer.addEventListener("click", async (event) => {
     );
   }
   if (toggle) await toggleRegistrationStatus(toggle.dataset.toggleRegistration ?? "", toggle.dataset.nextStatus as "confirmed" | "cancelled");
-  if (remove) await deleteRegistrations([remove.dataset.deleteRegistration ?? ""], remove.dataset.registrationCode ?? "esta inscripción");
   if (generateQrButton) await generateParticipantQr(generateQrButton.dataset.generateQr ?? "", generateQrButton);
 });
 
@@ -403,8 +397,28 @@ const manualCheckIn = async (participantCode: string, displayName: string) => {
 };
 
 const toggleRegistrationStatus = async (registrationId: string, status: "confirmed" | "cancelled") => {
+  const registrationRows = participants.filter((row) => row.registrationId === registrationId);
+  const categories = [...new Set(registrationRows.flatMap((row) => row.categories))];
+  const registrationCode = registrationRows[0]?.registrationCode ?? "esta inscripción";
+  if (status === "confirmed") {
+    const categoryText = categories.map((category) => categoryLabels[category]).join(", ");
+    if (!window.confirm(`Al reactivar ${registrationCode}, volverá a utilizar un cupo en: ${categoryText}. Si la categoría ya está llena, la reactivación será rechazada. ¿Deseas continuar?`)) return;
+  } else if (!window.confirm(`¿Desactivar ${registrationCode}? Seguirá visible como desactivada y dejará de utilizar sus cupos.`)) {
+    return;
+  }
+
   const { error } = await getSupabase().from("registrations").update({ status }).eq("id", registrationId);
-  if (error) return setNotice("No se pudo cambiar el estado.", "error");
+  if (error) {
+    const isFull = error.message.includes("CATEGORY_FULL");
+    return setNotice(isFull ? "No se puede reactivar: una de sus categorías ya no tiene cupos disponibles." : "No se pudo cambiar el estado.", "error");
+  }
+  await getSupabase().rpc("log_admin_action", {
+    p_action: status === "confirmed" ? "reactivate_registration" : "deactivate_registration",
+    p_target_type: "registration",
+    p_target_id: registrationId,
+    p_metadata: { categories }
+  });
+  setNotice(status === "confirmed" ? "Inscripción reactivada: vuelve a utilizar sus cupos." : "Inscripción desactivada: ya no utiliza cupos y sigue visible en el panel.", "success");
   await loadRows();
 };
 
@@ -489,19 +503,27 @@ document.querySelector("[data-export-emergency]")?.addEventListener("click", asy
   await getSupabase().rpc("log_admin_action", { p_action: "export_emergency_csv", p_target_type: "event", p_target_id: eventState?.id, p_metadata: { rows: filtered.length } });
 });
 
-const deleteRegistrations = async (registrationIds: string[], description: string) => {
+const deactivateRegistrations = async (registrationIds: string[]) => {
   const uniqueIds = [...new Set(registrationIds.filter(Boolean))];
   if (!uniqueIds.length) return;
-  if (window.prompt(`Se eliminará permanentemente ${description} y todos sus datos. Escribe ELIMINAR para confirmar.`) !== "ELIMINAR") return;
-  const { error } = await getSupabase().from("registrations").delete().in("id", uniqueIds);
-  if (error) return setNotice("No se pudieron eliminar los registros.", "error");
-  setNotice("Registros eliminados permanentemente.", "success");
+  const activeIds = uniqueIds.filter((registrationId) => participants.some((row) => row.registrationId === registrationId && row.status === "confirmed"));
+  if (!activeIds.length) return setNotice("Las inscripciones seleccionadas ya están desactivadas.", "info");
+  if (!window.confirm(`¿Desactivar ${activeIds.length} inscripción(es)? Seguirán visibles como desactivadas y dejarán de utilizar sus cupos.`)) return;
+  const { error } = await getSupabase().from("registrations").update({ status: "cancelled" }).in("id", activeIds);
+  if (error) return setNotice("No se pudieron desactivar los registros.", "error");
+  await Promise.all(activeIds.map((registrationId) => getSupabase().rpc("log_admin_action", {
+    p_action: "deactivate_registration",
+    p_target_type: "registration",
+    p_target_id: registrationId,
+    p_metadata: { bulk: true }
+  })));
+  setNotice("Inscripciones desactivadas: ya no utilizan cupos y siguen visibles en el panel.", "success");
   await loadRows();
 };
 
-document.querySelector("[data-delete-selected]")?.addEventListener("click", async () => {
+document.querySelector("[data-deactivate-selected]")?.addEventListener("click", async () => {
   const registrationIds = [...new Set(participants.filter((row) => selected.has(row.id)).map((row) => row.registrationId))];
-  await deleteRegistrations(registrationIds, `${registrationIds.length} inscripciones seleccionadas`);
+  await deactivateRegistrations(registrationIds);
 });
 
 void restoreSession();

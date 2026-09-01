@@ -19,6 +19,7 @@ const row = (overrides: Partial<AdminParticipant> = {}): AdminParticipant => ({
   status: "confirmed",
   createdAt: "2026-07-15T12:00:00Z",
   checkedInAt: null,
+  photoPath: null,
   ...overrides
 });
 
@@ -55,6 +56,7 @@ describe("admin helpers", () => {
     expect(participants?.getCell("A1").value).toBe("Código");
     expect(participants?.getCell("C2").value).toBe("Bboy Test");
     expect(participants?.getCell("J2").value).toBe("Desactivado");
+    expect(participants?.getCell("L2").value).toBe("Pendiente");
 
     const reopened = new ExcelJS.Workbook();
     await reopened.xlsx.load(await workbook.xlsx.writeBuffer());

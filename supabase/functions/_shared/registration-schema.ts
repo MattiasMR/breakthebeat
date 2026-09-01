@@ -3,6 +3,10 @@ import { z } from "npm:zod@4";
 const category = z.enum(["1v1", "2v2", "bgirls"]);
 const phone = z.string().trim().min(8).max(24).regex(/^[+0-9][0-9 ()-]{7,22}$/);
 const socialProfile = z.string().trim().max(200);
+const participantPhoto = z.object({
+  mimeType: z.literal("image/jpeg"),
+  base64: z.string().min(100).max(2_000_000)
+});
 
 const medical = z.object({
   hasCondition: z.boolean(),
@@ -32,6 +36,7 @@ const participant = z.object({
   city: z.string().trim().max(100),
   phone,
   email: z.string().trim().toLowerCase().max(254).pipe(z.email()),
+  photo: participantPhoto,
   categories: z.array(category)
     .min(1)
     .max(3)

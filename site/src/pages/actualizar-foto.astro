@@ -1,0 +1,85 @@
+---
+import Analytics from "../components/Analytics.astro";
+import Icon from "../components/Icon.astro";
+import { withBase } from "../utils/paths";
+import "../styles/global.css";
+import "../styles/portal.css";
+
+const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Carga tu fotografía de participante para Break The Beat 2026." />
+    <meta name="theme-color" content="#050505" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <link rel="icon" type="image/png" href={withBase("/assets/favicon.png")} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <title>Actualiza tu foto | Break The Beat</title>
+  </head>
+  <body class="photo-update-body">
+    <header class="photo-update-topbar">
+      <a href={withBase("/")} aria-label="Volver a Break The Beat"><img src={withBase("/assets/break-the-beat-logo.webp")} alt="Break The Beat" /></a>
+      <a class="text-link" href={withBase("/")}><Icon name="arrow-left" size={17} /> Volver al inicio</a>
+    </header>
+
+    <main class="photo-update-main">
+      <section class="photo-update-copy" aria-labelledby="photo-update-title">
+        <p class="eyebrow">Participantes 2026</p>
+        <h1 id="photo-update-title">Tu foto también es parte del registro.</h1>
+        <p>Necesitamos una fotografía reciente donde se vea claramente tu rostro. Es importante completarlo antes del evento.</p>
+        <ul>
+          <li>La imagen se guarda de forma privada.</li>
+          <li>Se utiliza para la organización e identificación del participante.</li>
+          <li>Si estás en varias categorías con el mismo correo, una sola carga actualiza tus registros activos.</li>
+        </ul>
+      </section>
+
+      <form class="photo-update-card" data-photo-update-form novalidate>
+        <div class="photo-update-card-heading">
+          <span><Icon name="camera" size={26} /></span>
+          <div><p class="step-kicker">Actualización obligatoria</p><h2>Sube tu fotografía</h2></div>
+        </div>
+        <label class="field">
+          <span>Correo, código de participante o contenido del QR</span>
+          <input name="identifier" maxlength="254" required autocomplete="email" placeholder="tu@correo.com o BTB26-…" />
+          <small>Usa exactamente el correo de tu inscripción. También puedes pegar el código contenido en tu QR.</small>
+        </label>
+        <label class="field participant-photo-field">
+          <span>Fotografía reciente</span>
+          <input name="photo" type="file" accept="image/jpeg,image/png,image/webp" required />
+          <small>JPG, PNG o WebP. La imagen se optimiza antes de enviarse.</small>
+        </label>
+        <div class="turnstile-block compact">
+          {turnstileSiteKey ? (
+            <div class="cf-turnstile" data-sitekey={turnstileSiteKey} data-theme="light" data-action="participant_photo"></div>
+          ) : (
+            <p>La verificación humana todavía no está disponible.</p>
+          )}
+        </div>
+        <div class="submit-alert" data-photo-update-alert role="alert" hidden></div>
+        <button class="button button-primary" type="submit" data-photo-update-submit><Icon name="camera" size={18} /> Guardar fotografía</button>
+        <p class="photo-update-privacy"><Icon name="shield-check" size={17} /> Tu fotografía no es pública.</p>
+      </form>
+
+      <section class="photo-update-success" data-photo-update-success hidden aria-live="polite">
+        <span><Icon name="check-circle-2" size={36} /></span>
+        <p class="eyebrow">Actualización completada</p>
+        <h2>Tu fotografía quedó guardada.</h2>
+        <p>Gracias por completar tu registro para Break The Beat 2026.</p>
+        <a class="button button-secondary dark" href={withBase("/")}>Volver a Break The Beat</a>
+      </section>
+    </main>
+
+    {turnstileSiteKey && <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>}
+    <script>
+      import "../scripts/participant-photo";
+    </script>
+    <Analytics />
+  </body>
+</html>

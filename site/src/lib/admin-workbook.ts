@@ -20,18 +20,18 @@ export const buildOperationalWorkbook = (rows: AdminParticipant[], generatedAt =
 
   const summary = workbook.addWorksheet("Resumen", { views: [{ showGridLines: false }] });
   const participantsSheet = workbook.addWorksheet("Participantes", { views: [{ state: "frozen", ySplit: 1 }] });
-  const headers = ["Código", "Inscripción", "Nombre", "Rol", "Email", "Teléfono", "Red social", "Edad", "Categorías", "Estado", "Check-in"];
+  const headers = ["Código", "Inscripción", "Nombre", "Rol", "Email", "Teléfono", "Red social", "Edad", "Categorías", "Estado", "Check-in", "Foto"];
   const tableRows = rows.map((row) => [
     excelSafeText(row.participantCode), excelSafeText(row.registrationCode), excelSafeText(row.displayName), localizedRole(row.role),
     excelSafeText(row.email), excelSafeText(row.phone), excelSafeText(row.socialUrl), row.age, row.categories.join(" | "),
-    localizedStatus(row.status), checkInValue(row.checkedInAt)
+    localizedStatus(row.status), checkInValue(row.checkedInAt), row.photoPath ? "Cargada" : "Pendiente"
   ]);
 
   participantsSheet.addRow(headers);
   participantsSheet.addRows(tableRows);
   participantsSheet.columns = [
     { width: 20 }, { width: 19 }, { width: 32 }, { width: 13 }, { width: 31 }, { width: 18 },
-    { width: 30 }, { width: 9 }, { width: 18 }, { width: 14 }, { width: 22 }
+    { width: 30 }, { width: 9 }, { width: 18 }, { width: 14 }, { width: 22 }, { width: 14 }
   ];
   participantsSheet.getRow(1).height = 22;
   participantsSheet.getRow(1).font = { bold: true, color: { argb: "FFFFFFFF" } };
@@ -48,7 +48,7 @@ export const buildOperationalWorkbook = (rows: AdminParticipant[], generatedAt =
     }
   }
   participantsSheet.getColumn("K").numFmt = "yyyy-mm-dd hh:mm";
-  participantsSheet.autoFilter = { from: "A1", to: `K${Math.max(rows.length + 1, 1)}` };
+  participantsSheet.autoFilter = { from: "A1", to: `L${Math.max(rows.length + 1, 1)}` };
 
   const dataLastRow = Math.max(rows.length + 1, 2);
 
@@ -69,7 +69,8 @@ export const buildOperationalWorkbook = (rows: AdminParticipant[], generatedAt =
     ["Participantes exportados", rows.length], ["Confirmados", { formula: `COUNTIF('Participantes'!$J$2:$J$${dataLastRow},"Confirmado")` }],
     ["Desactivados", { formula: `COUNTIF('Participantes'!$J$2:$J$${dataLastRow},"Desactivado")` }], ["Con check-in", { formula: `COUNT('Participantes'!$K$2:$K$${dataLastRow})` }],
     ["1 vs 1", { formula: `COUNTIF('Participantes'!$I$2:$I$${dataLastRow},"*1v1*")` }], ["2 vs 2", { formula: `COUNTIF('Participantes'!$I$2:$I$${dataLastRow},"*2v2*")` }],
-    ["BGirls", { formula: `COUNTIF('Participantes'!$I$2:$I$${dataLastRow},"*bgirls*")` }]
+    ["BGirls", { formula: `COUNTIF('Participantes'!$I$2:$I$${dataLastRow},"*bgirls*")` }],
+    ["Fotos pendientes", { formula: `COUNTIFS('Participantes'!$J$2:$J$${dataLastRow},"Confirmado",'Participantes'!$L$2:$L$${dataLastRow},"Pendiente")` }]
   ];
   indicators.forEach(([label, value], index) => {
     const row = index + 6;

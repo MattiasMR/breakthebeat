@@ -16,6 +16,7 @@ export type AdminParticipant = {
   status: "confirmed" | "cancelled";
   createdAt: string;
   checkedInAt: string | null;
+  photoPath: string | null;
 };
 
 export type AdminFilters = {
@@ -61,7 +62,7 @@ const csvCell = (value: unknown) => {
 };
 
 export const operationalCsv = (rows: AdminParticipant[]) => {
-  const header = ["Código", "Inscripción", "Nombre", "Rol", "Email", "Teléfono", "Red social", "Edad", "Categorías", "Estado", "Check-in"];
+  const header = ["Código", "Inscripción", "Nombre", "Rol", "Email", "Teléfono", "Red social", "Edad", "Categorías", "Estado", "Check-in", "Foto"];
   const data = rows.map((row) => [
     row.participantCode,
     row.registrationCode,
@@ -73,7 +74,8 @@ export const operationalCsv = (rows: AdminParticipant[]) => {
     row.age,
     row.categories.join(" | "),
     row.status,
-    row.checkedInAt ?? ""
+    row.checkedInAt ?? "",
+    row.photoPath ? "Cargada" : "Pendiente"
   ]);
   return [header, ...data].map((line) => line.map(csvCell).join(",")).join("\r\n");
 };

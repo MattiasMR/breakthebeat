@@ -330,6 +330,18 @@
   color: var(--magenta-dark);
 }
 
+.participant-photo-field input[type="file"] {
+  min-height: 52px;
+  padding: 12px;
+  border: 1px dashed #92897c;
+  background: #fffdf8;
+}
+
+.participant-photo-field small {
+  color: #71695f;
+  line-height: 1.45;
+}
+
 .field-help {
   position: relative;
   display: inline-flex;
@@ -1163,6 +1175,113 @@ a.legal-document::after {
   border-color: #a60d35;
   background: #fff4f6;
   color: #7f0e2c;
+}
+
+.photo-update-body {
+  min-height: 100vh;
+  background: #f4efe6;
+  color: #080808;
+  font-family: "Poppins", Inter, ui-sans-serif, system-ui, sans-serif;
+}
+
+.photo-update-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.photo-update-topbar img {
+  width: 128px;
+  height: auto;
+}
+
+.photo-update-main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 520px);
+  gap: clamp(36px, 7vw, 100px);
+  align-items: center;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: clamp(40px, 8vw, 100px) 24px 80px;
+}
+
+.photo-update-copy h1 {
+  max-width: 680px;
+  margin: 12px 0 24px;
+  font-size: clamp(2.7rem, 6vw, 5.6rem);
+  line-height: 0.94;
+}
+
+.photo-update-copy > p:last-of-type,
+.photo-update-copy li {
+  color: #665f55;
+}
+
+.photo-update-copy ul {
+  display: grid;
+  gap: 10px;
+  margin: 28px 0 0;
+  padding-left: 22px;
+}
+
+.photo-update-card,
+.photo-update-success {
+  display: grid;
+  gap: 20px;
+  padding: clamp(24px, 5vw, 44px);
+  border: 1px solid #d6cdc0;
+  border-radius: 18px;
+  background: white;
+  box-shadow: 0 24px 70px rgba(44, 36, 27, 0.12);
+}
+
+.photo-update-card-heading {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.photo-update-card-heading > span,
+.photo-update-success > span {
+  display: grid;
+  width: 52px;
+  height: 52px;
+  place-items: center;
+  border-radius: 50%;
+  background: #ff0076;
+  color: white;
+}
+
+.photo-update-card-heading h2,
+.photo-update-success h2 {
+  margin: 2px 0 0;
+}
+
+.photo-update-card .field small,
+.photo-update-privacy {
+  color: #71695f;
+  font-size: 0.78rem;
+}
+
+.photo-update-privacy {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0;
+}
+
+@media (max-width: 820px) {
+  .photo-update-main {
+    grid-template-columns: 1fr;
+    padding-top: 36px;
+  }
+
+  .photo-update-copy h1 {
+    font-size: clamp(2.6rem, 13vw, 4.4rem);
+  }
 }
 
 .table-empty {

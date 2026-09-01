@@ -27,6 +27,11 @@ const socialUrlSchema = z
   .trim()
   .max(200, "El usuario es demasiado largo");
 
+export const participantPhotoSchema = z.object({
+  mimeType: z.literal("image/jpeg"),
+  base64: z.string().min(100, "Selecciona una fotografía válida").max(2_000_000, "La fotografía es demasiado pesada")
+});
+
 export const medicalSchema = z
   .object({
     hasCondition: z.boolean(),
@@ -61,6 +66,7 @@ export const participantSchema = z.object({
   city: z.string().trim().max(100),
   phone: phoneSchema,
   email: emailSchema,
+  photo: participantPhotoSchema,
   categories: z.array(categorySchema)
     .min(1, "Selecciona al menos una categoría")
     .max(3, "Puedes seleccionar hasta tres categorías")
@@ -110,6 +116,7 @@ export const registrationPayloadSchema = z
   });
 
 export type ParticipantInput = z.infer<typeof participantSchema>;
+export type ParticipantPhoto = z.infer<typeof participantPhotoSchema>;
 export type RegistrationPayload = z.infer<typeof registrationPayloadSchema>;
 
 export type RegistrationConfirmation = {

@@ -90,7 +90,8 @@ const normalizeRows = (data: any[]): AdminParticipant[] => data.map((item) => {
     categories: (item.participant_categories ?? []).map((entry: any) => entry.category),
     status: registration?.status ?? "confirmed",
     createdAt: registration?.created_at ?? item.created_at,
-    checkedInAt: checkIn?.checked_in_at ?? null
+    checkedInAt: checkIn?.checked_in_at ?? null,
+    photoPath: item.photo_path ?? null
   };
 });
 
@@ -172,6 +173,7 @@ const renderRows = () => {
     const statusCell = document.createElement("td");
     statusCell.append(chip(row.status === "cancelled" ? "Desactivado" : "Confirmado", row.status));
     statusCell.append(chip(row.checkedInAt ? "Ingresó" : "Sin check-in", row.checkedInAt ? "checked" : ""));
+    statusCell.append(chip(row.photoPath ? "Foto cargada" : "Foto pendiente", row.photoPath ? "checked" : "cancelled"));
 
     const actionCell = document.createElement("td");
     actionCell.className = "row-actions";
@@ -221,7 +223,7 @@ const loadRows = async () => {
   const { data, error } = await getSupabase()
     .from("participants")
     .select(`
-      id, registration_id, participant_code, qr_token, role, display_name, social_url,
+      id, registration_id, participant_code, qr_token, role, display_name, social_url, photo_path,
       age, phone, email, created_at,
       registrations!inner(id, public_code, status, created_at),
       participant_categories(category),

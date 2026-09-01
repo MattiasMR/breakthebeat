@@ -9,10 +9,12 @@ import {
   phoneSchema,
   registrationPayloadSchema,
   type Category,
+  type ParticipantPhoto,
   type ParticipantInput,
   type RegistrationConfirmation,
   type RegistrationPayload
 } from "../lib/registration";
+import { prepareParticipantPhoto } from "../lib/participant-photo";
 import {
   trackRegistrationComplete,
   trackRegistrationError,
@@ -176,7 +178,9 @@ const syncDuo = () => {
 };
 
 const getString = (data: FormData, key: string) => String(data.get(key) ?? "").trim();
-const collectParticipant = (prefix: "captain" | "partner", data: FormData): ParticipantInput => {
+type ParticipantDetails = Omit<ParticipantInput, "photo">;
+
+const collectParticipant = (prefix: "captain" | "partner", data: FormData): ParticipantDetails => {
   const legalName = getString(data, `${prefix}.legalName`);
   const artisticName = getString(data, `${prefix}.artisticName`);
   return {
@@ -204,11 +208,11 @@ const collectParticipant = (prefix: "captain" | "partner", data: FormData): Part
   };
 };
 
-const collectPayload = (turnstileToken: string): RegistrationPayload => {
+const collectPayload = (turnstileToken: string, photos: Record<"captain" | "partner", ParticipantPhoto | undefined>): RegistrationPayload => {
   const data = new FormData(form);
   const accepted = data.has("consent.responsibility");
-  const participants = [collectParticipant("captain", data)];
-  if (isDuo()) participants.push(collectParticipant("partner", data));
+  const participants: ParticipantInput[] = [{ ...collectParticipant("captain", data), photo: photos.captain! }];
+  if (isDuo()) participants.push({ ...collectParticipant("partner", data), photo: photos.partner! });
   return {
     eventSlug: EVENT_SLUG,
     participants,
@@ -253,7 +257,7 @@ const validateCurrentStep = () => {
     const participants = [collectParticipant("captain", data)];
     if (isDuo()) participants.push(collectParticipant("partner", data));
     const invalidResult = participants
-      .map((participant) => participantSchema.safeParse(participant))
+      .map((participant) => participantSchema.omit({ photo: true }).safeParse(participant))
       .find((result) => !result.success);
     if (invalidResult && !invalidResult.success) {
       setMedicalAlert(invalidResult.error.issues[0]?.message ?? "Revisa los datos obligatorios.");
@@ -270,6 +274,7 @@ const saveDraft = () => {
   const entries: Array<[string, string]> = [];
   form.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>("[name]").forEach((control) => {
     if (control.name === "cf-turnstile-response" || control.name.startsWith("consent.")) return;
+    if (control instanceof HTMLInputElement && control.type === "file") return;
     if ((control instanceof HTMLInputElement) && (control.type === "checkbox" || control.type === "radio")) {
       if (control.checked) entries.push([control.name, control.value]);
     } else if (control.value) {
@@ -287,6 +292,7 @@ const restoreDraft = () => {
     const grouped = new Map<string, string[]>();
     entries.forEach(([name, value]) => grouped.set(name, [...(grouped.get(name) ?? []), value]));
     form.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>("[name]").forEach((control) => {
+      if (control instanceof HTMLInputElement && control.type === "file") return;
       const values = grouped.get(control.name) ?? [];
       if (control instanceof HTMLInputElement && (control.type === "checkbox" || control.type === "radio")) {
         if (!control.dataset.forcedCategory) control.checked = values.includes(control.value);
@@ -381,14 +387,33 @@ form.addEventListener("submit", async (event) => {
   if (!registrationEnabled || !validateCurrentStep()) return;
   const submitButton = form.querySelector<HTMLButtonElement>("[data-submit]");
   const token = getString(new FormData(form), "cf-turnstile-response") || (backendConfiguration.testMode ? "test-ok" : "");
-  const parsed = registrationPayloadSchema.safeParse(collectPayload(token));
+  submitButton?.setAttribute("disabled", "true");
+  if (submitButton) submitButton.textContent = "Procesando fotografía…";
+  let photos: Record<"captain" | "partner", ParticipantPhoto | undefined>;
+  try {
+    const captainFile = form.querySelector<HTMLInputElement>('input[name="captain.photo"]')?.files?.[0];
+    const partnerFile = form.querySelector<HTMLInputElement>('input[name="partner.photo"]')?.files?.[0];
+    if (!captainFile || (isDuo() && !partnerFile)) throw new Error("Agrega una fotografía por cada participante.");
+    const [captain, partner] = await Promise.all([
+      prepareParticipantPhoto(captainFile),
+      isDuo() && partnerFile ? prepareParticipantPhoto(partnerFile) : Promise.resolve(undefined)
+    ]);
+    photos = { captain, partner };
+  } catch (error) {
+    setSubmitAlert(error instanceof Error ? error.message : "No pudimos procesar la fotografía.");
+    submitButton?.removeAttribute("disabled");
+    if (submitButton) submitButton.textContent = "Finalizar inscripción";
+    return;
+  }
+  const parsed = registrationPayloadSchema.safeParse(collectPayload(token, photos));
   if (!parsed.success) {
     trackRegistrationError("CLIENT_VALIDATION");
     setSubmitAlert(parsed.error.issues[0]?.message ?? "Revisa los campos obligatorios.");
+    submitButton?.removeAttribute("disabled");
+    if (submitButton) submitButton.textContent = "Finalizar inscripción";
     return;
   }
 
-  submitButton?.setAttribute("disabled", "true");
   if (submitButton) submitButton.textContent = "Guardando inscripción…";
   setSubmitAlert();
 
@@ -419,6 +444,7 @@ form.addEventListener("submit", async (event) => {
         REGISTRATION_CLOSED: "Las inscripciones se cerraron antes de completar el envío.",
         LEGAL_DOCUMENTS_NOT_READY: "Los documentos legales aún no están listos para recibir inscripciones.",
         TURNSTILE_FAILED: "La verificación humana expiró. Inténtalo nuevamente.",
+        PHOTO_UPLOAD_FAILED: "No pudimos guardar la fotografía. La inscripción no fue creada; inténtalo nuevamente.",
         INVALID_REGISTRATION: "Hay un dato con formato inválido. Vuelve y comprueba los datos ingresados.",
         INTERNAL_ERROR: "El servidor no pudo completar la inscripción. Tus datos siguen en el formulario; inténtalo nuevamente."
       };

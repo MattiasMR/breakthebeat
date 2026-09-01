@@ -10,6 +10,7 @@ const participant = (overrides: Partial<ParticipantInput> = {}): ParticipantInpu
   city: "Guayaquil",
   phone: "+593 99 123 4567",
   email: "test@example.com",
+  photo: { mimeType: "image/jpeg", base64: "A".repeat(100) },
   categories: ["1v1"],
   medical: {
     hasCondition: false,
@@ -43,6 +44,12 @@ describe("registrationPayloadSchema", () => {
 
   it("acepta una inscripción individual válida", () => {
     expect(registrationPayloadSchema.safeParse(payload([participant()])).success).toBe(true);
+  });
+
+  it("exige una fotografía para cada inscripción nueva", () => {
+    const withoutPhoto = { ...participant() } as Partial<ParticipantInput>;
+    delete withoutPhoto.photo;
+    expect(registrationPayloadSchema.safeParse(payload([withoutPhoto as ParticipantInput])).success).toBe(false);
   });
 
   it("rechaza participantes menores de edad", () => {

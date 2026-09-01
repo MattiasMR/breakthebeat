@@ -3,6 +3,7 @@ import { errorResponse, jsonResponse } from "../_shared/http.ts";
 import { createAdminClient } from "../_shared/supabase.ts";
 import { verifyTurnstile } from "../_shared/turnstile.ts";
 import { registrationPayloadSchema } from "../_shared/registration-schema.ts";
+import { PARTICIPANT_PHOTO_BUCKET, uploadParticipantPhoto } from "../_shared/participant-photo.ts";
 
 const handleRequest = async (request: Request) => {
   if (request.method === "OPTIONS") return optionsResponse(request);
@@ -23,7 +24,11 @@ const handleRequest = async (request: Request) => {
   if (!human) return errorResponse(request, "TURNSTILE_FAILED", 403);
 
   const client = createAdminClient();
-  const { data, error } = await client.rpc("create_registration", { p_payload: parsed.data });
+  const databasePayload = {
+    ...parsed.data,
+    participants: parsed.data.participants.map(({ photo: _photo, ...participant }) => participant)
+  };
+  const { data, error } = await client.rpc("create_registration", { p_payload: databasePayload });
   if (error || !data) {
     const message = error?.message ?? "REGISTRATION_FAILED";
     const duplicateCategory = message.match(/DUPLICATE_PARTICIPANT_CATEGORY:(1v1|2v2|bgirls)/)?.[1];
@@ -57,6 +62,28 @@ const handleRequest = async (request: Request) => {
       categories: string[];
     }>;
   };
+
+  const uploadedPaths: string[] = [];
+  try {
+    for (const participant of registration.participants) {
+      const input = parsed.data.participants.find((item) => item.email === participant.email.toLowerCase());
+      if (!input) throw new Error("INVALID_PHOTO");
+      const path = `${parsed.data.eventSlug}/${participant.id}.jpg`;
+      await uploadParticipantPhoto(client, path, input.photo);
+      uploadedPaths.push(path);
+      const { error: updateError } = await client
+        .from("participants")
+        .update({ photo_path: path, photo_uploaded_at: new Date().toISOString() })
+        .eq("id", participant.id);
+      if (updateError) throw updateError;
+    }
+  } catch (photoError) {
+    if (uploadedPaths.length) await client.storage.from(PARTICIPANT_PHOTO_BUCKET).remove(uploadedPaths);
+    const { error: rollbackError } = await client.from("registrations").delete().eq("id", registration.registrationId);
+    if (rollbackError) console.error("Could not roll back registration after photo failure", rollbackError);
+    console.error("Participant photo upload failed", photoError);
+    return errorResponse(request, "PHOTO_UPLOAD_FAILED", 500);
+  }
 
   return jsonResponse(request, {
     registrationCode: registration.registrationCode,

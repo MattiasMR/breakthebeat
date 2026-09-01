@@ -1,7 +1,9 @@
 import {
+  activeParticipantsWithPhotos,
   calculateStats,
   downloadCsv,
   filterParticipants,
+  participantPhotoFilename,
   type AdminFilters,
   type AdminParticipant
 } from "../lib/admin";
@@ -27,6 +29,12 @@ const dashboard = document.querySelector<HTMLElement>("[data-dashboard]");
 const rowsContainer = document.querySelector<HTMLTableSectionElement>("[data-participant-rows]");
 const dialog = document.querySelector<HTMLDialogElement>("[data-participant-dialog]");
 const detail = document.querySelector<HTMLElement>("[data-participant-detail]");
+const photoDialog = document.querySelector<HTMLDialogElement>("[data-photo-dialog]");
+const photoPreview = document.querySelector<HTMLImageElement>("[data-photo-preview]");
+const photoOpen = document.querySelector<HTMLAnchorElement>("[data-photo-open]");
+
+const PARTICIPANT_PHOTO_BUCKET = "participant-photos";
+const PHOTO_LINK_TTL_SECONDS = 120;
 
 if (!loginShell || !loginForm || !dashboard || !rowsContainer) throw new Error("Admin markup is incomplete");
 
@@ -200,7 +208,14 @@ const renderRows = () => {
     qrButton.textContent = "Generar QR";
     qrButton.dataset.generateQr = row.id;
     qrButton.className = "qr-action-button";
-    actionCell.append(detailsButton, checkInButton, statusButton, qrButton);
+    const photoButton = document.createElement("button");
+    photoButton.type = "button";
+    photoButton.textContent = row.photoPath ? "Ver foto" : "Sin foto";
+    photoButton.dataset.viewPhoto = row.id;
+    photoButton.className = "photo-action-button";
+    photoButton.disabled = !row.photoPath;
+    if (!row.photoPath) photoButton.title = "Este participante todavía no ha cargado una foto";
+    actionCell.append(detailsButton, photoButton, checkInButton, statusButton, qrButton);
 
     tr.append(selectCell, personCell, categoryCell, statusCell, actionCell);
     return tr;
@@ -208,6 +223,14 @@ const renderRows = () => {
 
   const deactivateButton = document.querySelector<HTMLButtonElement>("[data-deactivate-selected]");
   if (deactivateButton) deactivateButton.disabled = selected.size === 0;
+  const photoDownloadButton = document.querySelector<HTMLButtonElement>("[data-download-active-photos]");
+  const activePhotoCount = activeParticipantsWithPhotos(participants).length;
+  if (photoDownloadButton) {
+    photoDownloadButton.disabled = activePhotoCount === 0;
+    photoDownloadButton.title = activePhotoCount
+      ? `Descargar ${activePhotoCount} foto(s) de participantes activos`
+      : "Todavía no hay fotos de participantes activos";
+  }
 };
 
 const applyFilters = () => {
@@ -315,6 +338,11 @@ loginForm.addEventListener("submit", async (event) => {
 
 document.querySelector("[data-logout]")?.addEventListener("click", () => void sessionLogout());
 document.querySelector("[data-dialog-close]")?.addEventListener("click", () => dialog?.close());
+document.querySelector("[data-photo-dialog-close]")?.addEventListener("click", () => photoDialog?.close());
+photoDialog?.addEventListener("close", () => {
+  photoPreview?.removeAttribute("src");
+  photoOpen?.removeAttribute("href");
+});
 ["pointerdown", "keydown", "touchstart"].forEach((name) => window.addEventListener(name, resetInactivity, { passive: true }));
 document.querySelectorAll<HTMLInputElement | HTMLSelectElement>("[data-filter]").forEach((control) => control.addEventListener("input", applyFilters));
 
@@ -331,6 +359,7 @@ rowsContainer.addEventListener("click", async (event) => {
   const manualCheckInButton = target.closest<HTMLButtonElement>("[data-manual-checkin]");
   const toggle = target.closest<HTMLButtonElement>("[data-toggle-registration]");
   const generateQrButton = target.closest<HTMLButtonElement>("[data-generate-qr]");
+  const viewPhotoButton = target.closest<HTMLButtonElement>("[data-view-photo]");
   if (view) await openParticipantDetail(view.dataset.viewParticipant ?? "");
   if (manualCheckInButton) {
     await manualCheckIn(
@@ -340,7 +369,45 @@ rowsContainer.addEventListener("click", async (event) => {
   }
   if (toggle) await toggleRegistrationStatus(toggle.dataset.toggleRegistration ?? "", toggle.dataset.nextStatus as "confirmed" | "cancelled");
   if (generateQrButton) await generateParticipantQr(generateQrButton.dataset.generateQr ?? "", generateQrButton);
+  if (viewPhotoButton) await openParticipantPhoto(viewPhotoButton.dataset.viewPhoto ?? "", viewPhotoButton);
 });
+
+const openParticipantPhoto = async (participantId: string, button: HTMLButtonElement) => {
+  const row = participants.find((participant) => participant.id === participantId);
+  if (!row?.photoPath || !photoDialog || !photoPreview || !photoOpen) {
+    return setNotice("Este participante todavía no tiene una foto disponible.", "info");
+  }
+
+  button.disabled = true;
+  setNotice(`Generando un enlace temporal para la foto de ${row.displayName}…`);
+  try {
+    const { data, error } = await getSupabase()
+      .storage
+      .from(PARTICIPANT_PHOTO_BUCKET)
+      .createSignedUrl(row.photoPath, PHOTO_LINK_TTL_SECONDS);
+    if (error || !data?.signedUrl) throw error ?? new Error("SIGNED_URL_MISSING");
+
+    const name = document.querySelector<HTMLElement>("[data-photo-name]");
+    const code = document.querySelector<HTMLElement>("[data-photo-code]");
+    if (name) name.textContent = row.displayName;
+    if (code) code.textContent = row.participantCode;
+    photoPreview.alt = `Foto de ${row.displayName}`;
+    photoPreview.src = data.signedUrl;
+    photoOpen.href = data.signedUrl;
+    photoDialog.showModal();
+    await getSupabase().rpc("log_admin_action", {
+      p_action: "view_participant_photo",
+      p_target_type: "participant",
+      p_target_id: row.id,
+      p_metadata: { participant_code: row.participantCode, expires_in_seconds: PHOTO_LINK_TTL_SECONDS }
+    });
+    setNotice(`Foto de ${row.displayName} disponible mediante un enlace temporal.`, "success");
+  } catch {
+    setNotice("No se pudo abrir la foto. Revisa tu sesión e intenta nuevamente.", "error");
+  } finally {
+    button.disabled = false;
+  }
+};
 
 const openParticipantDetail = async (participantId: string) => {
   const row = participants.find((item) => item.id === participantId);
@@ -476,6 +543,56 @@ document.querySelector("[data-export]")?.addEventListener("click", async () => {
     setNotice("Excel operativo descargado.", "success");
   } catch {
     setNotice("No se pudo generar el Excel operativo.", "error");
+  }
+});
+
+document.querySelector<HTMLButtonElement>("[data-download-active-photos]")?.addEventListener("click", async (event) => {
+  const button = event.currentTarget as HTMLButtonElement;
+  const rows = activeParticipantsWithPhotos(participants);
+  if (!rows.length) return setNotice("No hay fotos cargadas de participantes activos.", "info");
+
+  button.disabled = true;
+  setNotice(`Preparando 0 de ${rows.length} fotos activas…`);
+  try {
+    const files: Record<string, Uint8Array> = {};
+    const batchSize = 6;
+    for (let start = 0; start < rows.length; start += batchSize) {
+      const batch = rows.slice(start, start + batchSize);
+      const downloads = await Promise.all(batch.map(async (row) => {
+        const { data, error } = await getSupabase()
+          .storage
+          .from(PARTICIPANT_PHOTO_BUCKET)
+          .download(row.photoPath!);
+        if (error || !data) throw error ?? new Error(`PHOTO_DOWNLOAD_FAILED:${row.participantCode}`);
+        return {
+          filename: participantPhotoFilename(row.displayName, row.participantCode),
+          bytes: new Uint8Array(await data.arrayBuffer())
+        };
+      }));
+      downloads.forEach(({ filename, bytes }) => { files[filename] = bytes; });
+      setNotice(`Preparando ${Math.min(start + batch.length, rows.length)} de ${rows.length} fotos activas…`);
+    }
+
+    const { zipSync } = await import("fflate");
+    const archive = zipSync(files, { level: 0 });
+    const archiveBytes = archive.buffer.slice(archive.byteOffset, archive.byteOffset + archive.byteLength) as ArrayBuffer;
+    const url = URL.createObjectURL(new Blob([archiveBytes], { type: "application/zip" }));
+    const download = document.createElement("a");
+    download.href = url;
+    download.download = `break-the-beat-fotos-activas-${new Date().toISOString().slice(0, 10)}.zip`;
+    download.click();
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+    await getSupabase().rpc("log_admin_action", {
+      p_action: "export_active_participant_photos",
+      p_target_type: "event",
+      p_target_id: eventState?.id,
+      p_metadata: { rows: rows.length }
+    });
+    setNotice(`${rows.length} foto(s) activas descargadas en un archivo ZIP.`, "success");
+  } catch {
+    setNotice("No se generó el ZIP porque una o más fotos no pudieron descargarse. Intenta nuevamente.", "error");
+  } finally {
+    button.disabled = activeParticipantsWithPhotos(participants).length === 0;
   }
 });
 

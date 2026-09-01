@@ -86,6 +86,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
           <div class="admin-table-heading">
             <div><h2>Participantes</h2><p><span data-filtered-count>0</span> resultados visibles</p></div>
             <div class="table-action-row">
+              <button class="button button-secondary dark" type="button" data-download-active-photos disabled><Icon name="download" size={17} /> Fotos activas (.zip)</button>
               <button class="button button-secondary dark" type="button" data-export><Icon name="download" size={17} /> Excel operativo</button>
               <button class="button button-secondary dark" type="button" data-export-emergency><Icon name="shield-alert" size={17} /> CSV emergencia</button>
               <button class="button danger-button" type="button" data-deactivate-selected disabled><Icon name="shield-alert" size={17} /> Desactivar selección</button>
@@ -119,6 +120,19 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
     <dialog class="participant-dialog" data-participant-dialog>
       <button class="dialog-close" type="button" data-dialog-close aria-label="Cerrar">×</button>
       <div data-participant-detail></div>
+    </dialog>
+
+    <dialog class="participant-dialog participant-photo-dialog" data-photo-dialog>
+      <button class="dialog-close" type="button" data-photo-dialog-close aria-label="Cerrar">×</button>
+      <div class="participant-photo-heading">
+        <p class="eyebrow" data-photo-code></p>
+        <h2 data-photo-name>Foto del participante</h2>
+        <p data-photo-expiry>El enlace temporal vence en 2 minutos.</p>
+      </div>
+      <div class="participant-photo-preview">
+        <img data-photo-preview alt="" />
+      </div>
+      <a class="button button-primary" data-photo-open target="_blank" rel="noreferrer">Abrir imagen en otra pestaña</a>
     </dialog>
 
     {turnstileSiteKey && <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>}

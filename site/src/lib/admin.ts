@@ -55,6 +55,25 @@ export const calculateStats = (rows: AdminParticipant[]) => {
   };
 };
 
+const cleanFilenameSegment = (value: string, fallback: string) => {
+  const cleaned = value
+    .normalize("NFC")
+    .replace(/[\u0000-\u001f<>:"/\\|?*]+/g, " ")
+    .replace(/\s+/g, " ")
+    .replace(/[. ]+$/g, "")
+    .trim();
+  return (cleaned || fallback).slice(0, 100).replace(/[. ]+$/g, "");
+};
+
+export const participantPhotoFilename = (displayName: string, participantCode: string) => {
+  const name = cleanFilenameSegment(displayName, "Participante");
+  const code = cleanFilenameSegment(participantCode.toUpperCase(), "BTB26-SIN-CODIGO");
+  return `${name} - ${code}.jpg`;
+};
+
+export const activeParticipantsWithPhotos = (rows: AdminParticipant[]) =>
+  rows.filter((row) => row.status === "confirmed" && Boolean(row.photoPath));
+
 const csvCell = (value: unknown) => {
   let text = value == null ? "" : String(value);
   if (/^[=+\-@]/.test(text)) text = `'${text}`;

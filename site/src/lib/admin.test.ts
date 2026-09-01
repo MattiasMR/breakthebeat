@@ -1,6 +1,13 @@
 import { describe, expect, it } from "vitest";
 import ExcelJS from "exceljs";
-import { calculateStats, filterParticipants, operationalCsv, type AdminParticipant } from "./admin";
+import {
+  activeParticipantsWithPhotos,
+  calculateStats,
+  filterParticipants,
+  operationalCsv,
+  participantPhotoFilename,
+  type AdminParticipant
+} from "./admin";
 import { buildOperationalWorkbook } from "./admin-workbook";
 
 const row = (overrides: Partial<AdminParticipant> = {}): AdminParticipant => ({
@@ -45,6 +52,18 @@ describe("admin helpers", () => {
 
   it("neutraliza fórmulas al exportar CSV", () => {
     expect(operationalCsv([row({ displayName: "=HYPERLINK(\"bad\")" })])).toContain("'=HYPERLINK");
+  });
+
+  it("nombra las fotos con el participante antes del código y elimina caracteres inválidos", () => {
+    expect(participantPhotoFilename("Bgirl Luna", "btb26-aaaa-a")).toBe("Bgirl Luna - BTB26-AAAA-A.jpg");
+    expect(participantPhotoFilename("Ana/María:*?", "BTB26-BBBB-A")).toBe("Ana María - BTB26-BBBB-A.jpg");
+  });
+
+  it("incluye en el ZIP solo participantes activos que tengan foto", () => {
+    const active = row({ photoPath: "break-the-beat-2026/p1.jpg" });
+    const inactive = row({ id: "p2", status: "cancelled", photoPath: "break-the-beat-2026/p2.jpg" });
+    const pending = row({ id: "p3", photoPath: null });
+    expect(activeParticipantsWithPhotos([active, inactive, pending])).toEqual([active]);
   });
 
   it("crea un Excel operativo con resumen y filtros compatibles", async () => {

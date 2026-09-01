@@ -45,17 +45,25 @@ describe("admin helpers", () => {
     expect(operationalCsv([row({ displayName: "=HYPERLINK(\"bad\")" })])).toContain("'=HYPERLINK");
   });
 
-  it("crea un Excel operativo con resumen y tabla filtrable", async () => {
+  it("crea un Excel operativo con resumen y filtros compatibles", async () => {
     const workbook = buildOperationalWorkbook([row({ checkedInAt: "2026-08-31T12:00:00Z" })], new Date("2026-08-31T13:00:00Z"));
     const summary = workbook.getWorksheet("Resumen");
     const participants = workbook.getWorksheet("Participantes");
     expect(summary?.getCell("A1").value).toContain("Break The Beat 2026");
-    expect(summary?.getCell("B7").value).toEqual({ formula: 'COUNTIF(Participantes[Estado],"Confirmado")' });
+    expect(summary?.getCell("B7").value).toEqual({ formula: "COUNTIF('Participantes'!$J$2:$J$2,\"Confirmado\")" });
     expect(participants?.getCell("A1").value).toBe("Código");
-    expect(participants?.getTable("Participantes").name).toBe("Participantes");
+    expect(participants?.getCell("C2").value).toBe("Bboy Test");
 
     const reopened = new ExcelJS.Workbook();
     await reopened.xlsx.load(await workbook.xlsx.writeBuffer());
-    expect(reopened.getWorksheet("Participantes")?.getTable("Participantes").name).toBe("Participantes");
+    expect(reopened.getWorksheet("Participantes")?.getTables()).toHaveLength(0);
+  });
+
+  it("mantiene un Excel válido aunque el filtro no tenga resultados", async () => {
+    const workbook = buildOperationalWorkbook([], new Date("2026-08-31T13:00:00Z"));
+    const reopened = new ExcelJS.Workbook();
+    await reopened.xlsx.load(await workbook.xlsx.writeBuffer());
+    expect(reopened.getWorksheet("Participantes")?.getCell("A1").value).toBe("Código");
+    expect(reopened.getWorksheet("Resumen")?.getCell("B7").value).toEqual({ formula: "COUNTIF('Participantes'!$J$2:$J$2,\"Confirmado\")" });
   });
 });

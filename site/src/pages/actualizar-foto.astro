@@ -57,7 +57,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
         </label>
         <div class="turnstile-block compact">
           {turnstileSiteKey ? (
-            <div class="cf-turnstile" data-sitekey={turnstileSiteKey} data-theme="light" data-action="participant_photo"></div>
+            <div class="cf-turnstile" data-sitekey={turnstileSiteKey} data-size="compact" data-theme="light" data-action="participant_photo"></div>
           ) : (
             <p>La verificación humana todavía no está disponible.</p>
           )}

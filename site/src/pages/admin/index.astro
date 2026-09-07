@@ -86,6 +86,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
           <div class="admin-table-heading">
             <div><h2>Participantes</h2><p><span data-filtered-count>0</span> resultados visibles</p></div>
             <div class="table-action-row">
+              <button class="button button-secondary dark" type="button" data-download-all-photos disabled><Icon name="download" size={17} /> Todas las fotos (.zip)</button>
               <button class="button button-secondary dark" type="button" data-download-active-photos disabled><Icon name="download" size={17} /> Fotos activas (.zip)</button>
               <button class="button button-secondary dark" type="button" data-export><Icon name="download" size={17} /> Excel operativo</button>
               <button class="button button-secondary dark" type="button" data-export-emergency><Icon name="shield-alert" size={17} /> CSV emergencia</button>
@@ -132,7 +133,10 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
       <div class="participant-photo-preview">
         <img data-photo-preview alt="" />
       </div>
-      <a class="button button-primary" data-photo-open target="_blank" rel="noreferrer">Abrir imagen en otra pestaña</a>
+      <div class="table-action-row">
+        <button class="button button-primary" type="button" data-photo-download><Icon name="download" size={17} /> Descargar foto</button>
+        <a class="button button-secondary dark" data-photo-open target="_blank" rel="noreferrer">Abrir imagen en otra pestaña</a>
+      </div>
     </dialog>
 
     {turnstileSiteKey && <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>}

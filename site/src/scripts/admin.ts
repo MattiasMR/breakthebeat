@@ -32,6 +32,7 @@ const detail = document.querySelector<HTMLElement>("[data-participant-detail]");
 const photoDialog = document.querySelector<HTMLDialogElement>("[data-photo-dialog]");
 const photoPreview = document.querySelector<HTMLImageElement>("[data-photo-preview]");
 const photoOpen = document.querySelector<HTMLAnchorElement>("[data-photo-open]");
+const photoDownload = document.querySelector<HTMLButtonElement>("[data-photo-download]");
 
 const PARTICIPANT_PHOTO_BUCKET = "participant-photos";
 const PHOTO_LINK_TTL_SECONDS = 120;
@@ -43,6 +44,7 @@ let filtered: AdminParticipant[] = [];
 let selected = new Set<string>();
 let eventState: { id: string; registration_open: boolean; legal_ready: boolean } | null = null;
 let inactivityTimer: number | undefined;
+let previewParticipantId: string | null = null;
 
 const filters: AdminFilters = {
   query: "",
@@ -231,6 +233,8 @@ const renderRows = () => {
       ? `Descargar ${activePhotoCount} foto(s) de participantes activos`
       : "Todavía no hay fotos de participantes activos";
   }
+  const allPhotosButton = document.querySelector<HTMLButtonElement>("[data-download-all-photos]");
+  if (allPhotosButton) allPhotosButton.disabled = !participants.some((row) => row.photoPath);
 };
 
 const applyFilters = () => {
@@ -340,9 +344,36 @@ document.querySelector("[data-logout]")?.addEventListener("click", () => void se
 document.querySelector("[data-dialog-close]")?.addEventListener("click", () => dialog?.close());
 document.querySelector("[data-photo-dialog-close]")?.addEventListener("click", () => photoDialog?.close());
 photoDialog?.addEventListener("close", () => {
+  previewParticipantId = null;
   photoPreview?.removeAttribute("src");
   photoOpen?.removeAttribute("href");
 });
+photoDownload?.addEventListener("click", async () => {
+  const row = participants.find((participant) => participant.id === previewParticipantId);
+  if (!row?.photoPath) return;
+  photoDownload.disabled = true;
+  try {
+    const { data, error } = await getSupabase().storage.from(PARTICIPANT_PHOTO_BUCKET).download(row.photoPath);
+    if (error || !data) throw error ?? new Error("PHOTO_DOWNLOAD_FAILED");
+    downloadBlob(data, participantPhotoFilename(row.displayName, row.participantCode));
+    setNotice(`Foto de ${row.displayName} descargada.`, "success");
+  } catch {
+    setNotice("No se pudo descargar la foto. Revisa tu sesión e intenta nuevamente.", "error");
+  } finally {
+    photoDownload.disabled = false;
+  }
+});
+
+const downloadBlob = (blob: Blob, filename: string) => {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  document.body.append(link);
+  link.click();
+  link.remove();
+  window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
+};
 ["pointerdown", "keydown", "touchstart"].forEach((name) => window.addEventListener(name, resetInactivity, { passive: true }));
 document.querySelectorAll<HTMLInputElement | HTMLSelectElement>("[data-filter]").forEach((control) => control.addEventListener("input", applyFilters));
 
@@ -394,6 +425,7 @@ const openParticipantPhoto = async (participantId: string, button: HTMLButtonEle
     photoPreview.alt = `Foto de ${row.displayName}`;
     photoPreview.src = data.signedUrl;
     photoOpen.href = data.signedUrl;
+    previewParticipantId = row.id;
     photoDialog.showModal();
     await getSupabase().rpc("log_admin_action", {
       p_action: "view_participant_photo",
@@ -546,13 +578,14 @@ document.querySelector("[data-export]")?.addEventListener("click", async () => {
   }
 });
 
-document.querySelector<HTMLButtonElement>("[data-download-active-photos]")?.addEventListener("click", async (event) => {
+const downloadPhotos = async (event: Event) => {
   const button = event.currentTarget as HTMLButtonElement;
-  const rows = activeParticipantsWithPhotos(participants);
-  if (!rows.length) return setNotice("No hay fotos cargadas de participantes activos.", "info");
+  const activeOnly = button.hasAttribute("data-download-active-photos");
+  const rows = activeOnly ? activeParticipantsWithPhotos(participants) : participants.filter((row) => row.photoPath);
+  if (!rows.length) return setNotice("No hay fotos cargadas para descargar.", "info");
 
   button.disabled = true;
-  setNotice(`Preparando 0 de ${rows.length} fotos activas…`);
+  setNotice(`Preparando 0 de ${rows.length} fotos…`);
   try {
     const files: Record<string, Uint8Array> = {};
     const batchSize = 6;
@@ -570,31 +603,29 @@ document.querySelector<HTMLButtonElement>("[data-download-active-photos]")?.addE
         };
       }));
       downloads.forEach(({ filename, bytes }) => { files[filename] = bytes; });
-      setNotice(`Preparando ${Math.min(start + batch.length, rows.length)} de ${rows.length} fotos activas…`);
+      setNotice(`Preparando ${Math.min(start + batch.length, rows.length)} de ${rows.length} fotos…`);
     }
 
     const { zipSync } = await import("fflate");
     const archive = zipSync(files, { level: 0 });
     const archiveBytes = archive.buffer.slice(archive.byteOffset, archive.byteOffset + archive.byteLength) as ArrayBuffer;
-    const url = URL.createObjectURL(new Blob([archiveBytes], { type: "application/zip" }));
-    const download = document.createElement("a");
-    download.href = url;
-    download.download = `break-the-beat-fotos-activas-${new Date().toISOString().slice(0, 10)}.zip`;
-    download.click();
-    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+    downloadBlob(new Blob([archiveBytes], { type: "application/zip" }),
+      `break-the-beat-fotos-${activeOnly ? "activas" : "todas"}-${new Date().toISOString().slice(0, 10)}.zip`);
     await getSupabase().rpc("log_admin_action", {
-      p_action: "export_active_participant_photos",
+      p_action: activeOnly ? "export_active_participant_photos" : "export_all_participant_photos",
       p_target_type: "event",
       p_target_id: eventState?.id,
       p_metadata: { rows: rows.length }
     });
-    setNotice(`${rows.length} foto(s) activas descargadas en un archivo ZIP.`, "success");
+    setNotice(`${rows.length} foto(s) descargadas en un archivo ZIP.`, "success");
   } catch {
     setNotice("No se generó el ZIP porque una o más fotos no pudieron descargarse. Intenta nuevamente.", "error");
   } finally {
-    button.disabled = activeParticipantsWithPhotos(participants).length === 0;
+    button.disabled = false;
   }
-});
+};
+document.querySelector("[data-download-active-photos]")?.addEventListener("click", downloadPhotos);
+document.querySelector("[data-download-all-photos]")?.addEventListener("click", downloadPhotos);
 
 const csvCell = (value: unknown) => {
   let text = value == null ? "" : String(value);

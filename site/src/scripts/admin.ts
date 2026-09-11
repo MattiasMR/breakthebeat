@@ -1,7 +1,6 @@
 import {
   activeParticipantsWithPhotos,
   calculateStats,
-  downloadCsv,
   filterParticipants,
   participantPhotoFilename,
   type AdminFilters,
@@ -627,30 +626,40 @@ const downloadPhotos = async (event: Event) => {
 document.querySelector("[data-download-active-photos]")?.addEventListener("click", downloadPhotos);
 document.querySelector("[data-download-all-photos]")?.addEventListener("click", downloadPhotos);
 
-const csvCell = (value: unknown) => {
-  let text = value == null ? "" : String(value);
-  if (/^[=+\-@]/.test(text)) text = `'${text}`;
-  return `"${text.replaceAll('"', '""')}"`;
-};
-
-document.querySelector("[data-export-emergency]")?.addEventListener("click", async () => {
+document.querySelector("[data-export-emergency]")?.addEventListener("click", async (event) => {
   if (!window.confirm("Este archivo contiene información médica y de emergencia. ¿Confirmas que se usará únicamente para el evento?")) return;
-  const ids = filtered.map((row) => row.id);
-  if (!ids.length) return;
-  const [{ data: medical }, { data: contacts }] = await Promise.all([
-    getSupabase().from("medical_profiles").select("*").in("participant_id", ids),
-    getSupabase().from("emergency_contacts").select("*").in("participant_id", ids)
-  ]);
-  const medicalMap = new Map((medical ?? []).map((item) => [item.participant_id, item]));
-  const contactMap = new Map((contacts ?? []).map((item) => [item.participant_id, item]));
-  const header = ["Código", "Nombre", "Teléfono", "Condición", "Alergia medicamento", "Alergia alimento", "Medicación permanente", "Contacto emergencia", "Relación", "Teléfono emergencia"];
-  const lines = filtered.map((row) => {
-    const health = medicalMap.get(row.id);
-    const contact = contactMap.get(row.id);
-    return [row.participantCode, row.displayName, row.phone, health?.condition_detail, health?.medication_allergy_detail, health?.food_allergy_detail, health?.medication_detail, contact?.full_name, contact?.relationship, contact?.phone];
-  });
-  downloadCsv(`break-the-beat-emergencia-${new Date().toISOString().slice(0, 10)}.csv`, [header, ...lines].map((line) => line.map(csvCell).join(",")).join("\r\n"));
-  await getSupabase().rpc("log_admin_action", { p_action: "export_emergency_csv", p_target_type: "event", p_target_id: eventState?.id, p_metadata: { rows: filtered.length } });
+  const rows = [...filtered];
+  const ids = rows.map((row) => row.id);
+  if (!ids.length) return setNotice("No hay participantes para exportar con los filtros actuales.", "info");
+  const button = event.currentTarget as HTMLButtonElement;
+  button.disabled = true;
+  try {
+    const [medicalResult, contactsResult] = await Promise.all([
+      getSupabase().from("medical_profiles").select("*").in("participant_id", ids),
+      getSupabase().from("emergency_contacts").select("*").in("participant_id", ids)
+    ]);
+    if (medicalResult.error || contactsResult.error) throw medicalResult.error ?? contactsResult.error;
+    const medicalMap = new Map((medicalResult.data ?? []).map((item) => [item.participant_id, item]));
+    const contactMap = new Map((contactsResult.data ?? []).map((item) => [item.participant_id, item]));
+    const emergencyRows = rows.map((row) => {
+      const health = medicalMap.get(row.id);
+      const contact = contactMap.get(row.id);
+      return {
+        participantCode: row.participantCode, displayName: row.displayName, phone: row.phone,
+        condition: health?.condition_detail, medicationAllergy: health?.medication_allergy_detail,
+        foodAllergy: health?.food_allergy_detail, medication: health?.medication_detail,
+        contactName: contact?.full_name, relationship: contact?.relationship, contactPhone: contact?.phone
+      };
+    });
+    const { downloadEmergencyWorkbook } = await import("../lib/admin-workbook");
+    await downloadEmergencyWorkbook(`break-the-beat-emergencia-${new Date().toISOString().slice(0, 10)}.xlsx`, emergencyRows);
+    await getSupabase().rpc("log_admin_action", { p_action: "export_emergency_xlsx", p_target_type: "event", p_target_id: eventState?.id, p_metadata: { rows: rows.length } });
+    setNotice("Excel de emergencia descargado.", "success");
+  } catch {
+    setNotice("No se pudo generar el Excel de emergencia. Intenta nuevamente.", "error");
+  } finally {
+    button.disabled = false;
+  }
 });
 
 const deactivateRegistrations = async (registrationIds: string[]) => {

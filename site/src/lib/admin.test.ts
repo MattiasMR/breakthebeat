@@ -8,7 +8,7 @@ import {
   participantPhotoFilename,
   type AdminParticipant
 } from "./admin";
-import { buildOperationalWorkbook } from "./admin-workbook";
+import { buildEmergencyWorkbook, buildOperationalWorkbook } from "./admin-workbook";
 
 const row = (overrides: Partial<AdminParticipant> = {}): AdminParticipant => ({
   id: "p1",
@@ -31,6 +31,40 @@ const row = (overrides: Partial<AdminParticipant> = {}): AdminParticipant => ({
 });
 
 describe("admin helpers", () => {
+  it("conserva los datos de emergencia como texto y genera filtros sin tablas incompatibles", async () => {
+    const workbook = buildEmergencyWorkbook([{
+      participantCode: "BTB26-TEST-A", displayName: "=HYPERLINK(\"bad\")", phone: "+56912345678",
+      condition: "Detalle\nsegunda línea", medicationAllergy: "Dato de prueba", foodAllergy: null,
+      medication: "Otro dato", contactName: "Contacto de prueba", relationship: "Familiar", contactPhone: "0012345"
+    }]);
+    const reopened = new ExcelJS.Workbook();
+    await reopened.xlsx.load(await workbook.xlsx.writeBuffer());
+    const sheet = reopened.getWorksheet("Emergencia")!;
+    expect(sheet.getCell("B2").value).toBe("'=HYPERLINK(\"bad\")");
+    expect(sheet.getCell("C2").value).toBe("'+56912345678");
+    expect(sheet.getCell("D2").value).toBe("Detalle\nsegunda línea");
+    expect(sheet.getCell("E2").value).toBe("Dato de prueba");
+    expect(sheet.getCell("F2").value ?? "").toBe("");
+    expect(sheet.getCell("G2").value).toBe("Otro dato");
+    expect(sheet.getCell("H2").value).toBe("Contacto de prueba");
+    expect(sheet.getCell("I2").value).toBe("Familiar");
+    expect(sheet.getCell("J2").value).toBe("0012345");
+    expect(sheet.autoFilter).toBe("A1:J2");
+    expect(sheet.views[0]).toMatchObject({ state: "frozen", ySplit: 1 });
+    expect(sheet.getTables()).toHaveLength(0);
+    expect(reopened.getWorksheet("Resumen")?.getCell("B6").value).toBe(1);
+  });
+
+  it("genera emergencia con datos faltantes o sin participantes", async () => {
+    for (const rows of [[], [{ participantCode: "TEST", displayName: "Prueba", phone: "" }]]) {
+      const workbook = buildEmergencyWorkbook(rows);
+      const reopened = new ExcelJS.Workbook();
+      await reopened.xlsx.load(await workbook.xlsx.writeBuffer());
+      expect(reopened.getWorksheet("Resumen")?.getCell("B6").value).toBe(rows.length);
+      expect(reopened.getWorksheet("Emergencia")?.getCell("J1").value).toBe("Teléfono emergencia");
+    }
+  });
+
   it("cuenta personas, inscripciones y duplas sin inflar el total", () => {
     const stats = calculateStats([
       row(),

@@ -57,7 +57,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
           <div class="admin-heading-actions">
             <a class="button button-secondary dark" href={withBase("/admin/asistencia/")}><Icon name="users-round" size={18} /> Invitados</a>
             <a class="button button-primary" href={withBase("/check-in/")}><Icon name="qr-code" size={18} /> Abrir check-in</a>
-            <button class="button button-secondary" type="button" data-logout><Icon name="log-out" size={18} /> Salir</button>
+            <button class="button button-secondary dark" type="button" data-logout><Icon name="log-out" size={18} /> Salir</button>
           </div>
         </div>
 
@@ -89,7 +89,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
               <button class="button button-secondary dark" type="button" data-download-all-photos disabled><Icon name="download" size={17} /> Todas las fotos (.zip)</button>
               <button class="button button-secondary dark" type="button" data-download-active-photos disabled><Icon name="download" size={17} /> Fotos activas (.zip)</button>
               <button class="button button-secondary dark" type="button" data-export><Icon name="download" size={17} /> Excel operativo</button>
-              <button class="button button-secondary dark" type="button" data-export-emergency><Icon name="shield-alert" size={17} /> CSV emergencia</button>
+              <button class="button button-secondary dark" type="button" data-export-emergency><Icon name="shield-alert" size={17} /> Excel emergencia</button>
               <button class="button danger-button" type="button" data-deactivate-selected disabled><Icon name="shield-alert" size={17} /> Desactivar selección</button>
             </div>
           </div>

@@ -53,25 +53,6 @@ const renderRows = () => {
   }));
 };
 
-const renderOrganizationFilter = () => {
-  const select = document.querySelector<HTMLSelectElement>("[data-guest-organization-filter]");
-  if (!select) return;
-  const selected = select.value;
-  const organizations = [...new Set(guests.map((guest) => guest.organization).filter((value): value is string => Boolean(value)))].sort((left, right) => left.localeCompare(right, "es"));
-  select.replaceChildren();
-  const all = document.createElement("option");
-  all.value = "all";
-  all.textContent = "Todos";
-  select.append(all);
-  organizations.forEach((organization) => {
-    const option = document.createElement("option");
-    option.value = organization;
-    option.textContent = organization;
-    select.append(option);
-  });
-  select.value = organizations.includes(selected) ? selected : "all";
-};
-
 const loadGuests = async () => {
   setNotice("Actualizando lista de invitados…");
   const client = getSupabase();
@@ -92,7 +73,6 @@ const loadGuests = async () => {
     confirmedAt: guest.confirmed_at,
     createdAt: guest.created_at
   }));
-  renderOrganizationFilter();
   renderRows();
   setNotice("Lista de invitados actualizada.", "success");
 };
@@ -129,7 +109,6 @@ rowsContainer.addEventListener("click", async (event) => {
     const { error } = await getSupabase().rpc("remove_guest_attendance", { p_event_id: eventId, p_guest_id: guest.id });
     if (error) throw error;
     guests = guests.filter((item) => item.id !== guest.id);
-    renderOrganizationFilter();
     renderRows();
     setNotice(`${guest.firstName} ${guest.lastName} fue quitado de la lista.`, "success");
   } catch {

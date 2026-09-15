@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const guestTypes = ["Influencer", "Bailarín", "Sponsor", "Invitado"] as const;
+export const guestTypes = ["Sponsor", "Bailarín", "Invitado", "Casa Grande"] as const;
 
 export const guestAttendanceSchema = z.object({
   firstName: z.string().trim().min(2, "Ingresa tu nombre").max(80, "El nombre es demasiado largo"),

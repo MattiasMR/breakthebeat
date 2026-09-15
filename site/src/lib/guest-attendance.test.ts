@@ -15,6 +15,8 @@ const row = (overrides: Partial<GuestAttendance> = {}): GuestAttendance => ({
 
 describe("guest attendance helpers", () => {
   it("acepta solamente los cuatro tipos de invitado", () => {
+    expect(guestTypes).toEqual(["Sponsor", "Bailarín", "Invitado", "Casa Grande"]);
+    expect(guestAttendanceSchema.safeParse({ firstName: "María", lastName: "Pérez", organization: "Influencer" }).success).toBe(false);
     guestTypes.forEach((organization) => {
       expect(guestAttendanceSchema.safeParse({ firstName: "María", lastName: "Pérez", organization }).success).toBe(true);
     });

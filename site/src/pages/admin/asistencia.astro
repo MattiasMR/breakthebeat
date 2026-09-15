@@ -1,4 +1,5 @@
 ---
+import { guestTypes } from "../../lib/guest-attendance";
 import Icon from "../../components/Icon.astro";
 import { withBase } from "../../utils/paths";
 import "../../styles/global.css";
@@ -53,7 +54,7 @@ import "../../styles/portal.css";
           </div>
           <div class="filter-grid guest-filter-grid">
             <label class="field filter-search"><span>Buscar</span><input type="search" data-guest-filter placeholder="Nombre, apellido o tipo de invitado…" /></label>
-            <label class="field"><span>Tipo de invitado</span><select data-guest-organization-filter><option value="all">Todos</option></select></label>
+            <label class="field"><span>Tipo de invitado</span><select data-guest-organization-filter><option value="all">Todos</option>{guestTypes.map((guestType) => <option value={guestType}>{guestType}</option>)}</select></label>
           </div>
           <div class="data-table-wrap"><table class="data-table"><thead><tr><th>Nombre</th><th>Apellido</th><th>Tipo de invitado</th><th>Confirmó asistencia</th><th>Acciones</th></tr></thead><tbody data-guest-rows></tbody></table></div>
           <div class="table-empty" data-guest-empty hidden>No hay invitados que coincidan con la búsqueda.</div>

@@ -12,7 +12,7 @@ const requestSchema = z.object({
   eventSlug: z.literal(eventSlug),
   firstName: textField(2, 80),
   lastName: textField(2, 80),
-  organization: z.enum(["Influencer", "Bailarín", "Sponsor", "Invitado"]),
+  organization: z.enum(["Sponsor", "Bailarín", "Invitado", "Casa Grande"]),
   turnstileToken: z.string().min(1).max(2048)
 }).strict();
 

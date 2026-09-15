@@ -41,9 +41,10 @@ const renderRows = () => {
       row.append(cell);
     });
     const actions = document.createElement("td");
+    actions.className = "row-actions";
     const remove = document.createElement("button");
     remove.type = "button";
-    remove.className = "button button-secondary dark";
+    remove.className = "deactivate-action-button";
     remove.textContent = "Quitar invitado";
     remove.dataset.removeGuest = guest.id;
     remove.setAttribute("aria-label", `Quitar a ${guest.firstName} ${guest.lastName}`);

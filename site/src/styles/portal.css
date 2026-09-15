@@ -1119,8 +1119,7 @@ a.legal-document::after {
   border-bottom: 2px solid var(--pink);
 }
 
-.data-table td:nth-child(2),
-.data-table td:nth-child(4) {
+.table-cell-stack {
   display: grid;
   gap: 3px;
 }

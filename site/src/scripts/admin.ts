@@ -174,15 +174,22 @@ const renderRows = () => {
     code.textContent = `Inscripción: ${row.registrationCode} · ${row.role === "captain" ? "Principal" : "Compañero"}`;
     const email = document.createElement("small");
     email.textContent = `Participante: ${row.participantCode} · ${row.email}`;
-    personCell.append(name, code, email);
+    const personContent = document.createElement("div");
+    personContent.className = "table-cell-stack";
+    personContent.append(name, code, email);
+    personCell.append(personContent);
 
     const categoryCell = document.createElement("td");
     row.categories.forEach((category) => categoryCell.append(chip(categoryLabels[category])));
 
     const statusCell = document.createElement("td");
-    statusCell.append(chip(row.status === "cancelled" ? "Desactivado" : "Confirmado", row.status));
-    statusCell.append(chip(row.checkedInAt ? "Ingresó" : "Sin check-in", row.checkedInAt ? "checked" : ""));
-    statusCell.append(chip(row.photoPath ? "Foto cargada" : "Foto pendiente", row.photoPath ? "checked" : "cancelled"));
+    const statusContent = document.createElement("div");
+    statusContent.className = "table-cell-stack";
+    statusContent.append(chip(row.status === "cancelled" ? "Desactivado" : "Confirmado", row.status));
+    statusContent.append(chip(row.checkedInAt ? "Ingresó" : "Sin check-in", row.checkedInAt ? "checked" : ""));
+    statusContent.append(chip(row.photoPath ? "Foto cargada" : "Foto pendiente", row.photoPath ? "checked" : "cancelled"));
+
+    statusCell.append(statusContent);
 
     const actionCell = document.createElement("td");
     actionCell.className = "row-actions";

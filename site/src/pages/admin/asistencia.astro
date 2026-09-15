@@ -49,13 +49,13 @@ import "../../styles/portal.css";
         <section class="admin-table-section">
           <div class="admin-table-heading">
             <div><h2>Lista de invitados</h2><p><span data-guest-filtered-count>0</span> resultados visibles</p></div>
-            <div class="table-action-row"><button class="button button-secondary dark" type="button" data-export-guests><Icon name="download" size={17} /> Exportar CSV</button></div>
+            <div class="table-action-row"><button class="button button-secondary dark" type="button" data-export-guests><Icon name="download" size={17} /> Exportar Excel</button></div>
           </div>
           <div class="filter-grid guest-filter-grid">
             <label class="field filter-search"><span>Buscar</span><input type="search" data-guest-filter placeholder="Nombre, apellido o tipo de invitado…" /></label>
             <label class="field"><span>Tipo de invitado</span><select data-guest-organization-filter><option value="all">Todos</option></select></label>
           </div>
-          <div class="data-table-wrap"><table class="data-table"><thead><tr><th>Nombre</th><th>Apellido</th><th>Tipo de invitado</th><th>Confirmó asistencia</th></tr></thead><tbody data-guest-rows></tbody></table></div>
+          <div class="data-table-wrap"><table class="data-table"><thead><tr><th>Nombre</th><th>Apellido</th><th>Tipo de invitado</th><th>Confirmó asistencia</th><th>Acciones</th></tr></thead><tbody data-guest-rows></tbody></table></div>
           <div class="table-empty" data-guest-empty hidden>No hay invitados que coincidan con la búsqueda.</div>
         </section>
       </section>

@@ -1,5 +1,6 @@
 import ExcelJS from "exceljs";
 import type { AdminParticipant } from "./admin";
+import type { GuestAttendance } from "./guest-attendance";
 
 const excelSafeText = (value: unknown) => {
   const text = value == null ? "" : String(value);
@@ -152,6 +153,58 @@ export const buildEmergencyWorkbook = (rows: EmergencyParticipant[], generatedAt
   return workbook;
 };
 
+export const buildGuestWorkbook = (rows: GuestAttendance[], generatedAt = new Date()) => {
+  const workbook = new ExcelJS.Workbook();
+  workbook.creator = "Break The Beat";
+  workbook.created = generatedAt;
+  workbook.modified = generatedAt;
+  const summary = workbook.addWorksheet("Resumen", { views: [{ showGridLines: false }] });
+  const sheet = workbook.addWorksheet("Invitados", { views: [{ state: "frozen", ySplit: 1 }] });
+  sheet.addRow(["Nombre", "Apellido", "Tipo de invitado", "Confirmó asistencia (Ecuador)"]);
+  sheet.addRows(rows.map((row) => [excelSafeText(row.firstName), excelSafeText(row.lastName),
+    excelSafeText(row.organization), new Date(new Date(row.confirmedAt).getTime() - 5 * 60 * 60 * 1000)]));
+  sheet.columns = [32, 32, 24, 30].map((width) => ({ width }));
+  sheet.getColumn("D").numFmt = "yyyy-mm-dd hh:mm";
+  sheet.autoFilter = { from: "A1", to: `D${Math.max(rows.length + 1, 1)}` };
+  sheet.eachRow((row, index) => {
+    row.alignment = { vertical: "top", wrapText: true };
+    if (index === 1 || index % 2 === 0) row.eachCell((cell) => {
+      cell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: index === 1 ? "FF2563EB" : "FFEFF6FF" } };
+    });
+  });
+  sheet.getRow(1).height = 32;
+  sheet.getRow(1).font = { bold: true, color: { argb: "FFFFFFFF" } };
+  sheet.getRow(1).alignment = { vertical: "middle", wrapText: true };
+  summary.mergeCells("A1:D1");
+  summary.getCell("A1").value = "Break The Beat 2026 — Exportación de invitados";
+  summary.getCell("A1").font = { bold: true, size: 16, color: { argb: "FFFFFFFF" } };
+  summary.getCell("A1").fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FF111827" } };
+  summary.getCell("A1").alignment = { vertical: "middle" };
+  summary.getRow(1).height = 28;
+  summary.getCell("A3").value = "Generado";
+  summary.getCell("B3").value = generatedAt;
+  summary.getCell("B3").numFmt = "yyyy-mm-dd hh:mm";
+  summary.getCell("A5").value = "Indicador";
+  summary.getCell("B5").value = "Total";
+  summary.getRow(5).font = { bold: true, color: { argb: "FFFFFFFF" } };
+  ["A5", "B5"].forEach((cell) => summary.getCell(cell).fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FF2563EB" } });
+  summary.getCell("A6").value = "Invitados exportados";
+  summary.getCell("B6").value = rows.length;
+  ["A6", "B6"].forEach((cell) => summary.getCell(cell).fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FFEFF6FF" } });
+  summary.getCell("A8").value = "Uso";
+  summary.getCell("B8").value = "Usa los filtros de la hoja “Invitados” para buscar y ordenar los registros exportados. Las fechas están en hora de Ecuador (UTC-5).";
+  summary.getCell("A10").value = "Campos vacíos";
+  summary.getCell("B10").value = "Un campo vacío indica información no registrada. El archivo incluye los invitados que coinciden con los filtros aplicados.";
+  [8, 10].forEach((index) => {
+    summary.getCell(`B${index}`).alignment = { wrapText: true, vertical: "top" };
+    summary.getRow(index).height = 45;
+  });
+  summary.getColumn("A").width = 28;
+  summary.getColumn("B").width = 72;
+  summary.eachRow((row) => row.eachCell((cell) => cell.border = { bottom: { style: "hair", color: { argb: "FFD1D5DB" } } }));
+  return workbook;
+};
+
 const downloadWorkbook = async (filename: string, workbook: ExcelJS.Workbook) => {
   const buffer = await workbook.xlsx.writeBuffer();
   const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
@@ -168,3 +221,6 @@ export const downloadOperationalWorkbook = (filename: string, rows: AdminPartici
 
 export const downloadEmergencyWorkbook = (filename: string, rows: EmergencyParticipant[]) =>
   downloadWorkbook(filename, buildEmergencyWorkbook(rows));
+
+export const downloadGuestWorkbook = (filename: string, rows: GuestAttendance[]) =>
+  downloadWorkbook(filename, buildGuestWorkbook(rows));

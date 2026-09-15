@@ -1,5 +1,5 @@
 import QRCode from "qrcode";
-import { filterGuestAttendances, guestAttendanceCsv, type GuestAttendance } from "../lib/guest-attendance";
+import { filterGuestAttendances, type GuestAttendance } from "../lib/guest-attendance";
 import { EVENT_SLUG } from "../lib/registration";
 import { getSupabase, isBackendConfigured, withClientBase } from "../lib/supabase";
 
@@ -21,16 +21,6 @@ const setNotice = (message: string, tone: "info" | "success" | "error" = "info")
   notice.className = `admin-notice is-${tone}`;
 };
 
-const downloadCsv = (filename: string, content: string) => {
-  const blob = new Blob(["\uFEFF", content], { type: "text/csv;charset=utf-8" });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = filename;
-  link.click();
-  URL.revokeObjectURL(url);
-};
-
 const renderRows = () => {
   const query = document.querySelector<HTMLInputElement>("[data-guest-filter]")?.value ?? "";
   const organization = document.querySelector<HTMLSelectElement>("[data-guest-organization-filter]")?.value ?? "all";
@@ -50,6 +40,15 @@ const renderRows = () => {
       cell.textContent = value;
       row.append(cell);
     });
+    const actions = document.createElement("td");
+    const remove = document.createElement("button");
+    remove.type = "button";
+    remove.className = "button button-secondary dark";
+    remove.textContent = "Quitar invitado";
+    remove.dataset.removeGuest = guest.id;
+    remove.setAttribute("aria-label", `Quitar a ${guest.firstName} ${guest.lastName}`);
+    actions.append(remove);
+    row.append(actions);
     return row;
   }));
 };
@@ -119,9 +118,45 @@ const verifyAdmin = async () => {
 
 document.querySelector("[data-guest-filter]")?.addEventListener("input", renderRows);
 document.querySelector("[data-guest-organization-filter]")?.addEventListener("change", renderRows);
-document.querySelector("[data-export-guests]")?.addEventListener("click", async () => {
-  downloadCsv(`break-the-beat-invitados-${new Date().toISOString().slice(0, 10)}.csv`, guestAttendanceCsv(filtered));
-  if (eventId) await getSupabase().rpc("log_admin_action", { p_action: "export_guest_attendance_csv", p_target_type: "event", p_target_id: eventId, p_metadata: { rows: filtered.length } });
+rowsContainer.addEventListener("click", async (event) => {
+  const button = (event.target as HTMLElement).closest<HTMLButtonElement>("[data-remove-guest]");
+  const guest = guests.find((item) => item.id === button?.dataset.removeGuest);
+  if (!button || button.disabled || !guest || !eventId) return;
+  if (!window.confirm(`¿Quitar a ${guest.firstName} ${guest.lastName} de la lista de invitados? Se eliminará su confirmación de asistencia. Esta acción no se puede deshacer.`)) return;
+  button.disabled = true;
+  button.textContent = "Quitando…";
+  try {
+    const { error } = await getSupabase().rpc("remove_guest_attendance", { p_event_id: eventId, p_guest_id: guest.id });
+    if (error) throw error;
+    guests = guests.filter((item) => item.id !== guest.id);
+    renderOrganizationFilter();
+    renderRows();
+    setNotice(`${guest.firstName} ${guest.lastName} fue quitado de la lista.`, "success");
+  } catch {
+    setNotice("No pudimos quitar al invitado. Actualiza la lista antes de volver a intentarlo.", "error");
+  } finally {
+    button.disabled = false;
+    button.textContent = "Quitar invitado";
+  }
+});
+
+document.querySelector<HTMLButtonElement>("[data-export-guests]")?.addEventListener("click", async (event) => {
+  const button = event.currentTarget as HTMLButtonElement;
+  button.disabled = true;
+  const rows = [...filtered];
+  try {
+    const { downloadGuestWorkbook } = await import("../lib/admin-workbook");
+    await downloadGuestWorkbook(`break-the-beat-invitados-${new Date().toISOString().slice(0, 10)}.xlsx`, rows);
+    setNotice("Excel de invitados descargado.", "success");
+    if (eventId) {
+      const { error } = await getSupabase().rpc("log_admin_action", { p_action: "export_guest_attendance_xlsx", p_target_type: "event", p_target_id: eventId, p_metadata: { rows: rows.length } });
+      if (error) setNotice("Excel descargado, pero no se pudo registrar la exportación en la auditoría.", "error");
+    }
+  } catch {
+    setNotice("No pudimos completar la exportación de invitados.", "error");
+  } finally {
+    button.disabled = false;
+  }
 });
 document.querySelector("[data-copy-guest-url]")?.addEventListener("click", async () => {
   try {

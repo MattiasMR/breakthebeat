@@ -41,6 +41,9 @@ const progressCopy = document.querySelector<HTMLElement>("[data-progress-copy]")
 const submitAlert = form.querySelector<HTMLElement>("[data-submit-alert]");
 const medicalAlert = form.querySelector<HTMLElement>("[data-medical-alert]");
 const categoryError = form.querySelector<HTMLElement>("[data-category-error]");
+const capacityAlert = form.querySelector<HTMLElement>("[data-capacity-alert]");
+const categoryNext = form.querySelector<HTMLButtonElement>('[data-form-step="categories"] [data-next]');
+let capacityRequest = 0;
 let currentStepName = "categories";
 let registrationEnabled = false;
 let registrationStartTracked = false;
@@ -74,6 +77,46 @@ const setMedicalAlert = (message = "") => {
   if (!medicalAlert) return;
   medicalAlert.textContent = message;
   medicalAlert.hidden = !message;
+};
+
+// Only the latest selection may update the notice or allow the user to advance.
+const checkSelectedCapacity = async (): Promise<boolean> => {
+  const request = ++capacityRequest;
+  const selected = Array.from(form.querySelectorAll<HTMLInputElement>('input[name="captain.categories"]:checked'))
+    .map((input) => input.value as Category);
+  const showCapacity = (message: string, pending = false) => {
+    if (capacityAlert) {
+      capacityAlert.textContent = message;
+      capacityAlert.hidden = !message;
+      capacityAlert.setAttribute("aria-busy", String(pending));
+    }
+    if (categoryNext) categoryNext.disabled = pending;
+  };
+  if (categoryError) categoryError.hidden = true;
+  if (!selected.length) {
+    showCapacity("");
+    return false;
+  }
+  showCapacity("Comprobando cupos disponibles…", true);
+  try {
+    const { data, error } = await getSupabase().rpc("get_registration_capacity", { p_event_slug: EVENT_SLUG });
+    if (request !== capacityRequest) return false;
+    if (error || !Array.isArray(data)) throw new Error("CAPACITY_UNAVAILABLE");
+    const rows = data as Array<{ category: string; remaining: number | null }>;
+    if (selected.some((category) => !rows.some((row) => row.category === category &&
+      (row.remaining === null || (typeof row.remaining === "number" && Number.isFinite(row.remaining)))))) {
+      throw new Error("CAPACITY_UNAVAILABLE");
+    }
+    const full = selected.filter((category) => rows.some((row) => row.category === category && row.remaining !== null && row.remaining <= 0));
+    showCapacity(full.length
+      ? `Sin cupos en ${full.map((category) => categoryLabels[category]).join(", ")}. Desmarca ${full.length === 1 ? "esa categoría" : "esas categorías"} y elige otra o inténtalo más tarde.`
+      : "");
+    return full.length === 0;
+  } catch {
+    if (request !== capacityRequest) return false;
+    showCapacity("No pudimos comprobar los cupos. Revisa tu conexión y pulsa Continuar para reintentar.");
+    return false;
+  }
 };
 
 const instantSchemaFor = (input: HTMLInputElement) => {
@@ -335,6 +378,7 @@ const loadRegistrationState = async () => {
     formFields.disabled = false;
     restoreDraft();
     syncDuo();
+    void checkSelectedCapacity();
     setBanner("Inscripciones abiertas · Domingo 27 Sept, 2026 · 10 AM", "ready");
   } catch {
     setBanner("No pudimos conectar con el sistema de inscripciones.", "error");
@@ -343,7 +387,10 @@ const loadRegistrationState = async () => {
 
 form.addEventListener("change", (event) => {
   const target = event.target as HTMLInputElement;
-  if (target.name === "captain.categories") syncDuo();
+  if (target.name === "captain.categories") {
+    syncDuo();
+    void checkSelectedCapacity();
+  }
   setMedicalAlert();
   saveDraft();
 });
@@ -365,7 +412,11 @@ form.addEventListener("focusout", (event) => {
   validateInstantField(target, true);
 });
 
-form.querySelectorAll<HTMLButtonElement>("[data-next]").forEach((button) => button.addEventListener("click", () => {
+form.querySelectorAll<HTMLButtonElement>("[data-next]").forEach((button) => button.addEventListener("click", async () => {
+  if (currentStepName === "categories" && !(await checkSelectedCapacity())) {
+    if (categoryError) categoryError.hidden = Boolean(form.querySelector('input[name="captain.categories"]:checked'));
+    return;
+  }
   if (!validateCurrentStep()) return;
   if (currentStepName === "categories" && !registrationStartTracked) {
     registrationStartTracked = true;

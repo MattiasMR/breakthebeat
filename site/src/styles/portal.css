@@ -988,7 +988,7 @@ a.legal-document::after {
 
 .distribution-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
+  grid-template-columns: minmax(220px, .7fr) minmax(0, 1.3fr);
   gap: 12px;
   margin-top: 12px;
 }
@@ -1110,6 +1110,40 @@ a.legal-document::after {
 .data-table tr.is-duo-row td:first-child {
   border-left: 4px solid var(--pink);
 }
+
+.data-table tr.is-duo-row { background: #fff0f6; }
+.duo-partner-link {
+  justify-self: start;
+  margin-top: 7px;
+  padding: 7px 11px;
+  border: 1px solid #b01965;
+  border-radius: 8px;
+  background: #ffe0ee;
+  color: #761243;
+  font-weight: 800;
+  text-align: left;
+  cursor: pointer;
+}
+.duo-partner-link:hover { background: #ffc7e0; }
+.distribution-card.activity-card { min-width: 0; }
+.activity-card .activity-heading { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.activity-card > p, .activity-card > small { font-size: .8rem; color: #61584e; }
+.activity-card .activity-feed { display: grid; gap: 10px; max-height: 280px; overflow-y: auto; margin: 12px 0; padding-right: 6px; }
+.activity-bubble { padding: 12px; border: 1px solid #ded5c7; border-left: 3px solid var(--magenta); border-radius: 10px; background: white; overflow-wrap: anywhere; }
+.activity-bubble strong { font-size: .85rem; }
+.activity-bubble time { display: block; font-size: .72rem; color: #71695f; }
+.activity-bubble p { margin: 6px 0 0; white-space: pre-line; font-size: .85rem; }
+.category-editor { display: grid; gap: 16px; margin: 22px 0; }
+.category-editor fieldset { display: flex; flex-wrap: wrap; gap: 14px; padding: 16px; border: 1px solid #ad9e8a; border-radius: 8px; }
+.category-editor legend { font-weight: 800; padding: 0 6px; overflow-wrap: anywhere; }
+.category-editor label, .category-warning label { display: flex; gap: 8px; align-items: center; }
+.category-editor input, .category-warning input { width: 18px; height: 18px; flex-shrink: 0; accent-color: #a9135c; }
+.category-editor small { flex-basis: 100%; }
+.category-editor-error { color: #9b1527; font-weight: 700; }
+.category-warning { padding: 18px; margin: 18px 0; border: 2px solid #ac6b00; border-radius: 8px; background: #fff2cf; }
+.category-warning h3 { margin-top: 0; }
+.category-warning p { margin: 10px 0; }
+.category-change-summary { margin: 16px 0; padding: 8px 12px; border-radius: 6px; background: #fffaf0; }
 
 .data-table tr.is-duo-start td {
   border-top: 2px solid var(--pink);
@@ -1601,6 +1635,8 @@ a.legal-document::after {
   .scanner-heading h1 {
     font-size: clamp(2.4rem, 13vw, 4.5rem);
   }
+
+  .admin-dashboard-heading h1 { font-size: clamp(2rem, 9vw, 4rem); }
 
   .registration-layout {
     padding-inline: 10px;

@@ -80,6 +80,12 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
 
         <section class="distribution-grid">
           <article class="distribution-card"><h2>Categorías</h2><div data-category-stats></div></article>
+          <article class="distribution-card activity-card">
+            <div class="activity-heading"><h2>Registro de actividad</h2><button class="button button-secondary dark" type="button" data-refresh-activity>Actualizar</button></div>
+            <p data-activity-status role="status">Cargando actividad…</p>
+            <div class="activity-feed" data-activity-feed role="log" aria-label="Cambios recientes" aria-live="polite" aria-relevant="additions"></div>
+            <small>Últimas 60 acciones · actualización automática cada 20 segundos.</small>
+          </article>
         </section>
 
         <section class="admin-table-section">
@@ -121,6 +127,28 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
     <dialog class="participant-dialog" data-participant-dialog>
       <button class="dialog-close" type="button" data-dialog-close aria-label="Cerrar">×</button>
       <div data-participant-detail></div>
+    </dialog>
+
+    <dialog class="participant-dialog" data-category-dialog aria-labelledby="category-dialog-title">
+      <button class="dialog-close" type="button" data-category-close aria-label="Cerrar">×</button>
+      <h2 id="category-dialog-title">Cambiar categorías</h2>
+      <p data-category-registration></p>
+      <p>Selecciona las categorías de cada persona. 2 vs 2 se activa o desactiva para ambos integrantes.</p>
+      <form data-category-form>
+        <div class="category-editor" data-category-fields></div>
+        <p class="category-editor-error" data-category-error role="alert" hidden></p>
+        <section class="category-warning" data-category-warning tabindex="-1" hidden>
+          <h3>Revisa antes de confirmar</h3>
+          <p>Este cambio modifica las listas de competencia y los cupos. Comprueba las categorías con los participantes y la organización. Los QR existentes conservan su validez; vuelve a descargarlos si necesitas actualizar las categorías impresas.</p>
+          <div class="category-change-summary" data-category-summary></div>
+          <label><input type="checkbox" data-category-ack /> Revisé los cambios y confirmo que son correctos.</label>
+        </section>
+        <div class="table-action-row">
+          <button class="button button-secondary dark" type="button" data-category-close>Cancelar</button>
+          <button class="button button-secondary dark" type="button" data-category-back hidden>Volver a editar</button>
+          <button class="button button-primary" type="submit" data-category-submit>Revisar cambios</button>
+        </div>
+      </form>
     </dialog>
 
     <dialog class="participant-dialog participant-photo-dialog" data-photo-dialog>

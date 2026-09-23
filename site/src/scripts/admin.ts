@@ -12,7 +12,8 @@ import {
   createParticipantQrDataUrl,
   participantQrFilename
 } from "../lib/participant-qr";
-import { categoryLabels, EVENT_SLUG } from "../lib/registration";
+import { categoryLabels, EVENT_SLUG, type Category } from "../lib/registration";
+import { activityText, categorySnapshot, categoryText, duoPartner, validateCategoryChanges, type ActivityEntry, type CategoryChange } from "../lib/admin-categories";
 import { backendConfiguration, getSupabase, isBackendConfigured } from "../lib/supabase";
 
 declare global {
@@ -44,6 +45,10 @@ let selected = new Set<string>();
 let eventState: { id: string; registration_open: boolean; legal_ready: boolean } | null = null;
 let inactivityTimer: number | undefined;
 let previewParticipantId: string | null = null;
+let activityTimer: number | undefined;
+let activityLoading = false;
+let activityVersion = 0;
+let activityFingerprint = "";
 
 const filters: AdminFilters = {
   query: "",
@@ -65,9 +70,15 @@ const setNotice = (message: string, tone: "info" | "success" | "error" = "info")
   if (!notice) return;
   notice.textContent = message;
   notice.className = `admin-notice is-${tone}`;
+  if (tone === "success") void loadActivity();
 };
 
 const sessionLogout = async (message?: string) => {
+  window.clearInterval(activityTimer);
+  activityVersion++;
+  activityFingerprint = "";
+  document.querySelector("[data-activity-feed]")?.replaceChildren();
+  document.querySelectorAll<HTMLDialogElement>("dialog[open]").forEach((item) => item.close());
   if (isBackendConfigured()) await getSupabase().auth.signOut();
   window.clearTimeout(inactivityTimer);
   dashboard.hidden = true;
@@ -177,6 +188,20 @@ const renderRows = () => {
     const personContent = document.createElement("div");
     personContent.className = "table-cell-stack";
     personContent.append(name, code, email);
+    if (row.categories.includes("2v2")) {
+      const partner = duoPartner(row, participants);
+      if (partner) {
+        const duoLink = document.createElement("button");
+        duoLink.type = "button";
+        duoLink.className = "duo-partner-link";
+        duoLink.textContent = `Dúo con ${partner.displayName} ↗`;
+        duoLink.dataset.viewParticipant = partner.id;
+        duoLink.title = `Ver a ${partner.displayName} · ${partner.participantCode}`;
+        personContent.append(duoLink);
+      } else {
+        personContent.append(chip("Dúo incompleto: revisar inscripción", "cancelled"));
+      }
+    }
     personCell.append(personContent);
 
     const categoryCell = document.createElement("td");
@@ -223,7 +248,11 @@ const renderRows = () => {
     photoButton.className = "photo-action-button";
     photoButton.disabled = !row.photoPath;
     if (!row.photoPath) photoButton.title = "Este participante todavía no ha cargado una foto";
-    actionCell.append(detailsButton, photoButton, checkInButton, statusButton, qrButton);
+    const categoryButton = document.createElement("button");
+    categoryButton.type = "button";
+    categoryButton.textContent = "Cambiar categorías";
+    categoryButton.dataset.editCategories = row.id;
+    actionCell.append(detailsButton, categoryButton, photoButton, checkInButton, statusButton, qrButton);
 
     tr.append(selectCell, personCell, categoryCell, statusCell, actionCell);
     return tr;
@@ -265,7 +294,7 @@ const loadRows = async () => {
     .order("created_at", { ascending: false });
   if (error) {
     setNotice("No se pudieron cargar las inscripciones.", "error");
-    return;
+    return false;
   }
   participants = normalizeRows(data ?? []);
   selected.clear();
@@ -273,7 +302,50 @@ const loadRows = async () => {
   renderRows();
   const oldRecords = participants.filter((row) => Date.now() - new Date(row.createdAt).getTime() > 365 * 86400000).length;
   setNotice(oldRecords ? `${oldRecords} registros tienen más de un año. Revisa si todavía deben conservarse.` : "Datos actualizados.", oldRecords ? "info" : "success");
+  void loadActivity();
+  return true;
 };
+
+const loadActivity = async () => {
+  if (dashboard.hidden || activityLoading) return;
+  const feed = document.querySelector<HTMLElement>("[data-activity-feed]");
+  const status = document.querySelector<HTMLElement>("[data-activity-status]");
+  if (!feed || !status) return;
+  activityLoading = true;
+  const version = activityVersion;
+  try {
+    const { data, error } = await getSupabase().rpc("admin_recent_activity");
+    if (dashboard.hidden || version !== activityVersion) return;
+    if (error) throw error;
+    const entries = (data ?? []) as ActivityEntry[];
+    const fingerprint = entries.map((entry) => entry.id).join();
+    if (fingerprint !== activityFingerprint || !feed.childElementCount) {
+      const scrollTop = feed.scrollTop;
+      feed.replaceChildren(...entries.map((entry) => {
+        const bubble = document.createElement("article");
+        bubble.className = "activity-bubble";
+        const author = document.createElement("strong");
+        author.textContent = entry.username;
+        const time = document.createElement("time");
+        time.dateTime = entry.created_at;
+        time.textContent = new Date(entry.created_at).toLocaleString("es-EC", { timeZone: "America/Guayaquil", day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" });
+        time.title = "Hora de Ecuador";
+        const message = document.createElement("p");
+        message.textContent = activityText(entry, participants);
+        bubble.append(author, time, message);
+        return bubble;
+      }));
+      feed.scrollTop = scrollTop;
+      activityFingerprint = fingerprint;
+    }
+    status.textContent = entries.length ? "Más reciente primero · hora de Ecuador" : "Todavía no hay actividad registrada.";
+  } catch {
+    if (version === activityVersion && !dashboard.hidden) status.textContent = "No se pudo actualizar el registro. Pulsa Actualizar para reintentar.";
+  } finally {
+    activityLoading = false;
+  }
+};
+document.querySelector("[data-refresh-activity]")?.addEventListener("click", () => void loadActivity());
 
 const renderEventState = () => {
   const label = document.querySelector<HTMLElement>("[data-event-state]");
@@ -297,6 +369,8 @@ const showDashboard = async (username: string) => {
   if (usernameNode) usernameNode.textContent = username;
   resetInactivity();
   await Promise.all([loadRows(), loadEventState()]);
+  window.clearInterval(activityTimer);
+  activityTimer = window.setInterval(() => { if (!document.hidden) void loadActivity(); }, 20_000);
 };
 
 const restoreSession = async () => {
@@ -397,6 +471,8 @@ rowsContainer.addEventListener("click", async (event) => {
   const toggle = target.closest<HTMLButtonElement>("[data-toggle-registration]");
   const generateQrButton = target.closest<HTMLButtonElement>("[data-generate-qr]");
   const viewPhotoButton = target.closest<HTMLButtonElement>("[data-view-photo]");
+  const editCategories = target.closest<HTMLButtonElement>("[data-edit-categories]");
+  if (editCategories) openCategoryEditor(editCategories.dataset.editCategories ?? "");
   if (view) await openParticipantDetail(view.dataset.viewParticipant ?? "");
   if (manualCheckInButton) {
     await manualCheckIn(
@@ -470,10 +546,8 @@ const openParticipantDetail = async (participantId: string) => {
   const entries: Array<[string, string]> = [
     ["Contacto de emergencia", emergency ? `${emergency.full_name} (${emergency.relationship}) · ${emergency.phone}` : "Sin información"]
   ];
-  const partner = row.role === "captain"
-    ? participants.find((participant) => participant.registrationId === row.registrationId && participant.role === "partner")
-    : null;
-  if (partner) entries.push(["Compañero registrado", `${partner.displayName} · ${partner.participantCode}`]);
+  const partner = duoPartner(row, participants);
+  if (partner) entries.push(["Dúo con", `${partner.displayName} · ${partner.participantCode}`]);
   entries.forEach(([label, value]) => {
     const item = document.createElement("div");
     const strong = document.createElement("strong");
@@ -690,6 +764,147 @@ const deactivateRegistrations = async (registrationIds: string[]) => {
 document.querySelector("[data-deactivate-selected]")?.addEventListener("click", async () => {
   const registrationIds = [...new Set(participants.filter((row) => selected.has(row.id)).map((row) => row.registrationId))];
   await deactivateRegistrations(registrationIds);
+});
+
+const categoryDialog = document.querySelector<HTMLDialogElement>("[data-category-dialog]")!;
+const categoryForm = document.querySelector<HTMLFormElement>("[data-category-form]")!;
+const categoryFields = document.querySelector<HTMLElement>("[data-category-fields]")!;
+const categoryWarning = document.querySelector<HTMLElement>("[data-category-warning]")!;
+const categoryError = document.querySelector<HTMLElement>("[data-category-error]")!;
+const categorySubmit = document.querySelector<HTMLButtonElement>("[data-category-submit]")!;
+const categoryBack = document.querySelector<HTMLButtonElement>("[data-category-back]")!;
+const categoryAck = document.querySelector<HTMLInputElement>("[data-category-ack]")!;
+let editingRows: AdminParticipant[] = [];
+let reviewedChanges: CategoryChange[] | null = null;
+let categorySaving = false;
+
+const resetCategoryReview = () => {
+  reviewedChanges = null;
+  categoryWarning.hidden = true;
+  categoryBack.hidden = true;
+  categoryAck.checked = false;
+  categorySubmit.textContent = "Revisar cambios";
+  categorySubmit.disabled = false;
+  categoryFields.querySelectorAll<HTMLFieldSetElement>("fieldset").forEach((item) => { item.disabled = false; });
+};
+const showCategoryError = (message = "") => {
+  categoryError.textContent = message;
+  categoryError.hidden = !message;
+};
+const openCategoryEditor = (participantId: string) => {
+  const row = participants.find((item) => item.id === participantId);
+  if (!row || categorySaving) return;
+  editingRows = participants.filter((item) => item.registrationId === row.registrationId)
+    .map((item) => ({ ...item, categories: [...item.categories] }));
+  resetCategoryReview();
+  showCategoryError();
+  document.querySelector<HTMLElement>("[data-category-registration]")!.textContent = `${row.registrationCode} · ${row.status === "confirmed" ? "Confirmada" : "Desactivada (no ocupa cupos hasta reactivarse)"}`;
+  categoryFields.replaceChildren(...editingRows.map((person) => {
+    const fieldset = document.createElement("fieldset");
+    fieldset.dataset.categoryPerson = person.id;
+    const legend = document.createElement("legend");
+    legend.textContent = `${person.displayName} · ${person.participantCode}`;
+    fieldset.append(legend);
+    (Object.keys(categoryLabels) as Category[]).forEach((category) => {
+      const label = document.createElement("label");
+      const input = document.createElement("input");
+      input.type = "checkbox";
+      input.value = category;
+      input.checked = person.categories.includes(category);
+      input.disabled = category === "2v2" && editingRows.length !== 2;
+      label.append(input, document.createTextNode(categoryLabels[category]));
+      fieldset.append(label);
+    });
+    if (editingRows.length !== 2) {
+      const hint = document.createElement("small");
+      hint.textContent = "Para 2 vs 2 se necesita un compañero registrado en esta inscripción.";
+      fieldset.append(hint);
+    }
+    if (person.checkedInAt) {
+      const hint = document.createElement("small");
+      hint.textContent = "Esta persona ya hizo check-in. Coordina el cambio con la mesa de competencia.";
+      fieldset.append(hint);
+    }
+    return fieldset;
+  }));
+  categoryDialog.showModal();
+};
+categoryFields.addEventListener("change", (event) => {
+  const input = event.target as HTMLInputElement;
+  if (input.value === "2v2") categoryFields.querySelectorAll<HTMLInputElement>('input[value="2v2"]').forEach((other) => { other.checked = input.checked; });
+  showCategoryError();
+});
+document.querySelectorAll("[data-category-close]").forEach((button) => button.addEventListener("click", () => { if (!categorySaving) categoryDialog.close(); }));
+categoryDialog.addEventListener("cancel", (event) => { if (categorySaving) event.preventDefault(); });
+categoryBack.addEventListener("click", resetCategoryReview);
+categoryAck.addEventListener("change", () => { categorySubmit.disabled = !categoryAck.checked; });
+categoryForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  if (categorySaving || !editingRows.length) return;
+  if (!reviewedChanges) {
+    const changes = Array.from(categoryFields.querySelectorAll<HTMLFieldSetElement>("fieldset")).map((fieldset) => ({
+      id: fieldset.dataset.categoryPerson!,
+      categories: Array.from(fieldset.querySelectorAll<HTMLInputElement>("input:checked")).map((input) => input.value as Category)
+    }));
+    const error = validateCategoryChanges(editingRows, changes);
+    if (error) return showCategoryError(error);
+    showCategoryError();
+    reviewedChanges = changes;
+    document.querySelector("[data-category-summary]")!.replaceChildren(...changes.map((change) => {
+      const row = editingRows.find((item) => item.id === change.id)!;
+      const summary = document.createElement("p");
+      const name = document.createElement("strong");
+      name.textContent = row.displayName;
+      summary.append(name, document.createElement("br"), document.createTextNode(`${categoryText(row.categories)} → ${categoryText(change.categories)}`));
+      return summary;
+    }));
+    categoryFields.querySelectorAll<HTMLFieldSetElement>("fieldset").forEach((item) => { item.disabled = true; });
+    categoryWarning.hidden = false;
+    categoryBack.hidden = false;
+    categorySubmit.textContent = "Confirmar cambio";
+    categorySubmit.disabled = true;
+    categoryWarning.focus();
+    return;
+  }
+  if (!categoryAck.checked) return;
+  categorySaving = true;
+  categorySubmit.disabled = true;
+  categoryBack.disabled = true;
+  categoryAck.disabled = true;
+  categorySubmit.textContent = "Guardando…";
+  showCategoryError();
+  try {
+    const { error } = await getSupabase().rpc("admin_update_categories", {
+      p_registration_id: editingRows[0].registrationId,
+      p_expected: categorySnapshot(editingRows),
+      p_changes: reviewedChanges,
+      p_expected_status: editingRows[0].status
+    });
+    if (error) throw error;
+    categoryDialog.close();
+    const refreshed = await loadRows();
+    await loadActivity();
+    setNotice(refreshed ? "Categorías actualizadas y cambio registrado en el historial."
+      : "El cambio se guardó, pero no se pudo actualizar la lista. Recarga el panel antes de seguir editando.", refreshed ? "success" : "info");
+  } catch (error) {
+    const code = (error as { message?: string })?.message ?? "";
+    const message = code.includes("CATEGORY_FULL") ? "No se guardó: una categoría no tiene cupos disponibles."
+      : code.includes("DUPLICATE_PARTICIPANT_CATEGORY") ? "No se guardó: una persona ya está inscrita en esa categoría con el mismo correo."
+      : code.includes("STALE_CATEGORIES") ? "Otro administrador cambió esta inscripción. Cierra el editor y vuelve a abrirlo para revisar los datos actuales."
+      : code.includes("DUO_REQUIRES_TWO") ? "2 vs 2 requiere a los dos integrantes de la inscripción."
+      : code.includes("INDIVIDUAL_CATEGORY_SHARED") ? "Cada categoría individual necesita una inscripción separada para cada persona."
+      : "No se pudo confirmar el cambio. Cierra el editor y actualiza los datos antes de reintentar.";
+    resetCategoryReview();
+    showCategoryError(message);
+    if (code.includes("STALE_CATEGORIES")) {
+      categorySubmit.disabled = true;
+      await loadRows();
+    }
+  } finally {
+    categorySaving = false;
+    categoryBack.disabled = false;
+    categoryAck.disabled = false;
+  }
 });
 
 void restoreSession();

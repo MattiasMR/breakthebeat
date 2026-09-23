@@ -181,7 +181,7 @@ const renderRows = () => {
     const personContent = document.createElement("div");
     personContent.className = "table-cell-stack";
     personContent.append(name, code, email);
-    if (row.categories.includes("2v2")) {
+    if (row.role === "captain" && row.categories.includes("2v2")) {
       const partner = duoPartner(row, participants);
       if (partner) {
         const duoLink = document.createElement("button");

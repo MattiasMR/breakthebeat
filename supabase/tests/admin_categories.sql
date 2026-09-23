@@ -34,10 +34,6 @@ begin
     perform public.admin_update_categories(v_registration, v_expected, v_expected, 'confirmed');
     raise exception 'TEST: non-admin edit accepted';
   exception when raise_exception then if sqlerrm <> 'NOT_AUTHORIZED' then raise; end if; end;
-  begin
-    perform public.admin_recent_activity();
-    raise exception 'TEST: non-admin activity accepted';
-  exception when raise_exception then if sqlerrm <> 'NOT_AUTHORIZED' then raise; end if; end;
   perform set_config('request.jwt.claim.sub', v_admin::text, true);
 
   v_changes := jsonb_set(v_expected, '{0,categories}', '["2v2", "bgirls"]');
@@ -46,7 +42,6 @@ begin
   if not exists (select 1 from public.admin_audit_log where action = 'update_participant_categories' and target_id = v_registration
     and metadata->'before' @> v_expected and metadata->'after' @> v_changes
     and metadata->'participants'->v_a::text->>'name' = 'Test Ana') then raise exception 'TEST: audit incomplete'; end if;
-  if not exists (select 1 from public.admin_recent_activity() where username = 'category-test-admin' and action = 'update_participant_categories') then raise exception 'TEST: activity missing'; end if;
   select count(*) into v_audit_count from public.admin_audit_log where target_id = v_registration;
   perform public.admin_update_categories(v_registration, v_changes, v_changes, 'confirmed');
   if (select count(*) from public.admin_audit_log where target_id = v_registration) <> v_audit_count then raise exception 'TEST: no-op logged'; end if;
@@ -111,7 +106,7 @@ begin
   perform public.admin_update_categories(v_registration, v_changes, v_expected, 'cancelled');
   if (select status from public.registrations where id = v_registration) <> 'cancelled' then raise exception 'TEST: category edit reactivated registration'; end if;
   if has_function_privilege('anon', 'public.admin_update_categories(uuid,jsonb,jsonb,text)', 'EXECUTE')
-    or has_function_privilege('anon', 'public.admin_recent_activity()', 'EXECUTE') then raise exception 'TEST: anonymous grant'; end if;
+    then raise exception 'TEST: anonymous grant'; end if;
 end;
 $$;
 rollback;

@@ -13,7 +13,8 @@ import {
   participantQrFilename
 } from "../lib/participant-qr";
 import { categoryLabels, EVENT_SLUG, type Category } from "../lib/registration";
-import { activityText, categorySnapshot, categoryText, duoPartner, validateCategoryChanges, type ActivityEntry, type CategoryChange } from "../lib/admin-categories";
+import { categorySnapshot, categoryText, duoPartner, validateCategoryChanges, type CategoryChange } from "../lib/admin-categories";
+import { loadCapacity, clearCapacity } from "./admin-capacity";
 import { backendConfiguration, getSupabase, isBackendConfigured } from "../lib/supabase";
 
 declare global {
@@ -45,10 +46,6 @@ let selected = new Set<string>();
 let eventState: { id: string; registration_open: boolean; legal_ready: boolean } | null = null;
 let inactivityTimer: number | undefined;
 let previewParticipantId: string | null = null;
-let activityTimer: number | undefined;
-let activityLoading = false;
-let activityVersion = 0;
-let activityFingerprint = "";
 
 const filters: AdminFilters = {
   query: "",
@@ -70,14 +67,10 @@ const setNotice = (message: string, tone: "info" | "success" | "error" = "info")
   if (!notice) return;
   notice.textContent = message;
   notice.className = `admin-notice is-${tone}`;
-  if (tone === "success") void loadActivity();
 };
 
 const sessionLogout = async (message?: string) => {
-  window.clearInterval(activityTimer);
-  activityVersion++;
-  activityFingerprint = "";
-  document.querySelector("[data-activity-feed]")?.replaceChildren();
+  clearCapacity();
   document.querySelectorAll<HTMLDialogElement>("dialog[open]").forEach((item) => item.close());
   if (isBackendConfigured()) await getSupabase().auth.signOut();
   window.clearTimeout(inactivityTimer);
@@ -302,50 +295,9 @@ const loadRows = async () => {
   renderRows();
   const oldRecords = participants.filter((row) => Date.now() - new Date(row.createdAt).getTime() > 365 * 86400000).length;
   setNotice(oldRecords ? `${oldRecords} registros tienen más de un año. Revisa si todavía deben conservarse.` : "Datos actualizados.", oldRecords ? "info" : "success");
-  void loadActivity();
+  await loadCapacity();
   return true;
 };
-
-const loadActivity = async () => {
-  if (dashboard.hidden || activityLoading) return;
-  const feed = document.querySelector<HTMLElement>("[data-activity-feed]");
-  const status = document.querySelector<HTMLElement>("[data-activity-status]");
-  if (!feed || !status) return;
-  activityLoading = true;
-  const version = activityVersion;
-  try {
-    const { data, error } = await getSupabase().rpc("admin_recent_activity");
-    if (dashboard.hidden || version !== activityVersion) return;
-    if (error) throw error;
-    const entries = (data ?? []) as ActivityEntry[];
-    const fingerprint = entries.map((entry) => entry.id).join();
-    if (fingerprint !== activityFingerprint || !feed.childElementCount) {
-      const scrollTop = feed.scrollTop;
-      feed.replaceChildren(...entries.map((entry) => {
-        const bubble = document.createElement("article");
-        bubble.className = "activity-bubble";
-        const author = document.createElement("strong");
-        author.textContent = entry.username;
-        const time = document.createElement("time");
-        time.dateTime = entry.created_at;
-        time.textContent = new Date(entry.created_at).toLocaleString("es-EC", { timeZone: "America/Guayaquil", day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" });
-        time.title = "Hora de Ecuador";
-        const message = document.createElement("p");
-        message.textContent = activityText(entry, participants);
-        bubble.append(author, time, message);
-        return bubble;
-      }));
-      feed.scrollTop = scrollTop;
-      activityFingerprint = fingerprint;
-    }
-    status.textContent = entries.length ? "Más reciente primero · hora de Ecuador" : "Todavía no hay actividad registrada.";
-  } catch {
-    if (version === activityVersion && !dashboard.hidden) status.textContent = "No se pudo actualizar el registro. Pulsa Actualizar para reintentar.";
-  } finally {
-    activityLoading = false;
-  }
-};
-document.querySelector("[data-refresh-activity]")?.addEventListener("click", () => void loadActivity());
 
 const renderEventState = () => {
   const label = document.querySelector<HTMLElement>("[data-event-state]");
@@ -369,8 +321,6 @@ const showDashboard = async (username: string) => {
   if (usernameNode) usernameNode.textContent = username;
   resetInactivity();
   await Promise.all([loadRows(), loadEventState()]);
-  window.clearInterval(activityTimer);
-  activityTimer = window.setInterval(() => { if (!document.hidden) void loadActivity(); }, 20_000);
 };
 
 const restoreSession = async () => {
@@ -883,8 +833,7 @@ categoryForm.addEventListener("submit", async (event) => {
     if (error) throw error;
     categoryDialog.close();
     const refreshed = await loadRows();
-    await loadActivity();
-    setNotice(refreshed ? "Categorías actualizadas y cambio registrado en el historial."
+    setNotice(refreshed ? "Categorías actualizadas."
       : "El cambio se guardó, pero no se pudo actualizar la lista. Recarga el panel antes de seguir editando.", refreshed ? "success" : "info");
   } catch (error) {
     const code = (error as { message?: string })?.message ?? "";

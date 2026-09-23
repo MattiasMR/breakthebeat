@@ -80,11 +80,11 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
 
         <section class="distribution-grid">
           <article class="distribution-card"><h2>Categorías</h2><div data-category-stats></div></article>
-          <article class="distribution-card activity-card">
-            <div class="activity-heading"><h2>Registro de actividad</h2><button class="button button-secondary dark" type="button" data-refresh-activity>Actualizar</button></div>
-            <p data-activity-status role="status">Cargando actividad…</p>
-            <div class="activity-feed" data-activity-feed role="log" aria-label="Cambios recientes" aria-live="polite" aria-relevant="additions"></div>
-            <small>Últimas 60 acciones · actualización automática cada 20 segundos.</small>
+          <article class="distribution-card capacity-card">
+            <header class="capacity-heading"><h2>Cupos por categoría</h2><button class="button button-secondary dark" type="button" data-refresh-capacity>Actualizar</button></header>
+            <p>Cambia los cupos totales. En 2 vs 2, cada cupo corresponde a una dupla.</p>
+            <p data-capacity-status role="status">Cargando cupos…</p>
+            <section class="capacity-list" data-capacity-list aria-label="Editar cupos por categoría"></section>
           </article>
         </section>
 

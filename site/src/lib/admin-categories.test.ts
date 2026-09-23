@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { activityText, categorySnapshot, duoPartner, validateCategoryChanges } from "./admin-categories";
+import { categorySnapshot, duoPartner, validateCategoryChanges } from "./admin-categories";
 import type { AdminParticipant } from "./admin";
 
 const person = (id: string, categories: AdminParticipant["categories"], registrationId = "r1") =>
@@ -25,13 +25,5 @@ describe("edición administrativa de categorías", () => {
     expect(validateCategoryChanges(rows, [{ id: "a", categories: ["1v1"] }, { id: "b", categories: ["bgirls"] }])).toBe("");
     expect(validateCategoryChanges(rows, [{ id: "a", categories: ["1v1"] }, { id: "b", categories: ["1v1"] }])).toContain("inscripciones separadas");
     expect(validateCategoryChanges(rows, [{ id: "a", categories: ["1v1"] }, { id: "b", categories: ["2v2"] }])).toContain("dos integrantes");
-  });
-  it("conserva el antes y después por nombre aunque la persona ya no esté en la lista", () => {
-    const text = activityText({ id: "log", action: "update_participant_categories", target_type: "registration", target_id: "r1", created_at: "2026-09-23", username: "admin", metadata: {
-      public_code: "BTB26-TEST", participants: { a: { name: "Ana" } },
-      before: [{ id: "a", categories: ["1v1"] }], after: [{ id: "a", categories: ["bgirls"] }]
-    } }, []);
-    expect(text).toContain("Ana: 1 vs 1 → BGirls");
-    expect(text).toContain("BTB26-TEST");
   });
 });

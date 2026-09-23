@@ -93,10 +93,6 @@ export type EmergencyParticipant = {
   participantCode: string;
   displayName: string;
   phone: string;
-  condition?: string | null;
-  medicationAllergy?: string | null;
-  foodAllergy?: string | null;
-  medication?: string | null;
   contactName?: string | null;
   relationship?: string | null;
   contactPhone?: string | null;
@@ -109,11 +105,11 @@ export const buildEmergencyWorkbook = (rows: EmergencyParticipant[], generatedAt
   workbook.modified = generatedAt;
   const summary = workbook.addWorksheet("Resumen", { views: [{ showGridLines: false }] });
   const sheet = workbook.addWorksheet("Emergencia", { views: [{ state: "frozen", ySplit: 1 }] });
-  sheet.addRow(["Código", "Nombre", "Teléfono", "Condición", "Alergia medicamento", "Alergia alimento", "Medicación permanente", "Contacto emergencia", "Relación", "Teléfono emergencia"]);
-  sheet.addRows(rows.map((row) => [row.participantCode, row.displayName, row.phone, row.condition,
-    row.medicationAllergy, row.foodAllergy, row.medication, row.contactName, row.relationship, row.contactPhone].map(excelSafeText)));
-  sheet.columns = [20, 32, 20, 40, 36, 36, 40, 32, 20, 22].map((width) => ({ width }));
-  sheet.autoFilter = { from: "A1", to: `J${Math.max(rows.length + 1, 1)}` };
+  sheet.addRow(["Código", "Nombre", "Teléfono", "Contacto emergencia", "Relación", "Teléfono emergencia"]);
+  sheet.addRows(rows.map((row) => [row.participantCode, row.displayName, row.phone,
+    row.contactName, row.relationship, row.contactPhone].map(excelSafeText)));
+  sheet.columns = [20, 32, 20, 32, 20, 22].map((width) => ({ width }));
+  sheet.autoFilter = { from: "A1", to: `F${Math.max(rows.length + 1, 1)}` };
   sheet.eachRow((row, index) => {
     row.alignment = { vertical: "top", wrapText: true };
     if (index === 1 || index % 2 === 0) row.eachCell((cell) => {
@@ -140,9 +136,9 @@ export const buildEmergencyWorkbook = (rows: EmergencyParticipant[], generatedAt
   summary.getCell("B6").value = rows.length;
   ["A6", "B6"].forEach((cell) => summary.getCell(cell).fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FFEFF6FF" } });
   summary.getCell("A8").value = "Uso reservado";
-  summary.getCell("B8").value = "Información médica y de emergencia para uso exclusivo del evento. Usa los filtros de la hoja “Emergencia” para encontrar a cada participante.";
+  summary.getCell("B8").value = "Datos de contacto de emergencia para uso exclusivo del evento. Usa los filtros de la hoja “Emergencia” para encontrar a cada participante.";
   summary.getCell("A10").value = "Campos vacíos";
-  summary.getCell("B10").value = "Un campo vacío indica información no registrada; no confirma ausencia de una condición, alergia o medicación.";
+  summary.getCell("B10").value = "Un campo vacío indica información de contacto no registrada.";
   [8, 10].forEach((index) => {
     summary.getCell(`B${index}`).alignment = { wrapText: true, vertical: "top" };
     summary.getRow(index).height = 45;

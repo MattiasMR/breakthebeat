@@ -658,27 +658,21 @@ document.querySelector("[data-download-active-photos]")?.addEventListener("click
 document.querySelector("[data-download-all-photos]")?.addEventListener("click", downloadPhotos);
 
 document.querySelector("[data-export-emergency]")?.addEventListener("click", async (event) => {
-  if (!window.confirm("Este archivo contiene información médica y de emergencia. ¿Confirmas que se usará únicamente para el evento?")) return;
+  if (!window.confirm("Este archivo contiene datos de contacto de emergencia. ¿Confirmas que se usará únicamente para el evento?")) return;
   const rows = [...filtered];
   const ids = rows.map((row) => row.id);
   if (!ids.length) return setNotice("No hay participantes para exportar con los filtros actuales.", "info");
   const button = event.currentTarget as HTMLButtonElement;
   button.disabled = true;
   try {
-    const [medicalResult, contactsResult] = await Promise.all([
-      getSupabase().from("medical_profiles").select("*").in("participant_id", ids),
-      getSupabase().from("emergency_contacts").select("*").in("participant_id", ids)
-    ]);
-    if (medicalResult.error || contactsResult.error) throw medicalResult.error ?? contactsResult.error;
-    const medicalMap = new Map((medicalResult.data ?? []).map((item) => [item.participant_id, item]));
+    const contactsResult = await getSupabase().from("emergency_contacts")
+      .select("participant_id, full_name, relationship, phone").in("participant_id", ids);
+    if (contactsResult.error) throw contactsResult.error;
     const contactMap = new Map((contactsResult.data ?? []).map((item) => [item.participant_id, item]));
     const emergencyRows = rows.map((row) => {
-      const health = medicalMap.get(row.id);
       const contact = contactMap.get(row.id);
       return {
         participantCode: row.participantCode, displayName: row.displayName, phone: row.phone,
-        condition: health?.condition_detail, medicationAllergy: health?.medication_allergy_detail,
-        foodAllergy: health?.food_allergy_detail, medication: health?.medication_detail,
         contactName: contact?.full_name, relationship: contact?.relationship, contactPhone: contact?.phone
       };
     });

@@ -24,9 +24,7 @@ const editedId = () => input.value.trim() ? parseYouTubeVideoId(input.value) : n
 const updateControls = () => {
   const invalid = Boolean(input.value.trim()) && !editedId();
   const dirty = invalid || editedId() !== state?.video_id;
-  input.setCustomValidity(invalid ? (/^rtmps?:/i.test(input.value.trim())
-    ? "Esta dirección se usa en OBS para enviar la señal. Aquí pega el enlace de Compartir del video de YouTube."
-    : "Pega un enlace válido de un video o en vivo de YouTube.") : "");
+  input.setCustomValidity(invalid ? "Pega un enlace válido de un video o en vivo de YouTube." : "");
   toggle.disabled = busy || !state || dirty || (!state.video_id && !state.enabled);
   save.disabled = busy || !state || invalid || !dirty || (state.enabled && !editedId());
 };

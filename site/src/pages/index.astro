@@ -7,6 +7,7 @@ import { editions } from "../data/editions";
 import { withBase } from "../utils/paths";
 import "../styles/global.css";
 import "../styles/portal.css";
+import "../styles/livestream.css";
 
 const pageTitle = "Break The Beat | 3ra edición";
 const description =
@@ -175,6 +176,11 @@ const homeSponsorLogo = (logo: string, editionId: string) => {
                 )}
               </div>
             </div>
+            <section class="home-livestream" data-home-livestream hidden aria-labelledby="home-live-title">
+              <div class="home-livestream-heading"><span class="home-live-dot" aria-hidden="true"></span><h2 id="home-live-title">Break The Beat en vivo</h2></div>
+              <div class="livestream-frame" data-live-player></div>
+              <div class="home-livestream-footer"><span>Dale play y vive el movimiento.</span><a data-live-youtube target="_blank" rel="noopener">Ver en YouTube ↗</a></div>
+            </section>
           </article>
         ))}
 
@@ -431,6 +437,7 @@ const homeSponsorLogo = (logo: string, editionId: string) => {
 
     <script>
       import "../scripts/home-countdown";
+      import "../scripts/home-livestream";
       import "../scripts/edition-switcher";
     </script>
     <Analytics />

@@ -15,6 +15,7 @@ import {
 import { categoryLabels, EVENT_SLUG, type Category } from "../lib/registration";
 import { categorySnapshot, categoryText, duoPartner, validateCategoryChanges, type CategoryChange } from "../lib/admin-categories";
 import { loadCapacity, clearCapacity } from "./admin-capacity";
+import { loadLivestream, clearLivestream } from "./admin-livestream";
 import { backendConfiguration, getSupabase, isBackendConfigured } from "../lib/supabase";
 
 declare global {
@@ -71,6 +72,7 @@ const setNotice = (message: string, tone: "info" | "success" | "error" = "info")
 
 const sessionLogout = async (message?: string) => {
   clearCapacity();
+  clearLivestream();
   document.querySelectorAll<HTMLDialogElement>("dialog[open]").forEach((item) => item.close());
   if (isBackendConfigured()) await getSupabase().auth.signOut();
   window.clearTimeout(inactivityTimer);
@@ -320,7 +322,7 @@ const showDashboard = async (username: string) => {
   const usernameNode = document.querySelector<HTMLElement>("[data-admin-username]");
   if (usernameNode) usernameNode.textContent = username;
   resetInactivity();
-  await Promise.all([loadRows(), loadEventState()]);
+  await Promise.all([loadRows(), loadEventState(), loadLivestream()]);
 };
 
 const restoreSession = async () => {

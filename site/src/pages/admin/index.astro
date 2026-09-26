@@ -1,8 +1,10 @@
 ---
 import Icon from "../../components/Icon.astro";
+import AdminLivestream from "../../components/AdminLivestream.astro";
 import { withBase } from "../../utils/paths";
 import "../../styles/global.css";
 import "../../styles/portal.css";
+import "../../styles/livestream.css";
 
 const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
 ---
@@ -70,6 +72,8 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
           </div>
           <button class="button button-secondary dark" type="button" data-toggle-registration disabled>Cambiar estado</button>
         </section>
+
+        <AdminLivestream />
 
         <section class="metric-grid" aria-label="Resumen de inscripciones">
           <article><Icon name="user-round-check" size={22} /><span>Participantes</span><strong data-stat="participants">0</strong></article>

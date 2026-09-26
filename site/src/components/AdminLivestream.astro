@@ -1,0 +1,28 @@
+<section class="distribution-card livestream-admin" aria-labelledby="livestream-title">
+  <header class="capacity-heading">
+    <div><h2 id="livestream-title">Transmisión de YouTube</h2><p>Prueba el video aquí y actívalo cuando quieras mostrarlo en la portada.</p></div>
+    <button type="button" class="button button-secondary dark" data-live-refresh>Actualizar</button>
+  </header>
+  <form data-live-form>
+    <fieldset data-live-fields disabled>
+      <label class="field"><span>Enlace de la transmisión</span><input type="text" inputmode="url" name="youtube" maxlength="500" autocomplete="off" placeholder="https://www.youtube.com/live/…" data-live-url aria-describedby="livestream-help" /></label>
+      <p id="livestream-help">Pega el enlace de Compartir de YouTube. Guarda el enlace antes de cambiar el toggle.</p>
+      <div class="table-action-row">
+        <button type="submit" class="button button-primary" data-live-save>Guardar enlace</button>
+        <button type="button" class="button button-secondary dark" data-live-preview-button>Probar video</button>
+      </div>
+      <label class="livestream-toggle">
+        <input type="checkbox" role="switch" data-live-toggle aria-describedby="livestream-toggle-help" />
+        <span class="livestream-toggle-track" aria-hidden="true"></span>
+        <span>Mostrar transmisión en la portada</span>
+      </label>
+      <p id="livestream-toggle-help">El toggle guarda el cambio al instante. La portada se actualiza en un máximo aproximado de 30 segundos. No inicia ni detiene la emisión en YouTube.</p>
+    </fieldset>
+  </form>
+  <p data-live-status role="status" aria-live="polite">Cargando configuración…</p>
+  <section data-live-preview hidden aria-label="Vista previa de YouTube">
+    <header class="capacity-heading"><strong>Vista previa · solo en este panel</strong><button type="button" class="button button-secondary dark" data-live-close-preview>Cerrar vista previa</button></header>
+    <div class="livestream-frame" data-live-preview-player></div>
+    <p>Si YouTube bloquea el video, revisa su visibilidad y la opción Permitir inserción en YouTube Studio.</p>
+  </section>
+</section>

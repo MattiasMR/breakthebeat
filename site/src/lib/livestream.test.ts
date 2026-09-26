@@ -16,6 +16,7 @@ describe("YouTube livestream links", () => {
     "https://youtube.com.evil.test/watch?v=M7lc1UVf-VE", "https://evil.test/M7lc1UVf-VE",
     "https://youtube.com@evil.test/watch?v=M7lc1UVf-VE", "http://youtube.com/watch?v=M7lc1UVf-VE",
     "javascript:alert(1)", '<iframe src="https://youtube.com/embed/M7lc1UVf-VE"></iframe>',
+    "rtmp://a.rtmp.youtube.com/live2", "rtmp://b.rtmp.youtube.com/live2?backup=1", "rtmps://a.rtmps.youtube.com/live2",
     "https://user:secret@youtube.com/watch?v=M7lc1UVf-VE", "https://youtube.com:444/watch?v=M7lc1UVf-VE"
   ])("rejects unsupported or unsafe input: %s", (input) => {
     expect(parseYouTubeVideoId(input)).toBeNull();

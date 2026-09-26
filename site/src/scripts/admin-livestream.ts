@@ -24,7 +24,9 @@ const editedId = () => input.value.trim() ? parseYouTubeVideoId(input.value) : n
 const updateControls = () => {
   const invalid = Boolean(input.value.trim()) && !editedId();
   const dirty = invalid || editedId() !== state?.video_id;
-  input.setCustomValidity(invalid ? "Pega un enlace válido de un video o en vivo de YouTube." : "");
+  input.setCustomValidity(invalid ? (/^rtmps?:/i.test(input.value.trim())
+    ? "Esta dirección se usa en OBS para enviar la señal. Aquí pega el enlace de Compartir del video de YouTube."
+    : "Pega un enlace válido de un video o en vivo de YouTube.") : "");
   toggle.disabled = busy || !state || dirty || (!state.video_id && !state.enabled);
   save.disabled = busy || !state || invalid || !dirty || (state.enabled && !editedId());
 };
@@ -98,7 +100,7 @@ const persist = async (enabled: boolean, videoId: string | null) => {
 
 input.addEventListener("input", () => {
   updateControls();
-  status.textContent = "El enlace se aplicará al pulsar Guardar enlace. Puedes probarlo antes de guardar.";
+  status.textContent = input.validationMessage || "El enlace se aplicará al pulsar Guardar enlace. Puedes probarlo antes de guardar.";
   closePreview();
 });
 form.addEventListener("submit", (event) => {
@@ -110,7 +112,7 @@ toggle.addEventListener("change", () => { if (state) void persist(toggle.checked
 refresh.addEventListener("click", () => void loadLivestream());
 document.querySelector("[data-live-preview-button]")?.addEventListener("click", () => {
   const id = editedId();
-  if (!id) { status.textContent = "Ingresa un enlace válido de YouTube para probar el video."; input.focus(); return; }
+  if (!id) { status.textContent = input.validationMessage || "Ingresa un enlace válido de YouTube para probar el video."; input.focus(); return; }
   player.replaceChildren(createYouTubePlayer(id, "Vista previa de la transmisión de Break The Beat"));
   preview.hidden = false;
 });
